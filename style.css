@@ -41,4 +41,31 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 30px #d9b66d88;
 }
+/* TABLET AND DESKTOP NAME LAYOUT */
+@media (min-width: 701px) {
+
+    .names {
+        font-size: clamp(76px, 10vw, 125px);
+        line-height: 1;
+        margin: 15px 0;
+    }
+
+    .names span:first-child {
+        display: inline-block;
+    }
+
+    .names em {
+        display: inline-block;
+        font-size: 0.35em;
+        vertical-align: 0.5em;
+        margin-left: 8px;
+        line-height: 1;
+    }
+
+    .names span:last-child {
+        display: block;
+        margin-top: -8px;
+    }
+
+}
 
