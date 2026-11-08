@@ -12,31 +12,26 @@
     font-family: 'Great Vibes', cursive;
     font-weight: 400;
     font-size: clamp(76px, 12vw, 142px);
-    line-height: 0.75;
+    line-height: .82;
     margin: 12px 0;
     color: var(--gold2);
     text-shadow: 0 4px 25px #d9a64b55;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
 }
 
 .names span {
     display: block;
-    line-height: 0.75;
+    line-height: .82;
 }
 
 .names em {
     display: block;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 34px;
+    font-family: 'Cormorant Garamond';
+    font-size: 32px;
     font-style: italic;
     color: #f1d9a4;
-    line-height: 0.4;
-    margin: 0;
-    transform: translateY(5px);
+    line-height: .5;
+    margin: -5px 0;
+    position: relative;
     z-index: 2;
 }
 .section{padding:115px 8vw;position:relative}.intro{text-align:center;background:linear-gradient(180deg,#160d10,#211116)}.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6vw,70px);font-weight:400;margin:15px 0;color:var(--cream)}.section-title i{font-family:'Great Vibes';font-size:1.15em;color:var(--gold);font-weight:400}.intro-copy{max-width:590px;margin:20px auto;color:var(--muted);font-family:'Cormorant Garamond';font-size:22px;line-height:1.65}.divider-ornament{display:flex;align-items:center;justify-content:center;gap:15px;color:var(--gold);font-size:25px;margin:30px}.divider-ornament span{width:80px}.quote{font-family:'Cormorant Garamond';font-style:italic;font-size:23px;color:var(--gold2)}
