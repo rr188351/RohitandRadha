@@ -68,4 +68,8 @@
     }
 
 }
-
+@media (max-width: 700px) {
+  .names span:first-child {
+    margin-bottom: -12px;
+  }
+}
