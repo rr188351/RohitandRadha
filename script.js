@@ -52,3 +52,39 @@ if (window.matchMedia("(pointer:fine)").matches) {
     frame.style.transform = "perspective(1000px) rotateY(0) rotateX(0)";
   });
 }
+const songs = [
+    "song1.mp3",
+    "song2.mp3"
+];
+
+const audio = document.getElementById("weddingMusic");
+const musicBtn = document.getElementById("musicBtn");
+
+let currentSong = 0;
+
+function playSong(index) {
+    currentSong = index;
+    audio.src = songs[currentSong];
+    audio.play();
+
+    musicBtn.textContent = "♫ Pause Music";
+}
+
+audio.addEventListener("ended", () => {
+    currentSong = (currentSong + 1) % songs.length;
+    playSong(currentSong);
+});
+
+musicBtn.addEventListener("click", () => {
+    if (audio.paused) {
+        if (!audio.src) {
+            playSong(0);
+        } else {
+            audio.play();
+            musicBtn.textContent = "♫ Pause Music";
+        }
+    } else {
+        audio.pause();
+        musicBtn.textContent = "♫ Play Music";
+    }
+});
