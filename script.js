@@ -98,3 +98,18 @@ audio.addEventListener("pause", () => {
 window.addEventListener("load", () => {
     playSong(0);
 });
+window.addEventListener("load", () => {
+    currentSong = 0;
+    audio.src = songs[0];
+
+    audio.load();
+
+    audio.play()
+        .then(() => {
+            musicBtn.style.display = "none";
+        })
+        .catch(() => {
+            musicBtn.style.display = "block";
+            musicBtn.textContent = "♫ Play Music";
+        });
+});
