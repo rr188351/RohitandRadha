@@ -12,25 +12,26 @@
     font-family: 'Great Vibes', cursive;
     font-weight: 400;
     font-size: clamp(76px, 12vw, 142px);
-    line-height: .82;
+    line-height: 1;
     margin: 12px 0;
     color: var(--gold2);
     text-shadow: 0 4px 25px #d9a64b55;
+    text-align: center;
 }
 
 .names span {
     display: block;
-    line-height: .82;
+    line-height: 0.85;
 }
 
 .names em {
     display: block;
-    font-family: 'Cormorant Garamond';
-    font-size: 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
     font-style: italic;
     color: #f1d9a4;
-    line-height: .5;
-    margin: -5px 0;
+    line-height: 1;
+    margin: 0;
     position: relative;
     z-index: 2;
 }
