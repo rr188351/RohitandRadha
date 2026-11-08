@@ -52,27 +52,27 @@ if (window.matchMedia("(pointer:fine)").matches) {
     frame.style.transform = "perspective(1000px) rotateY(0) rotateX(0)";
   });
 }
-const songs = [
-    "song1.mp3",
-    "song2.mp3"
-];
+const songs = ["song1.mp3", "song2.mp3"];
 
 const audio = document.getElementById("weddingMusic");
 const musicBtn = document.getElementById("musicBtn");
 
 let currentSong = 0;
 
-function playSong(index) {
+async function playSong(index) {
     currentSong = index;
-    audio.src = songs[currentSong];
-    audio.play();
+    audio.src = songs[index];
 
-    musicBtn.textContent = "♫ Pause Music";
+    try {
+        await audio.play();
+        musicBtn.style.display = "none";
+    } catch (error) {
+        musicBtn.style.display = "block";
+    }
 }
 
 audio.addEventListener("ended", () => {
-    currentSong = (currentSong + 1) % songs.length;
-    playSong(currentSong);
+    playSong((currentSong + 1) % songs.length);
 });
 
 musicBtn.addEventListener("click", () => {
@@ -81,10 +81,20 @@ musicBtn.addEventListener("click", () => {
             playSong(0);
         } else {
             audio.play();
-            musicBtn.textContent = "♫ Pause Music";
         }
     } else {
         audio.pause();
-        musicBtn.textContent = "♫ Play Music";
     }
+});
+
+audio.addEventListener("play", () => {
+    musicBtn.style.display = "none";
+});
+
+audio.addEventListener("pause", () => {
+    musicBtn.style.display = "block";
+});
+
+window.addEventListener("load", () => {
+    playSong(0);
 });
