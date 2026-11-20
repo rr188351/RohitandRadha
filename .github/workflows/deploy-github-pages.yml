@@ -16,6 +16,7 @@ on:
 # Least privilege for the official Pages artifact flow.
 permissions:
   contents: read
+  actions: read # read the branch-based Pages run, see the ordering guard below
   pages: write
   id-token: write
 
@@ -114,6 +115,48 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # ---------------------------------------------------------------------
+      # Deployment ordering guard.
+      #
+      # GitHub also runs its branch-based Pages publisher ("pages build and
+      # deployment") for this repository, and that one publishes the *raw
+      # repository tree* — including the unbundled Vite shell at /Wedding/.
+      # Whichever deployment lands last is the one served, so this step waits
+      # for that build to finish and lets the artifact have the final word.
+      #
+      # The moment the repository's Pages source is set to "GitHub Actions"
+      # (Settings → Pages → Build and deployment → Source), that publisher
+      # stops running and this guard costs nothing.
+      # ---------------------------------------------------------------------
+      - name: Let the branch-based Pages build finish first
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+
+          # Give it time to appear and finish its Jekyll build.
+          sleep 40
+
+          deadline=$((SECONDS + 150))
+          while [ $SECONDS -lt $deadline ]; do
+            pending=$(curl -sS \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=30" \
+              | jq '[.workflow_runs[] | select(.name == "pages build and deployment" and .status != "completed")] | length' 2>/dev/null || echo 0)
+
+            if [ "$pending" = "0" ]; then
+              echo "No branch-based Pages build is still running."
+              break
+            fi
+
+            echo "Branch-based Pages build still running; waiting 5s…"
+            sleep 5
+          done
+
+          # A short settle window, so this deployment is unambiguously the newest.
+          sleep 5
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
