@@ -1,0 +1,3783 @@
+/* ==========================================================================
+   ROYAL WEDDING INVITATION — PHASE 01: DESIGN FOUNDATION
+   Dark burgundy atmosphere, antique gold accents, ivory editorial typography
+   and a layered, premium glassmorphism system. Custom CSS only (no Tailwind).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+
+  /* --- Backgrounds --- */
+  --bg-midnight: #16090d;
+  --bg-wine: #250d16;
+  --bg-velvet: #3a101d;
+  --bg-plum: #20101c;
+
+  /* --- Gold --- */
+  --gold: #c5a46d;
+  --gold-champagne: #e5c992;
+  --gold-muted: #9b7b49;
+
+  /* --- Text --- */
+  --ivory: #f5efe5;
+  --ivory-muted: #cfc3b5;
+  --taupe: #a8907c;
+
+  /* --- Typography --- */
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype',
+    Georgia, serif;
+  --font-label: 'Cinzel', 'Trajan Pro', 'Times New Roman', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
+
+  /* --- Glass system --- */
+  --glass-blur: 20px;
+  --glass-saturate: 135%;
+  --glass-radius: 12px;
+  --glass-ring-inset: 7px;
+  --glass-ring-radius: 6px;
+
+  --glass-fill-burgundy: rgba(58, 16, 29, 0.55);
+  --glass-fill-wine: rgba(37, 13, 22, 0.62);
+  --glass-fill-plum: rgba(32, 16, 28, 0.5);
+
+  --glass-border: rgba(197, 164, 109, 0.38);
+  --glass-border-strong: rgba(229, 201, 146, 0.6);
+  --glass-ring: rgba(229, 201, 146, 0.14);
+  --glass-highlight: rgba(229, 201, 146, 0.1);
+
+  --shadow-ambient: 0 44px 130px -46px rgba(0, 0, 0, 0.9);
+  --shadow-glow: 0 0 90px -26px rgba(197, 164, 109, 0.34);
+
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* --- Fine grain texture (inline SVG noise, no extra network request) --- */
+  --texture-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   2. BASE / RESET
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Reserve the scrollbar lane up front. Phase 03 makes the page scrollable
+     once the invitation opens, and this keeps that moment from nudging the
+     layout sideways as the bar appears. */
+  scrollbar-gutter: stable;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-midnight);
+  color: var(--ivory);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   3. GLASS SYSTEM
+   A reusable layered frosted-glass treatment: tinted fill, backdrop blur with
+   saturation, champagne outer border, delicate inner ring, top-edge
+   reflection, ambient gold glow and soft shadow depth.
+   -------------------------------------------------------------------------- */
+.glass {
+  position: relative;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  background-color: var(--glass-fill-wine);
+  box-shadow: inset 0 1px 0 0 var(--glass-highlight),
+    inset 0 -1px 0 0 rgba(22, 9, 13, 0.55), 0 0 0 1px rgba(11, 5, 7, 0.45),
+    var(--shadow-glow), var(--shadow-ambient);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+/* Main invitation surface: deep burgundy gradient with a soft top light. */
+.glass--panel {
+  background-image: linear-gradient(
+      180deg,
+      var(--glass-highlight) 0%,
+      rgba(229, 201, 146, 0.02) 26%,
+      rgba(229, 201, 146, 0) 58%
+    ),
+    radial-gradient(
+      135% 92% at 50% -14%,
+      rgba(58, 16, 29, 0.82) 0%,
+      rgba(37, 13, 22, 0.86) 44%,
+      rgba(22, 9, 13, 0.92) 100%
+    );
+}
+
+/* Secondary, lighter glass for smaller surfaces. */
+.glass--soft {
+  background-color: var(--glass-fill-burgundy);
+  background-image: linear-gradient(
+    180deg,
+    var(--glass-highlight) 0%,
+    rgba(229, 201, 146, 0) 62%
+  );
+  box-shadow: inset 0 1px 0 0 var(--glass-highlight),
+    0 0 0 1px rgba(11, 5, 7, 0.4), 0 18px 44px -28px rgba(0, 0, 0, 0.8);
+}
+
+/* Fine frosted grain layered over a glass surface. */
+.glass-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background-image: var(--texture-noise);
+  background-size: 180px 180px;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   4. PAGE SHELL
+   -------------------------------------------------------------------------- */
+.app {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.intro {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(1.6rem, 5vw, 4.5rem) clamp(1.15rem, 4vw, 2.5rem);
+  /* Clips stray decorative overflow on the horizontal axis only, without
+     turning the section into a scroll container. */
+  overflow-x: clip;
+}
+
+/* --------------------------------------------------------------------------
+   5. ATMOSPHERIC BACKDROP
+   Layered gradients build architectural depth: a burgundy base, a slowly
+   breathing golden aura, the key light behind the invitation, a shadowy
+   palace arch, warm side glows, darkened corners and a fine film grain.
+   -------------------------------------------------------------------------- */
+.backdrop {
+  /* Fixed rather than absolute: the atmosphere is locked to the viewport so it
+     stays perfectly continuous as the visitor scrolls from the hero into
+     Phase 03. It remains a DOM child of the stage, so Phase 01's entrance
+     timeline and every petal loop keep working exactly as before. */
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.backdrop__base {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+      120% 88% at 50% 6%,
+      rgba(58, 16, 29, 0.6) 0%,
+      rgba(37, 13, 22, 0.28) 46%,
+      rgba(22, 9, 13, 0) 76%
+    ),
+    linear-gradient(
+      178deg,
+      var(--bg-midnight) 0%,
+      var(--bg-wine) 36%,
+      var(--bg-plum) 66%,
+      var(--bg-midnight) 100%
+    );
+}
+
+/* Ambient breathing light so the room feels alive but stays quiet. */
+.backdrop__aura {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 118vmin;
+  height: 92vmin;
+  margin-left: -59vmin;
+  margin-top: -46vmin;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(229, 201, 146, 0.1) 0%,
+    rgba(197, 164, 109, 0.045) 56%,
+    rgba(197, 164, 109, 0) 78%
+  );
+  animation: aura-breathe 17s ease-in-out infinite;
+}
+
+@keyframes aura-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.95;
+  }
+}
+
+/* Key light behind the invitation — faded in by GSAP on load. */
+.backdrop__glow {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 74vmin;
+  height: 74vmin;
+  margin-left: -37vmin;
+  margin-top: -37vmin;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(229, 201, 146, 0.17) 0%,
+    rgba(197, 164, 109, 0.07) 52%,
+    rgba(197, 164, 109, 0) 76%
+  );
+}
+
+/* Faint double-outlined palace arch behind the card. */
+.backdrop__arch {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  width: min(88vw, 46rem);
+  height: min(80vh, 42rem);
+  transform: translateX(-50%);
+  border: 1px solid rgba(197, 164, 109, 0.09);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 62% 62% 0 0;
+}
+
+.backdrop__arch::after {
+  content: '';
+  position: absolute;
+  inset: 16px 16px 0;
+  border: 1px solid rgba(197, 164, 109, 0.05);
+  border-bottom: 0;
+  border-radius: inherit;
+}
+
+/* Warm pillar glows down the far left and right edges. */
+.backdrop__column {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(24vw, 14rem);
+}
+
+.backdrop__column--left {
+  left: 0;
+  background-image: linear-gradient(
+    90deg,
+    rgba(155, 123, 73, 0.1) 0%,
+    rgba(155, 123, 73, 0) 72%
+  );
+}
+
+.backdrop__column--right {
+  right: 0;
+  background-image: linear-gradient(
+    270deg,
+    rgba(155, 123, 73, 0.1) 0%,
+    rgba(155, 123, 73, 0) 72%
+  );
+}
+
+/* Darkened corners. */
+.backdrop__vignette {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    118% 86% at 50% 42%,
+    rgba(22, 9, 13, 0) 40%,
+    rgba(15, 7, 10, 0.55) 74%,
+    rgba(10, 5, 7, 0.88) 100%
+  );
+}
+
+.backdrop__grain {
+  position: absolute;
+  inset: 0;
+  background-image: var(--texture-noise);
+  background-size: 200px 200px;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+}
+
+/* --------------------------------------------------------------------------
+   6. GOLD DUST
+   A restrained scattering of slow-floating specks. Purely decorative and
+   fully disabled when the visitor prefers reduced motion.
+   -------------------------------------------------------------------------- */
+.backdrop__dust {
+  position: absolute;
+  inset: 0;
+}
+
+.dust {
+  position: absolute;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    circle,
+    rgba(229, 201, 146, 0.85) 0%,
+    rgba(197, 164, 109, 0) 70%
+  );
+  opacity: 0;
+  /* Drift and twinkle run on separate clocks so the opacity can shimmer on its
+     own without disturbing the slow float. */
+  animation: dust-drift var(--dust-duration, 30s) linear infinite,
+    dust-twinkle var(--dust-twinkle-duration, 9s) ease-in-out infinite;
+  animation-delay: var(--dust-delay, 0s), var(--dust-twinkle-delay, 0s);
+}
+
+/* Slow, near-vertical float — opacity is owned by `dust-twinkle` below. */
+@keyframes dust-drift {
+  0% {
+    transform: translate3d(0, 16px, 0) scale(0.78);
+  }
+  50% {
+    transform: translate3d(var(--dust-drift, 6px), -18px, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(0, -44px, 0) scale(0.78);
+  }
+}
+
+/* Gentle twinkle with uneven stops, so the specks never pulse in rhythm. */
+@keyframes dust-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  12% {
+    opacity: calc(var(--dust-opacity, 0.25) * 0.45);
+  }
+  30% {
+    opacity: var(--dust-opacity, 0.25);
+  }
+  47% {
+    opacity: calc(var(--dust-opacity, 0.25) * 0.35);
+  }
+  64% {
+    opacity: calc(var(--dust-opacity, 0.25) * 0.85);
+  }
+  82% {
+    opacity: calc(var(--dust-opacity, 0.25) * 0.4);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6.1 ROSE PETALS
+   A handful of softly tumbling petals. Each one rides inside a full-height lane
+   so every movement is expressed as a percentage of the stage — that keeps the
+   drift correct on any viewport and lets GSAP animate transforms only. Petals
+   sit behind the card, so the invitation itself stays perfectly readable.
+   -------------------------------------------------------------------------- */
+.backdrop__petals {
+  position: absolute;
+  inset: 0;
+}
+
+.petal-lane {
+  position: absolute;
+  inset: 0;
+}
+
+.petal {
+  position: absolute;
+  top: 0;
+  display: block;
+  opacity: 0; /* revealed by GSAP; stays hidden if scripting is unavailable */
+  transform-origin: center;
+}
+
+.petal__shape {
+  opacity: 0.92;
+}
+
+.petal__vein {
+  fill: none;
+  stroke: rgba(245, 239, 229, 0.2);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+/* Gradient paint servers shared by the petals: zero sized, still rendered. */
+.petal-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   6.2 AMBIENT CANDLELIGHT
+   Three broad, very soft warm pools that breathe on different slow cycles, so
+   the light never pulses in an obvious rhythm. Each pool is wider than the
+   card, which is what lets the glow spill around the glass instead of being
+   swallowed by it. The light always stays behind the invitation.
+   -------------------------------------------------------------------------- */
+.backdrop__candlelight {
+  position: absolute;
+  inset: 0;
+  animation: candle-arrive 4.5s ease-out 0.3s both;
+}
+
+@keyframes candle-arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.candle {
+  position: absolute;
+  border-radius: 50%;
+  animation: candle-breathe var(--candle-cycle, 30s) ease-in-out infinite;
+  animation-delay: var(--candle-phase, 0s);
+}
+
+.candle--key {
+  left: 50%;
+  top: 42%;
+  width: 104vmin;
+  height: 104vmin;
+  margin-left: -52vmin;
+  margin-top: -52vmin;
+  --candle-cycle: 27s;
+  --candle-phase: -6s;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(229, 201, 146, 0.11) 0%,
+    rgba(197, 164, 109, 0.045) 52%,
+    rgba(197, 164, 109, 0) 78%
+  );
+}
+
+.candle--high {
+  left: 50%;
+  top: 14%;
+  width: 86vmin;
+  height: 86vmin;
+  margin-left: -43vmin;
+  margin-top: -43vmin;
+  --candle-cycle: 41s;
+  --candle-phase: -28s;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(233, 208, 160, 0.075) 0%,
+    rgba(197, 164, 109, 0.03) 50%,
+    rgba(197, 164, 109, 0) 78%
+  );
+}
+
+.candle--low {
+  left: 50%;
+  top: 70%;
+  width: 74vmin;
+  height: 74vmin;
+  margin-left: -37vmin;
+  margin-top: -37vmin;
+  --candle-cycle: 34s;
+  --candle-phase: -17s;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(216, 174, 115, 0.085) 0%,
+    rgba(180, 120, 80, 0.03) 55%,
+    rgba(180, 120, 80, 0) 80%
+  );
+}
+
+/* Uneven stops so the shimmer never reads as a regular pulse. */
+@keyframes candle-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  34% {
+    opacity: 0.92;
+    transform: scale(1.05);
+  }
+  58% {
+    opacity: 0.68;
+    transform: scale(1.018);
+  }
+  79% {
+    opacity: 0.88;
+    transform: scale(1.035);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. INVITATION CARD
+   The focal point: an opaque frosted burgundy panel with a top-edge
+   reflection, a delicate inner ring and refined ornamental corners.
+   -------------------------------------------------------------------------- */
+.invitation {
+  z-index: 1;
+  width: min(100%, 30rem);
+  overflow: hidden;
+}
+
+/* Top-edge light reflection, clipped by the card's rounded corners. */
+.invitation::before {
+  content: '';
+  position: absolute;
+  inset: 1px 1px auto;
+  z-index: 0;
+  height: 46%;
+  border-radius: calc(var(--glass-radius) - 1px)
+    calc(var(--glass-radius) - 1px) 45% 45%;
+  background-image: linear-gradient(
+    180deg,
+    rgba(245, 239, 229, 0.07) 0%,
+    rgba(229, 201, 146, 0.028) 34%,
+    rgba(229, 201, 146, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Delicate inner hairline ring — the second border layer. */
+.invitation::after {
+  content: '';
+  position: absolute;
+  inset: var(--glass-ring-inset);
+  z-index: 1;
+  border: 1px solid var(--glass-ring);
+  border-radius: var(--glass-ring-radius);
+  pointer-events: none;
+}
+
+.invitation__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.1rem, 3.6vw, 1.75rem);
+  min-height: clamp(27rem, 66vh, 36rem);
+  padding: clamp(2.2rem, 7vw, 3.75rem) clamp(1.4rem, 6vw, 3rem);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   8. ORNAMENTAL CORNERS
+   -------------------------------------------------------------------------- */
+.corner {
+  position: absolute;
+  z-index: 3;
+  width: clamp(34px, 8vw, 52px);
+  aspect-ratio: 1;
+  color: var(--gold);
+  pointer-events: none;
+}
+
+.corner__art {
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  transform-origin: center;
+}
+
+.corner--tl {
+  top: 16px;
+  left: 16px;
+}
+
+.corner--tr {
+  top: 16px;
+  right: 16px;
+  transform: rotate(90deg);
+}
+
+.corner--br {
+  bottom: 16px;
+  right: 16px;
+  transform: rotate(180deg);
+}
+
+.corner--bl {
+  bottom: 16px;
+  left: 16px;
+  transform: rotate(270deg);
+}
+
+/* --------------------------------------------------------------------------
+   9. ORNAMENTAL DIVIDER
+   -------------------------------------------------------------------------- */
+.rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 100%;
+  max-width: 15rem;
+  transform-origin: center;
+}
+
+.rule__line {
+  flex: 1;
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.5)
+  );
+}
+
+.rule__line:last-child {
+  background-image: linear-gradient(
+    270deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.5)
+  );
+}
+
+.rule__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: rgba(197, 164, 109, 0.55);
+}
+
+.rule__gem {
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  border: 1px solid rgba(229, 201, 146, 0.6);
+  background-color: rgba(229, 201, 146, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   10. TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+.invitation__crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  transform-origin: center;
+}
+
+.invitation__crest-line {
+  width: clamp(1.5rem, 8vw, 3.25rem);
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.55)
+  );
+}
+
+.invitation__crest-line:last-child {
+  background-image: linear-gradient(
+    270deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.55)
+  );
+}
+
+.invitation__crest-icon {
+  color: var(--gold-champagne);
+}
+
+.invitation__label {
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.invitation__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.35rem, 9.5vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.invitation__title em {
+  font-style: italic;
+  color: var(--gold-champagne);
+}
+
+.invitation__text {
+  max-width: 26ch;
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.9vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+/* --------------------------------------------------------------------------
+   11. OPEN THE INVITATION BUTTON
+   A bespoke glass button: dark translucent interior, hairline gold border,
+   inner reveal line, champagne label, soft gold glow and a sheen sweep.
+   -------------------------------------------------------------------------- */
+.invitation__button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  min-height: 3.35rem;
+  margin-top: 0.4rem;
+  padding: 1.05rem 2.15rem;
+  border: 1px solid rgba(197, 164, 109, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  color: var(--gold-champagne);
+  font-family: var(--font-label);
+  font-size: clamp(0.68rem, 2.7vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  text-transform: uppercase;
+  background-color: rgba(37, 13, 22, 0.55);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.1) 0%,
+    rgba(229, 201, 146, 0.02) 48%,
+    rgba(22, 9, 13, 0.32) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.14),
+    0 14px 34px -18px rgba(197, 164, 109, 0.55);
+  backdrop-filter: blur(10px) saturate(120%);
+  transition: transform 0.45s var(--ease-soft), border-color 0.45s ease,
+    color 0.45s ease, box-shadow 0.45s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Inner reveal line. */
+.invitation__button::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(229, 201, 146, 0.12);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Slow sheen sweep across the glass on hover. */
+.invitation__button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    105deg,
+    rgba(245, 239, 229, 0) 34%,
+    rgba(245, 239, 229, 0.14) 50%,
+    rgba(245, 239, 229, 0) 66%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.85s var(--ease-soft);
+  pointer-events: none;
+}
+
+.invitation__button > * {
+  position: relative;
+  z-index: 1;
+}
+
+.invitation__button:hover {
+  transform: translateY(-2px);
+  border-color: var(--glass-border-strong);
+  color: var(--ivory);
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.22),
+    0 22px 46px -18px rgba(197, 164, 109, 0.6);
+}
+
+.invitation__button:hover::after {
+  transform: translateX(130%);
+}
+
+.invitation__button:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 10px rgba(11, 5, 7, 0.6),
+    0 10px 22px -16px rgba(197, 164, 109, 0.45);
+}
+
+.invitation__button-icon {
+  color: var(--gold);
+  transition: transform 0.45s var(--ease-soft), color 0.45s ease;
+}
+
+.invitation__button:hover .invitation__button-icon {
+  transform: translateX(3px);
+  color: var(--gold-champagne);
+}
+
+.invitation__button:focus-visible {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 3px;
+}
+
+/* Only ever applied once the button has been pressed: a subtle press with a
+   warm gold lift that carries the card into its exit. The resting, hover and
+   active states above are untouched. */
+.invitation__button--pressed,
+.invitation__button--pressed:hover {
+  transform: translateY(-1px) scale(0.993);
+  border-color: var(--glass-border-strong);
+  color: var(--ivory);
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.26),
+    0 0 34px -6px rgba(229, 201, 146, 0.5),
+    0 22px 46px -18px rgba(197, 164, 109, 0.6);
+}
+
+/* After opening, the control stops accepting pointer input so it cannot fire a
+   second transition (the ref guard in App backs this up). */
+.invitation__button[aria-disabled='true'] {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   12. MOTION PREFERENCES
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .backdrop__aura,
+  .candle {
+    animation: none;
+  }
+
+  .backdrop__dust,
+  .backdrop__petals {
+    display: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. RESPONSIVE REFINEMENTS (mobile-first, progressively enhanced)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  :root {
+    --glass-blur: 14px;
+  }
+
+  /* Keep the first twenty specks on small screens. */
+  .dust:nth-child(n + 21) {
+    display: none;
+  }
+
+  .backdrop__column {
+    width: min(30vw, 9rem);
+  }
+
+  /* Trim the scene further: nine petals (matching the JS budget) and one
+     fewer light pool. */
+  .petal-lane:nth-child(n + 10) {
+    display: none;
+  }
+
+  .candle--high {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .invitation {
+    width: min(100%, 31rem);
+  }
+
+  .invitation__inner {
+    min-height: clamp(30rem, 68vh, 38rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .invitation {
+    width: min(100%, 32rem);
+  }
+
+  .backdrop__glow {
+    width: 84vmin;
+    height: 84vmin;
+    margin-left: -42vmin;
+    margin-top: -42vmin;
+  }
+}
+
+@media (min-width: 1440px) {
+  .invitation {
+    width: min(100%, 33rem);
+  }
+
+  .invitation__inner {
+    min-height: clamp(32rem, 70vh, 40rem);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   14. WEDDING HERO (PHASE 02)
+   The invitation unfolding into its next chapter. It sits above the phase 01
+   stage, so the shared backdrop keeps drifting underneath it.
+   -------------------------------------------------------------------------- */
+.hero {
+  position: absolute;
+  /* Anchored to the first viewport only. With `inset: 0` the hero would stretch
+     to the full document height as soon as Phase 03 follows it, which would
+     drag the composition into the middle of the page. */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(3.5rem, 9vw, 6rem) clamp(1.25rem, 5vw, 3rem);
+  text-align: center;
+  opacity: 0; /* revealed by GSAP */
+  visibility: hidden;
+  overflow-x: clip;
+}
+
+/* Contains the bloom so its scale never creates scrollable overflow. */
+.hero__bloom-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Brief warm golden light that spreads across the hand-over. */
+.hero__bloom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100vmin;
+  height: 100vmin;
+  margin-left: -50vmin;
+  margin-top: -50vmin;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(233, 208, 160, 0.24) 0%,
+    rgba(197, 164, 109, 0.1) 46%,
+    rgba(197, 164, 109, 0) 76%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Delicate gold frame, echoing the invitation card's corners. */
+.hero__corners {
+  position: absolute;
+  inset: 0;
+}
+
+.hero__corners .corner {
+  width: clamp(38px, 9vw, 72px);
+  opacity: 0.6;
+}
+
+.hero__corners .corner--tl {
+  top: clamp(1.1rem, 4vw, 2.75rem);
+  left: clamp(1.1rem, 4vw, 2.75rem);
+}
+
+.hero__corners .corner--tr {
+  top: clamp(1.1rem, 4vw, 2.75rem);
+  right: clamp(1.1rem, 4vw, 2.75rem);
+}
+
+.hero__corners .corner--br {
+  bottom: clamp(1.1rem, 4vw, 2.75rem);
+  right: clamp(1.1rem, 4vw, 2.75rem);
+}
+
+.hero__corners .corner--bl {
+  bottom: clamp(1.1rem, 4vw, 2.75rem);
+  left: clamp(1.1rem, 4vw, 2.75rem);
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 3.1vw, 1.6rem);
+  width: min(100%, 46rem);
+}
+
+/* --- Crest --- */
+.hero__crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  transform-origin: center;
+}
+
+.hero__crest-line {
+  width: clamp(1.75rem, 9vw, 3.75rem);
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.55)
+  );
+}
+
+.hero__crest-line:last-child {
+  background-image: linear-gradient(
+    270deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.55)
+  );
+}
+
+.hero__crest-icon {
+  color: var(--gold-champagne);
+}
+
+/* --- Label --- */
+.hero__label {
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* Wider than the card's rule, so the hero composition can breathe. */
+.hero__rule {
+  max-width: 22rem;
+}
+
+/* --- The names --- */
+.hero__names {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.3rem, 1.6vw, 0.75rem);
+}
+
+.hero__name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 10.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-indent: 0.12em; /* balances the trailing letter-spacing */
+  text-transform: uppercase;
+  color: var(--ivory);
+  white-space: nowrap;
+}
+
+.hero__and {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.05rem, 3.2vw, 1.6rem);
+  letter-spacing: 0.06em;
+  text-indent: 0.06em;
+  color: var(--gold-champagne);
+}
+
+/* --- Supporting copy --- */
+.hero__copy {
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.7vw, 1rem);
+  font-weight: 300;
+  line-height: 1.9;
+  letter-spacing: 0.015em;
+  color: var(--ivory-muted);
+}
+
+.hero__copy--secondary {
+  color: var(--taupe);
+}
+
+/* --- Details: only rendered once real details exist in the config --- */
+.hero__details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  margin: 0;
+  padding-top: clamp(0.5rem, 2vw, 1.25rem);
+}
+
+.hero__detail {
+  min-width: 6rem;
+}
+
+.hero__detail dt {
+  font-family: var(--font-label);
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold-muted);
+}
+
+.hero__detail dd {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: var(--ivory);
+}
+
+/* --------------------------------------------------------------------------
+   15. HERO RESPONSIVE + MOTION
+   -------------------------------------------------------------------------- */
+@media (max-height: 560px) {
+  /* Short landscape viewports: top-align so nothing is pushed out of reach. */
+  .hero {
+    align-items: flex-start;
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__corners .corner {
+    width: clamp(32px, 10vw, 46px);
+    opacity: 0.5;
+  }
+
+  .hero__rule {
+    max-width: 15rem;
+  }
+}
+
+/* Reduced motion: the two phases simply swap and neither timeline runs. */
+@media (prefers-reduced-motion: reduce) {
+  .app.is-open .hero {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .app.is-open .invitation {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   16. THE CELEBRATION (PHASE 03)
+   The heartfelt page below the hero. A normal flow section, so the scroll stays
+   completely native — nothing is pinned and nothing is hijacked. The atmosphere
+   behind it is untouched: it lives in the fixed backdrop.
+   -------------------------------------------------------------------------- */
+.celebration {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  padding: clamp(5.5rem, 13vw, 10rem) clamp(1.25rem, 5vw, 3rem)
+    clamp(6.5rem, 15vw, 12rem);
+  overflow: clip;
+}
+
+/* Soft gold halo that seats the typography. It drifts a little on scroll. */
+.celebration__halo {
+  position: absolute;
+  inset: 7% 4%;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(229, 201, 146, 0.1) 0%,
+    rgba(197, 164, 109, 0.035) 52%,
+    rgba(197, 164, 109, 0) 78%
+  );
+  pointer-events: none;
+}
+
+.celebration__frame {
+  position: relative;
+  width: min(100%, 44rem);
+  padding: clamp(1.75rem, 5vw, 3rem);
+}
+
+/* Delicate gold frame — the same ornament language as the card and the hero. */
+.celebration__corners {
+  position: absolute;
+  inset: 0;
+}
+
+.celebration__corners .corner {
+  width: clamp(30px, 7vw, 48px);
+  opacity: 0.55;
+}
+
+.celebration__corners .corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.celebration__corners .corner--tr {
+  top: 0;
+  right: 0;
+}
+
+.celebration__corners .corner--br {
+  bottom: 0;
+  right: 0;
+}
+
+.celebration__corners .corner--bl {
+  bottom: 0;
+  left: 0;
+}
+
+.celebration__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.15rem, 3.4vw, 1.9rem);
+  text-align: center;
+}
+
+/* --- Crest --- */
+.celebration__crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  transform-origin: center;
+}
+
+.celebration__crest-line {
+  width: clamp(1.75rem, 9vw, 3.75rem);
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.55)
+  );
+}
+
+.celebration__crest-line:last-child {
+  background-image: linear-gradient(
+    270deg,
+    rgba(197, 164, 109, 0),
+    rgba(197, 164, 109, 0.55)
+  );
+}
+
+.celebration__crest-icon {
+  color: var(--gold-champagne);
+}
+
+/* --- Label --- */
+.celebration__label {
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.celebration__rule {
+  max-width: 20rem;
+}
+
+/* --- Heading --- */
+.celebration__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.2rem, 1.2vw, 0.5rem);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 8vw, 3.9rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: 0.008em;
+  color: var(--ivory);
+}
+
+.celebration__title-line {
+  display: block;
+}
+
+.celebration__title em {
+  font-style: italic;
+  color: var(--gold-champagne);
+}
+
+/* --- Message --- */
+.celebration__copy {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+/* --- The names return quietly, as a monogram band --- */
+.celebration__names {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.7rem, 2.4vw, 1.1rem);
+  margin: clamp(0.3rem, 1.5vw, 0.7rem) 0 0;
+  padding: clamp(0.65rem, 2.2vw, 0.9rem) clamp(1.4rem, 4.5vw, 2.25rem);
+  font-family: var(--font-label);
+  font-size: clamp(0.68rem, 2.5vw, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-champagne);
+  transform-origin: center;
+}
+
+/* Cancels each name's trailing letter-space so the band reads evenly. */
+.celebration__names span {
+  margin-right: -0.3em;
+}
+
+.celebration__names em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.35em;
+  letter-spacing: 0.02em;
+  color: var(--gold);
+}
+
+/* --- Slim glass band: the one glass accent in this phase --- */
+.glass--band {
+  border-color: rgba(197, 164, 109, 0.34);
+  border-radius: 4px;
+  background-color: rgba(37, 13, 22, 0.5);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.07) 0%,
+    rgba(229, 201, 146, 0.01) 55%,
+    rgba(22, 9, 13, 0.24) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.1),
+    0 16px 40px -26px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px) saturate(120%);
+}
+
+/* --- Details, rendered only once the couple's information is filled in --- */
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  margin: 0;
+}
+
+.details__item {
+  min-width: 6rem;
+}
+
+.details__label {
+  font-family: var(--font-label);
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold-muted);
+}
+
+.details__value {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 3.1vw, 1.3rem);
+  color: var(--ivory);
+}
+
+/* --- Phase 03 responsive --- */
+@media (max-width: 640px) {
+  .celebration {
+    padding-top: clamp(4.5rem, 16vw, 6rem);
+    padding-bottom: clamp(5rem, 18vw, 7.5rem);
+  }
+
+  .celebration__frame {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .celebration__copy {
+    max-width: 34ch;
+  }
+
+  .celebration__names {
+    letter-spacing: 0.22em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   17. THE CELEBRATIONS SHOWCASE (PHASE 04)
+   An editorial, left-aligned showcase: a heading on the left, then three
+   alternating entries. Deliberately not Phase 03's centred panel and not a
+   card grid. Scrolling stays native and the atmosphere behind is untouched.
+   -------------------------------------------------------------------------- */
+.showcase {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+  padding: clamp(5.5rem, 13vw, 10rem) clamp(1.25rem, 5vw, 3rem)
+    clamp(7rem, 16vw, 13rem);
+  overflow: clip;
+}
+
+/* --- Header --- */
+.showcase__header {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 3vw, 1.6rem);
+  max-width: 48rem;
+  margin-bottom: clamp(3.5rem, 9vw, 7rem);
+}
+
+.showcase__meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2.5vw, 1.25rem);
+  margin: 0;
+}
+
+.showcase__label {
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.showcase__meta-line {
+  flex: 1;
+  max-width: clamp(3rem, 18vw, 12rem);
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(197, 164, 109, 0.5),
+    rgba(197, 164, 109, 0)
+  );
+  transform-origin: left center;
+}
+
+.showcase__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8.5vw, 4.4rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+}
+
+.showcase__title-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.showcase__title-inner {
+  display: block;
+}
+
+.showcase__intro {
+  max-width: 46ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+/* --- The list of celebrations --- */
+.showcase__events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.showcase__item + .showcase__item {
+  margin-top: clamp(3.5rem, 9vw, 7rem);
+}
+
+.showcase__separator {
+  max-width: 26rem;
+  margin: 0 auto clamp(3.5rem, 9vw, 7rem);
+}
+
+/* --- One event entry --- */
+.event {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: 'art text';
+  align-items: start;
+  gap: clamp(1.15rem, 4.5vw, 1.85rem);
+}
+
+/* Every other entry carries its motif on the right, so the page alternates. */
+.event--flip {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'text art';
+}
+
+.event__art {
+  grid-area: art;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(56px, 15vw, 74px);
+}
+
+.event__glow {
+  position: absolute;
+  inset: -22%;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    closest-side,
+    var(--event-glow, rgba(229, 201, 146, 0.16)),
+    rgba(197, 164, 109, 0) 78%
+  );
+  pointer-events: none;
+}
+
+.event-ornament {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--event-accent, var(--gold));
+  opacity: 0.85;
+}
+
+.event__text {
+  grid-area: text;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.8rem, 2.6vw, 1.3rem);
+  min-width: 0;
+}
+
+/* --- Number, rule and label --- */
+.event__meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.6rem, 2vw, 1rem);
+  margin: 0;
+}
+
+.event__number {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 2.8vw, 1.2rem);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: var(--event-accent, var(--gold));
+}
+
+.event__meta-line {
+  flex: 1;
+  max-width: clamp(1.5rem, 7vw, 3.5rem);
+  height: 1px;
+  opacity: 0.6;
+  background-image: linear-gradient(
+    90deg,
+    var(--event-accent, rgba(197, 164, 109, 0.5)),
+    rgba(197, 164, 109, 0)
+  );
+}
+
+/* Mirrored on flipped entries so the rule always trails outwards. */
+.event--flip .event__meta-line {
+  background-image: linear-gradient(
+    270deg,
+    var(--event-accent, rgba(197, 164, 109, 0.5)),
+    rgba(197, 164, 109, 0)
+  );
+}
+
+.event__label {
+  font-family: var(--font-label);
+  font-size: clamp(0.6rem, 2.4vw, 0.7rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--event-accent, var(--gold));
+}
+
+/* --- Oversized name, revealed through a mask --- */
+.event__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, 4.6rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: 0.004em;
+  color: var(--ivory);
+}
+
+.event__name-mask {
+  display: block;
+  overflow: hidden;
+  /* The padding keeps descenders from being clipped by the mask. */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.event__name-inner {
+  display: block;
+}
+
+.event__copy {
+  max-width: 40ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.7vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+/* Details sit directly under the copy, aligned with it. */
+.event__details {
+  justify-content: flex-start;
+  padding-top: clamp(0.25rem, 1.5vw, 0.6rem);
+}
+
+/* --- Per-event visual identity ---
+   Shared with the Phase 06 timeline so each celebration's colour is defined
+   once and reused, rather than duplicated section by section. */
+.event--haldi,
+.milestone--haldi {
+  --event-accent: #e0b878;
+  --event-glow: rgba(224, 184, 120, 0.2);
+}
+
+.event--mehendi,
+.milestone--mehendi {
+  --event-accent: #b7c096;
+  --event-glow: rgba(150, 168, 120, 0.16);
+}
+
+.event--wedding,
+.milestone--wedding {
+  --event-accent: #e5c992;
+  --event-glow: rgba(229, 201, 146, 0.24);
+}
+
+.event--wedding .event__name {
+  font-size: clamp(2.6rem, 10vw, 4.4rem);
+}
+
+.event--wedding .event-ornament {
+  opacity: 1;
+}
+
+/* --- The grandest entry earns a palace frame --- */
+.event--framed {
+  padding: clamp(1.75rem, 4.5vw, 3rem);
+}
+
+.event__frame {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(197, 164, 109, 0.16);
+  border-radius: 8px;
+  background-image: radial-gradient(
+    120% 92% at 50% 0%,
+    rgba(229, 201, 146, 0.07),
+    rgba(229, 201, 146, 0) 62%
+  );
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.08);
+  pointer-events: none;
+}
+
+.event__corners {
+  position: absolute;
+  inset: 0;
+}
+
+.event__corners .corner {
+  width: clamp(30px, 6vw, 46px);
+  opacity: 0.5;
+}
+
+.event__corners .corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.event__corners .corner--tr {
+  top: 0;
+  right: 0;
+}
+
+.event__corners .corner--br {
+  bottom: 0;
+  right: 0;
+}
+
+.event__corners .corner--bl {
+  bottom: 0;
+  left: 0;
+}
+
+/* --- Wider, more editorial entries from tablet up --- */
+@media (min-width: 900px) {
+  .event {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 5.5rem);
+  }
+
+  .event--flip {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
+  }
+
+  .event__art {
+    width: min(100%, 14rem);
+  }
+
+  .event__text {
+    gap: clamp(1rem, 2.4vw, 1.6rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .showcase {
+    padding-top: clamp(4.5rem, 16vw, 6rem);
+    padding-bottom: clamp(5.5rem, 18vw, 8rem);
+  }
+
+  .showcase__intro,
+  .event__copy {
+    max-width: 34ch;
+  }
+
+  .event--framed {
+    padding: 1.6rem 1.35rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   18. THE MEMORIES GALLERY (PHASE 05)
+   Four photographs: one dominant portrait beside three supporting frames at
+   differing widths and ratios, so nothing reads as a grid. Mobile reorganises
+   the composition rather than shrinking it, and the atmosphere is untouched.
+   -------------------------------------------------------------------------- */
+.gallery {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding: clamp(5.5rem, 13vw, 10rem) clamp(1.25rem, 5vw, 3rem)
+    clamp(7rem, 16vw, 13rem);
+  overflow: clip;
+}
+
+/* --- Header: heading left, supporting line bottom-right on wide screens --- */
+.gallery__header {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  margin-bottom: clamp(3.5rem, 8vw, 6rem);
+}
+
+.gallery__meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2.5vw, 1.25rem);
+  margin: 0;
+}
+
+.gallery__label {
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.gallery__meta-line {
+  flex: 1;
+  max-width: clamp(3rem, 18vw, 12rem);
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(197, 164, 109, 0.5),
+    rgba(197, 164, 109, 0)
+  );
+  transform-origin: left center;
+}
+
+.gallery__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 9vw, 4.8rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+}
+
+.gallery__title-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.gallery__title-inner {
+  display: block;
+}
+
+.gallery__title em {
+  font-style: italic;
+  color: var(--gold-champagne);
+}
+
+.gallery__intro {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+@media (min-width: 900px) {
+  .gallery__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+    align-items: end;
+    column-gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .gallery__meta {
+    grid-column: 1 / -1;
+  }
+
+  .gallery__title {
+    grid-column: 1;
+  }
+
+  .gallery__intro {
+    grid-column: 2;
+  }
+}
+
+/* --- The photographs --- */
+.gallery__grid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 5vw, 2.5rem);
+}
+
+.shot {
+  position: relative;
+  margin: 0;
+}
+
+.shot__frame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(197, 164, 109, 0.22);
+  border-radius: 4px;
+  background-color: rgba(22, 9, 13, 0.55);
+  transition: border-color 0.7s ease, box-shadow 0.7s ease;
+}
+
+.shot__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 1.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Mobile composition: lead full width, bride full width, then a staggered pair. */
+.shot--lead .shot__frame {
+  aspect-ratio: 4 / 5;
+}
+
+.gallery__support {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 4vw, 2rem);
+}
+
+.shot--bride {
+  grid-column: 1 / -1;
+}
+
+.shot--bride .shot__frame {
+  aspect-ratio: 16 / 10;
+}
+
+.shot--ceremony {
+  grid-column: 1;
+}
+
+.shot--ceremony .shot__frame {
+  aspect-ratio: 3 / 4;
+}
+
+.shot--detail {
+  grid-column: 2;
+  margin-top: clamp(1.75rem, 7vw, 3.5rem);
+}
+
+.shot--detail .shot__frame {
+  aspect-ratio: 1 / 1;
+}
+
+/* --- The fine gold mat on the featured photograph --- */
+.shot__corners {
+  position: absolute;
+  inset: calc(clamp(7px, 1.4vw, 13px) * -1);
+  pointer-events: none;
+}
+
+.shot__corners .corner {
+  width: clamp(24px, 4.5vw, 38px);
+  opacity: 0.5;
+}
+
+.shot__corners .corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.shot__corners .corner--tr {
+  top: 0;
+  right: 0;
+}
+
+.shot__corners .corner--br {
+  bottom: 0;
+  right: 0;
+}
+
+.shot__corners .corner--bl {
+  bottom: 0;
+  left: 0;
+}
+
+/* --- Editorial desktop arrangement --- */
+@media (min-width: 900px) {
+  .gallery__grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: clamp(2rem, 3.6vw, 3.5rem);
+  }
+
+  .gallery__lead {
+    flex: 1.5;
+  }
+
+  .gallery__support {
+    flex: 1;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* 2:3 is the featured photograph's native ratio, so it is barely cropped. */
+  .shot--lead .shot__frame {
+    aspect-ratio: 2 / 3;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .shot--bride {
+    grid-column: 1;
+  }
+
+  .shot--bride .shot__frame {
+    aspect-ratio: 3 / 2;
+  }
+
+  /* Staggered widths and edges give the column its curated rhythm. */
+  .shot--ceremony {
+    grid-column: 1;
+    width: 88%;
+    justify-self: start;
+  }
+
+  .shot--ceremony .shot__frame {
+    aspect-ratio: 4 / 3;
+  }
+
+  .shot--detail {
+    grid-column: 1;
+    width: 68%;
+    justify-self: end;
+    margin-top: clamp(1.75rem, 3vw, 3rem);
+  }
+}
+
+/* --- Subtle hover, on desktop pointers only --- */
+@media (hover: hover) and (pointer: fine) {
+  .shot:hover .shot__frame {
+    border-color: rgba(229, 201, 146, 0.5);
+    box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.95),
+      0 0 44px -20px rgba(197, 164, 109, 0.4);
+  }
+
+  .shot:hover .shot__image {
+    transform: scale(1.045);
+  }
+}
+
+@media (max-width: 640px) {
+  .gallery {
+    padding-top: clamp(4.5rem, 16vw, 6rem);
+    padding-bottom: clamp(5.5rem, 18vw, 8rem);
+  }
+
+  .gallery__intro {
+    max-width: 34ch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   19. THE CELEBRATION TIMELINE (PHASE 06)
+   An axial, editorial spine through the same three celebrations Phase 04
+   showcases. It reuses the shared event data, palettes and ornaments, invents
+   nothing, and simply omits any field that has not been confirmed yet.
+   -------------------------------------------------------------------------- */
+.timeline {
+  position: relative;
+  z-index: 6;
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: clamp(5.5rem, 13vw, 10rem) clamp(1.25rem, 5vw, 3rem)
+    clamp(7rem, 16vw, 13rem);
+  overflow: clip;
+}
+
+/* --- Header, centred on the spine --- */
+.timeline__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.9rem, 2.6vw, 1.4rem);
+  max-width: 40rem;
+  margin: 0 auto clamp(3.5rem, 9vw, 6.5rem);
+  text-align: center;
+}
+
+.timeline__eyebrow {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.timeline__rule {
+  max-width: 18rem;
+}
+
+.timeline__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8.5vw, 4.4rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.timeline__title-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.timeline__title-inner {
+  display: block;
+}
+
+.timeline__intro {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+/* --- The gold spine --- */
+.timeline__track {
+  position: relative;
+}
+
+.timeline__line {
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  margin-left: -0.5px;
+  background-image: linear-gradient(
+    180deg,
+    rgba(197, 164, 109, 0.04),
+    rgba(197, 164, 109, 0.55) 10%,
+    rgba(197, 164, 109, 0.55) 90%,
+    rgba(197, 164, 109, 0.04)
+  );
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.timeline__list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3.5rem, 10vw, 6.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* --- One milestone: a rail on small screens --- */
+.milestone {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  column-gap: clamp(1rem, 4vw, 1.5rem);
+  align-items: start;
+}
+
+.milestone__marker {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+  padding-top: 0.3rem;
+}
+
+/* A gem on the spine, tinted by the event's own accent. */
+.milestone__dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border: 1px solid var(--event-accent, var(--gold));
+  background-color: rgba(22, 9, 13, 0.95);
+  box-shadow: 0 0 0 4px rgba(22, 9, 13, 0.9),
+    0 0 16px -2px var(--event-accent, var(--gold));
+}
+
+.milestone__content {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.7rem, 2.4vw, 1.1rem);
+  min-width: 0;
+}
+
+.milestone__meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.55rem, 2vw, 0.95rem);
+  margin: 0;
+}
+
+.milestone__number {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: var(--event-accent, var(--gold));
+}
+
+.milestone__meta-line {
+  flex: 1;
+  max-width: clamp(1.25rem, 6vw, 3rem);
+  height: 1px;
+  opacity: 0.6;
+  background-image: linear-gradient(
+    90deg,
+    var(--event-accent, rgba(197, 164, 109, 0.5)),
+    rgba(197, 164, 109, 0)
+  );
+}
+
+.milestone__label {
+  font-family: var(--font-label);
+  font-size: clamp(0.6rem, 2.4vw, 0.7rem);
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--event-accent, var(--gold));
+}
+
+.milestone__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 8.5vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: 0.004em;
+  color: var(--ivory);
+}
+
+.milestone__name-mask {
+  display: block;
+  overflow: hidden;
+  /* Keeps descenders clear of the mask. */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.milestone__name-inner {
+  display: block;
+}
+
+.milestone__copy {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.7vw, 1rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+.milestone__details {
+  justify-content: flex-start;
+}
+
+/* --- The event's motif, on the opposite side of the spine --- */
+.milestone__motif {
+  grid-column: 2;
+  grid-row: 2;
+  position: relative;
+  width: clamp(52px, 13vw, 72px);
+  margin-top: clamp(1rem, 4vw, 1.5rem);
+}
+
+.milestone__halo {
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    closest-side,
+    var(--event-glow, rgba(229, 201, 146, 0.18)),
+    rgba(197, 164, 109, 0) 78%
+  );
+  pointer-events: none;
+}
+
+.milestone__ornament {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--event-accent, var(--gold));
+  opacity: 0.85;
+}
+
+/* --- The ceremony earns a little more presence --- */
+.milestone--wedding .milestone__dot {
+  width: 13px;
+  height: 13px;
+}
+
+.milestone--wedding .milestone__name {
+  font-size: clamp(2.3rem, 9.5vw, 4.2rem);
+}
+
+.milestone--wedding .milestone__motif {
+  width: clamp(62px, 15vw, 86px);
+}
+
+.milestone--wedding .milestone__ornament {
+  opacity: 1;
+}
+
+/* --- Desktop: alternate either side of a central spine --- */
+@media (min-width: 900px) {
+  .timeline__line {
+    left: 50%;
+  }
+
+  .milestone {
+    grid-template-columns: minmax(0, 1fr) clamp(3.5rem, 8vw, 6rem) minmax(0, 1fr);
+    column-gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+
+  /* Content hugs the spine on the left; the motif mirrors it on the right. */
+  .milestone__content {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  .milestone__marker {
+    grid-column: 2;
+    grid-row: 1;
+    padding-top: 0;
+  }
+
+  .milestone__motif {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: center;
+    width: clamp(72px, 9vw, 120px);
+    margin-top: 0;
+  }
+
+  .milestone__meta {
+    justify-content: flex-end;
+  }
+
+  .milestone__details {
+    justify-content: flex-end;
+  }
+
+  /* Trails the text block to the right edge without stretching it. */
+  .milestone__copy {
+    margin-left: auto;
+  }
+
+  /* Every other milestone mirrors the whole arrangement. */
+  .milestone--flip .milestone__content {
+    grid-column: 3;
+    text-align: left;
+  }
+
+  .milestone--flip .milestone__motif {
+    grid-column: 1;
+  }
+
+  .milestone--flip .milestone__meta {
+    justify-content: flex-start;
+  }
+
+  .milestone--flip .milestone__details {
+    justify-content: flex-start;
+  }
+
+  .milestone--flip .milestone__copy {
+    margin-left: 0;
+  }
+
+  .milestone--wedding .milestone__motif {
+    width: clamp(88px, 11vw, 148px);
+  }
+}
+
+@media (max-width: 640px) {
+  .timeline {
+    padding-top: clamp(4.5rem, 16vw, 6rem);
+    padding-bottom: clamp(5.5rem, 18vw, 8rem);
+  }
+
+  .timeline__intro,
+  .milestone__copy {
+    max-width: 34ch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   20. THE RSVP (PHASE 07)
+   The final personal gesture: an invitation-style reply panel. The reply is
+   captured in the browser only — no backend is configured — and the flow is
+   shaped so a real RSVP service can be attached later without a redesign.
+   -------------------------------------------------------------------------- */
+.rsvp {
+  position: relative;
+  z-index: 7;
+  width: 100%;
+  max-width: 62rem;
+  margin-inline: auto;
+  padding: clamp(5.5rem, 13vw, 10rem) clamp(1.25rem, 5vw, 3rem)
+    clamp(7.5rem, 17vw, 14rem);
+  overflow: clip;
+}
+
+/* --- Header, centred like the timeline's --- */
+.rsvp__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.9rem, 2.6vw, 1.4rem);
+  max-width: 40rem;
+  margin: 0 auto clamp(3.5rem, 9vw, 6rem);
+  text-align: center;
+}
+
+.rsvp__eyebrow {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.rsvp__rule {
+  max-width: 18rem;
+}
+
+.rsvp__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8.5vw, 4.4rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.rsvp__title-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.rsvp__title-inner {
+  display: block;
+}
+
+.rsvp__intro {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+/* --- The panel --- */
+.rsvp__stage {
+  position: relative;
+  width: min(100%, 44rem);
+  margin-inline: auto;
+}
+
+/* Soft candlelight spilling out around the glass. */
+.rsvp__halo {
+  position: absolute;
+  inset: -14% -9%;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(229, 201, 146, 0.16) 0%,
+    rgba(197, 164, 109, 0.05) 52%,
+    rgba(197, 164, 109, 0) 78%
+  );
+  pointer-events: none;
+}
+
+.rsvp__panel {
+  position: relative;
+  padding: clamp(1.75rem, 5vw, 3.25rem);
+}
+
+.rsvp__corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rsvp__corners .corner {
+  width: clamp(28px, 6vw, 44px);
+  opacity: 0.5;
+}
+
+.rsvp__corners .corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.rsvp__corners .corner--tr {
+  top: 0;
+  right: 0;
+}
+
+.rsvp__corners .corner--br {
+  bottom: 0;
+  right: 0;
+}
+
+.rsvp__corners .corner--bl {
+  bottom: 0;
+  left: 0;
+}
+
+.rsvp__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.4rem, 4vw, 2rem);
+}
+
+/* Present for assistive technology, invisible on screen. */
+.rsvp__visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- The two attendance choices --- */
+.rsvp__choice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(0.85rem, 3vw, 1.25rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+@media (min-width: 640px) {
+  .rsvp__choice {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rsvp__option {
+  --rsvp-accent: var(--gold-champagne);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  padding: clamp(1.15rem, 3.4vw, 1.6rem) clamp(0.9rem, 3vw, 1.25rem);
+  border: 1px solid rgba(197, 164, 109, 0.26);
+  border-radius: 6px;
+  background-color: rgba(22, 9, 13, 0.4);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.05) 0%,
+    rgba(229, 201, 146, 0) 62%
+  );
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.5s ease, background-color 0.5s ease,
+    box-shadow 0.5s ease, transform 0.5s var(--ease-soft);
+}
+
+/* A quieter accent for the regretful reply, so the pair still reads as a pair. */
+.rsvp__option--decline {
+  --rsvp-accent: var(--taupe);
+}
+
+.rsvp__option:hover {
+  border-color: rgba(229, 201, 146, 0.46);
+  transform: translateY(-2px);
+}
+
+/* Selected state, keyed off the radio itself. */
+.rsvp__option:has(.rsvp__option-input:checked) {
+  border-color: var(--glass-border-strong);
+  background-color: rgba(58, 16, 29, 0.52);
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.16),
+    0 0 40px -16px rgba(197, 164, 109, 0.5);
+}
+
+.rsvp__option:has(.rsvp__option-input:focus-visible) {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 3px;
+}
+
+/* The radio stays in the accessibility tree and reachable by keyboard. */
+.rsvp__option-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.rsvp__option-seal {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
+  transform: rotate(45deg);
+  border: 1px solid var(--rsvp-accent);
+  opacity: 0.65;
+  transition: opacity 0.5s ease, box-shadow 0.5s ease;
+}
+
+.rsvp__option-seal::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background-color: transparent;
+  transition: background-color 0.5s ease;
+}
+
+.rsvp__option:has(.rsvp__option-input:checked) .rsvp__option-seal {
+  opacity: 1;
+  box-shadow: 0 0 16px -3px var(--rsvp-accent);
+}
+
+.rsvp__option:has(.rsvp__option-input:checked) .rsvp__option-seal::after {
+  background-color: var(--rsvp-accent);
+}
+
+.rsvp__option-label {
+  font-family: var(--font-label);
+  font-size: clamp(0.68rem, 2.6vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  text-transform: uppercase;
+  color: var(--rsvp-accent);
+}
+
+.rsvp__option-note {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.9rem, 2.9vw, 1.02rem);
+  line-height: 1.5;
+  color: var(--ivory-muted);
+}
+
+/* --- The unfolding body --- */
+.rsvp__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 3.4vw, 1.6rem);
+}
+
+/* --- Fields: fine ruled lines rather than boxes --- */
+.rsvp__form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.4rem, 4vw, 1.9rem);
+}
+
+.rsvp__fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.2rem, 3.6vw, 1.7rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+@media (min-width: 640px) {
+  .rsvp__fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rsvp__field--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.rsvp__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.rsvp__field-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-family: var(--font-label);
+  font-size: clamp(0.58rem, 2.3vw, 0.66rem);
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.rsvp__optional {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--taupe);
+}
+
+.rsvp__input,
+.rsvp__select,
+.rsvp__textarea {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0;
+  border: 0;
+  border-bottom: 1px solid rgba(197, 164, 109, 0.3);
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--ivory);
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 3.4vw, 1.28rem);
+  line-height: 1.4;
+  transition: border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+.rsvp__textarea {
+  min-height: 5rem;
+  resize: vertical;
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.7vw, 0.98rem);
+  line-height: 1.75;
+}
+
+.rsvp__input::placeholder,
+.rsvp__textarea::placeholder {
+  color: rgba(207, 195, 181, 0.4);
+  font-style: italic;
+}
+
+.rsvp__input:focus-visible,
+.rsvp__select:focus-visible,
+.rsvp__textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--gold-champagne);
+  box-shadow: 0 1px 0 0 var(--gold-champagne),
+    0 14px 30px -22px rgba(229, 201, 146, 0.9);
+}
+
+.rsvp__select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.9rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%23C5A46D' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.15rem center;
+  background-size: 12px 8px;
+}
+
+/* Keeps the native drop-down legible against the wine panel. */
+.rsvp__select option {
+  background-color: #250d16;
+  color: var(--ivory);
+}
+
+.rsvp__error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.75rem, 2.4vw, 0.82rem);
+  line-height: 1.6;
+  color: #d9a3a3;
+}
+
+/* --- Actions --- */
+.rsvp__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.rsvp__submit {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  min-height: 3.35rem;
+  padding: 1rem 2.2rem;
+  border: 1px solid rgba(197, 164, 109, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  color: var(--gold-champagne);
+  font-family: var(--font-label);
+  font-size: clamp(0.68rem, 2.7vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  background-color: rgba(37, 13, 22, 0.55);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.1) 0%,
+    rgba(229, 201, 146, 0.02) 48%,
+    rgba(22, 9, 13, 0.32) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.14),
+    0 14px 34px -18px rgba(197, 164, 109, 0.55);
+  transition: transform 0.45s var(--ease-soft), border-color 0.45s ease,
+    color 0.45s ease, box-shadow 0.45s ease, opacity 0.45s ease;
+}
+
+.rsvp__submit > * {
+  position: relative;
+  z-index: 1;
+}
+
+.rsvp__submit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    105deg,
+    rgba(245, 239, 229, 0) 34%,
+    rgba(245, 239, 229, 0.14) 50%,
+    rgba(245, 239, 229, 0) 66%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.85s var(--ease-soft);
+  pointer-events: none;
+}
+
+.rsvp__submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--glass-border-strong);
+  color: var(--ivory);
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.22),
+    0 22px 46px -18px rgba(197, 164, 109, 0.6);
+}
+
+.rsvp__submit:hover:not(:disabled)::after {
+  transform: translateX(130%);
+}
+
+.rsvp__submit:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 10px rgba(11, 5, 7, 0.6),
+    0 10px 22px -16px rgba(197, 164, 109, 0.45);
+}
+
+.rsvp__submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.rsvp__submit:focus-visible {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 3px;
+}
+
+.rsvp__submit-icon {
+  color: var(--gold);
+  transition: transform 0.45s var(--ease-soft), color 0.45s ease;
+}
+
+.rsvp__submit:hover:not(:disabled) .rsvp__submit-icon {
+  transform: translateX(3px);
+  color: var(--gold-champagne);
+}
+
+/* --- The demonstration note --- */
+.rsvp__demo-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 2.3vw, 0.76rem);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--taupe);
+  text-align: center;
+}
+
+.rsvp__demo-note::before {
+  content: '◇';
+  color: var(--gold-muted);
+  font-size: 0.9em;
+}
+
+/* --- The regretful reply --- */
+.rsvp__decline {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 3.4vw, 1.6rem);
+}
+
+.rsvp__decline-copy {
+  max-width: 40ch;
+  margin: 0 auto;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 3.2vw, 1.15rem);
+  line-height: 1.8;
+  color: var(--ivory);
+  text-align: center;
+}
+
+/* --- The success state --- */
+.rsvp__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.85rem, 2.8vw, 1.2rem);
+  text-align: center;
+}
+
+.rsvp__success-mark {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transform: rotate(45deg);
+  border: 1px solid var(--gold-champagne);
+  background-color: rgba(229, 201, 146, 0.22);
+  box-shadow: 0 0 22px -4px rgba(229, 201, 146, 0.75);
+}
+
+.rsvp__success-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 6vw, 2.45rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.rsvp__success-lede {
+  max-width: 40ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.98rem, 3.1vw, 1.12rem);
+  line-height: 1.8;
+  color: var(--ivory-muted);
+}
+
+.rsvp__success-detail {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 2.6vw, 0.92rem);
+  letter-spacing: 0.02em;
+  color: var(--taupe);
+}
+
+.rsvp__success-quote {
+  max-width: 34ch;
+  margin: 0;
+  padding: clamp(0.85rem, 3vw, 1.15rem) clamp(1.1rem, 4vw, 1.6rem);
+  border-left: 1px solid rgba(197, 164, 109, 0.4);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 3.2vw, 1.15rem);
+  line-height: 1.75;
+  color: var(--ivory);
+  text-align: left;
+}
+
+.rsvp__success-note {
+  max-width: 38ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 2.3vw, 0.76rem);
+  line-height: 1.6;
+  color: var(--taupe);
+}
+
+.rsvp__change {
+  margin-top: clamp(0.2rem, 1.5vw, 0.5rem);
+  padding: 0.35rem 0.25rem;
+  border: 0;
+  border-bottom: 1px solid rgba(197, 164, 109, 0.45);
+  background: none;
+  cursor: pointer;
+  color: var(--gold-champagne);
+  font-family: var(--font-label);
+  font-size: clamp(0.6rem, 2.3vw, 0.68rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+.rsvp__change:hover {
+  color: var(--ivory);
+  border-bottom-color: var(--gold-champagne);
+}
+
+.rsvp__change:focus-visible {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 3px;
+}
+
+/* --- Phase 07 responsive --- */
+@media (max-width: 640px) {
+  .rsvp {
+    padding-top: clamp(4.5rem, 16vw, 6rem);
+    padding-bottom: clamp(6rem, 18vw, 8rem);
+  }
+
+  .rsvp__intro {
+    max-width: 34ch;
+  }
+
+  .rsvp__panel {
+    padding: 1.6rem 1.35rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   21. GLASS TEXT PANELS + THE FINAL BLESSING (PHASE 08)
+   Selective refinements: the glass system now also carries the sections whose
+   words used to sit directly on the background — and the closing page that
+   ends the invitation. Everything reuses the existing tokens and utilities.
+   -------------------------------------------------------------------------- */
+
+/* A delicate hairline drawn just inside a glass edge: the second border layer
+   shared by every panel added below. The host element is always positioned
+   already (relative, or absolute for the ceremony's frame), so this utility
+   deliberately declares no `position` of its own — doing so would override an
+   absolutely-positioned host. */
+.glass-inset::after {
+  content: '';
+  position: absolute;
+  inset: var(--glass-ring-inset);
+  z-index: 0;
+  border: 1px solid var(--glass-ring);
+  border-radius: var(--glass-ring-radius);
+  pointer-events: none;
+}
+
+/* --- Phase 03: the message becomes one invitation plaque --- */
+.celebration__frame {
+  padding: clamp(2.25rem, 6vw, 3.75rem);
+}
+
+/* --- Phase 04: each event's words sit on their own editorial plaque --- */
+.event__text {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.35rem, 3.8vw, 2.1rem) clamp(1.15rem, 3.6vw, 2rem);
+}
+
+/* The ceremony's frame and its corners are absolutely positioned children of a
+   grid, so they must be given an explicit grid area to use as their containing
+   block. The entry has two columns and one row: span both columns, but do not
+   use `-1` for the row — there are no explicit row tracks, so `-1` resolves to
+   the first line and the area would collapse to zero height. */
+.event__frame,
+.event__corners {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+/* The framed ceremony already carries its glass on the frame itself, so its
+   text needs no second surface and no extra inset. */
+.event--framed .event__text {
+  padding: 0;
+}
+
+/* --- Phase 06: the same treatment along the timeline --- */
+.milestone__content {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.35rem, 3.8vw, 2.1rem) clamp(1.15rem, 3.6vw, 2rem);
+}
+
+/* --------------------------------------------------------------------------
+   The final blessing: a narrower, letter-like page that closes the journey.
+   -------------------------------------------------------------------------- */
+.closing {
+  position: relative;
+  z-index: 8;
+  width: 100%;
+  max-width: 56rem;
+  margin-inline: auto;
+  padding: clamp(5.5rem, 13vw, 10rem) clamp(1.25rem, 5vw, 3rem)
+    clamp(8rem, 18vw, 15rem);
+  overflow: clip;
+}
+
+.closing__stage {
+  position: relative;
+  width: min(100%, 38rem);
+  margin-inline: auto;
+}
+
+/* Warm candlelight gathering behind the last page. */
+.closing__halo {
+  position: absolute;
+  inset: 8% 2%;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(229, 201, 146, 0.18) 0%,
+    rgba(197, 164, 109, 0.055) 52%,
+    rgba(197, 164, 109, 0) 78%
+  );
+  pointer-events: none;
+}
+
+.closing__panel {
+  position: relative;
+  padding: clamp(2.25rem, 6.5vw, 2rem) clamp(1.5rem, 5vw, 3rem);
+}
+
+/* A soft top reflection — a deliberate echo of the invitation card that opened
+   the whole journey. */
+.closing__panel::before {
+  content: '';
+  position: absolute;
+  inset: 1px 1px auto;
+  z-index: 0;
+  height: 44%;
+  border-radius: calc(var(--glass-radius) - 1px)
+    calc(var(--glass-radius) - 1px) 45% 45%;
+  background-image: linear-gradient(
+    180deg,
+    rgba(245, 239, 229, 0.07) 0%,
+    rgba(229, 201, 146, 0.028) 34%,
+    rgba(229, 201, 146, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.closing__corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.closing__corners .corner {
+  width: clamp(28px, 6vw, 44px);
+  opacity: 0.5;
+}
+
+.closing__corners .corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.closing__corners .corner--tr {
+  top: 0;
+  right: 0;
+}
+
+.closing__corners .corner--br {
+  bottom: 0;
+  right: 0;
+}
+
+.closing__corners .corner--bl {
+  bottom: 0;
+  left: 0;
+}
+
+.closing__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 3.4vw, 1.6rem);
+  text-align: center;
+}
+
+.closing__mark {
+  width: clamp(46px, 13vw, 66px);
+  height: auto;
+  color: var(--gold-champagne);
+}
+
+.closing__eyebrow {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.6vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.closing__rule {
+  max-width: 16rem;
+}
+
+.closing__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 8vw, 3.9rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.closing__title-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.closing__title-inner {
+  display: block;
+}
+
+.closing__title em {
+  font-style: italic;
+  color: var(--gold-champagne);
+}
+
+.closing__message {
+  max-width: 38ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.7vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: 0.012em;
+  color: var(--ivory-muted);
+}
+
+/* The couple's names, set like a signature at the foot of a letter. */
+.closing__signature {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(0.6rem, 2.2vw, 1rem);
+  margin: clamp(0.2rem, 1.5vw, 0.6rem) 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.9rem, 7vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--ivory);
+}
+
+.closing__signature em {
+  font-size: 0.68em;
+  color: var(--gold);
+}
+
+.closing__signoff {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.9rem, 2.8vw, 1.02rem);
+  letter-spacing: 0.02em;
+  color: var(--taupe);
+}
+
+@media (max-width: 640px) {
+  .closing {
+    padding-top: clamp(4.5rem, 16vw, 6rem);
+    padding-bottom: clamp(6.5rem, 20vw, 9rem);
+  }
+
+  .closing__message {
+    max-width: 32ch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   22. THE HERO PLAQUE (PHASE 08 FOLLOW-UP)
+   "The Wedding Invitation" — the hero — now sits on the same opaque glass as
+   every other panel, so the invitation's opening words have their own surface.
+   -------------------------------------------------------------------------- */
+.hero__inner {
+  padding: clamp(2rem, 6vw, 3.25rem) clamp(1.35rem, 5vw, 2.75rem);
+}
+
+/* --------------------------------------------------------------------------
+   23. "THE SACRED UNION" — A LIVING GOLD BORDER
+   The third celebration carries a light that travels its border in a slow
+   loop. It is a rotating conic gradient masked down to the 1px ring, so the
+   motion stays on the compositor and only the border is ever repainted.
+   -------------------------------------------------------------------------- */
+.glass-sheen {
+  position: absolute;
+  inset: -1px;
+  z-index: 3;
+  padding: 1px;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
+}
+
+/* The comet: a narrow arc of champagne light swept around the ring. */
+.glass-sheen::before {
+  content: '';
+  position: absolute;
+  /* Twice the card's size in both axes, so every rotation still covers it. */
+  inset: -50%;
+  background-image: conic-gradient(
+    from 0deg,
+    rgba(229, 201, 146, 0) 0deg,
+    rgba(229, 201, 146, 0) 262deg,
+    rgba(197, 164, 109, 0.5) 298deg,
+    rgba(245, 239, 229, 0.92) 326deg,
+    rgba(229, 201, 146, 0.42) 348deg,
+    rgba(229, 201, 146, 0) 360deg
+  );
+  animation: sacred-border-travel 8s linear infinite;
+}
+
+@keyframes sacred-border-travel {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A still gold border is all this needs when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  .glass-sheen {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   24. AUTO-SCROLL INDICATOR
+   A small burgundy glass capsule that reports the camera's state and hands
+   control straight back to the guest. It must never compete with the invitation.
+   -------------------------------------------------------------------------- */
+.auto-scroll {
+  position: fixed;
+  right: clamp(0.85rem, 3vw, 1.6rem);
+  bottom: calc(clamp(0.85rem, 3vw, 1.6rem) + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.45rem, 1.6vw, 0.65rem);
+  padding: 0.42rem 0.45rem 0.42rem 0.8rem;
+  border: 1px solid rgba(197, 164, 109, 0.34);
+  border-radius: 999px;
+  background-color: rgba(22, 9, 13, 0.8);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.08) 0%,
+    rgba(229, 201, 146, 0) 62%
+  );
+  backdrop-filter: blur(14px) saturate(130%);
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.12),
+    0 18px 40px -24px rgba(0, 0, 0, 0.9);
+  color: var(--gold-champagne);
+  font-family: var(--font-label);
+  font-size: clamp(0.53rem, 1.9vw, 0.6rem);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  animation: auto-scroll-in 0.8s var(--ease-soft) both;
+}
+
+@keyframes auto-scroll-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auto-scroll__dot {
+  width: 6px;
+  height: 6px;
+  min-width: 6px;
+  border-radius: 50%;
+  background-color: var(--taupe);
+  transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.auto-scroll__dot.is-live {
+  background-color: var(--gold-champagne);
+  box-shadow: 0 0 10px 1px rgba(229, 201, 146, 0.7);
+  animation: auto-scroll-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes auto-scroll-pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.auto-scroll__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  min-width: 1.65rem;
+  padding: 0;
+  border: 1px solid rgba(197, 164, 109, 0.28);
+  border-radius: 50%;
+  background-color: rgba(58, 16, 29, 0.5);
+  color: var(--gold-champagne);
+  cursor: pointer;
+  transition: border-color 0.4s ease, background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+.auto-scroll__btn:hover {
+  border-color: var(--glass-border-strong);
+  background-color: rgba(58, 16, 29, 0.82);
+  color: var(--ivory);
+}
+
+.auto-scroll__btn:focus-visible {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .auto-scroll {
+    right: 0.7rem;
+    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.32rem 0.35rem 0.32rem 0.65rem;
+    letter-spacing: 0.12em;
+  }
+
+  /* Comfortable touch targets without growing the capsule. */
+  .auto-scroll__btn {
+    width: 1.9rem;
+    height: 1.9rem;
+    min-width: 1.9rem;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .auto-scroll {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   25. CINEMATIC MOBILE REFINEMENT (PHASE 09)
+   Additive only: every rule below is scoped to narrow viewports, so the
+   desktop composition (>900px) is exactly as it was. Most guests arrive from
+   a WhatsApp tap on a phone, so the phones get the richer type scale, the
+   larger ornament and the editorial stride of the timeline.
+   -------------------------------------------------------------------------- */
+
+/* --- The journey alternates real cards on small screens -------------------
+   Below 900px this used to collapse into one straight rail. Now every other
+   milestone steps in from the spine, its ornament swings to the opposite edge
+   and its meta row mirrors — a miniature of the desktop itinerary. The step
+   is taken out of the card's own width, so nothing exceeds the section gutter
+   and nothing scrolls sideways. */
+@media (max-width: 899.98px) {
+  /* The rail tightens, so the panels keep their reading measure while they
+     change sides. */
+  .milestone {
+    --step: clamp(2rem, 9vw, 3.25rem);
+    position: relative;
+    grid-template-columns: 16px minmax(0, 1fr);
+    column-gap: 0.75rem;
+  }
+
+  /* The spine follows the tighter rail. */
+  .timeline__line {
+    left: 8px;
+  }
+
+  /* The panel itself moves: odd cards ride the rail and stop short of the
+     right margin, flipped cards cross past the rail and run out to it. Both
+     stay the same width, so neither side reads as cramped. */
+  .milestone__content {
+    margin-right: var(--step);
+  }
+
+  .milestone--flip .milestone__content {
+    margin-left: var(--step);
+    margin-right: 0;
+  }
+
+  /* A hairline from the gem to the panel, so the rail visibly carries every
+     card. The flipped arm is longer, because its card stands further out. */
+  .milestone::before {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 13px;
+    width: 15px;
+    height: 1px;
+    background-image: linear-gradient(
+      90deg,
+      rgba(197, 164, 109, 0.45),
+      rgba(197, 164, 109, 0.08)
+    );
+    pointer-events: none;
+  }
+
+  .milestone--flip::before {
+    width: calc(15px + var(--step));
+  }
+
+  /* Number and label swap ends, so the flip side reads as the far column. */
+  .milestone--flip .milestone__meta {
+    flex-direction: row-reverse;
+  }
+
+  /* Its rule trails outwards, exactly like the desktop's mirrored side. */
+  .milestone--flip .milestone__meta-line {
+    background-image: linear-gradient(
+      270deg,
+      var(--event-accent, rgba(197, 164, 109, 0.5)),
+      rgba(197, 164, 109, 0)
+    );
+  }
+
+  /* The name follows the mirrored edge; body copy keeps a calm left edge so
+     paragraphs never go ragged-right on a phone. */
+  .milestone--flip .milestone__name {
+    text-align: right;
+  }
+
+  /* --- A motif with real presence -----------------------------------------
+     Roughly a third larger, with the room around it scaled to match, so it
+     balances the event title instead of sitting under it as a token. */
+  .milestone__motif {
+    width: clamp(66px, 20vw, 92px);
+    margin-top: clamp(1.2rem, 4.8vw, 1.75rem);
+    justify-self: start;
+  }
+
+  /* On the flip side it crosses to the opposite edge. */
+  .milestone--flip .milestone__motif {
+    justify-self: end;
+  }
+
+  .milestone--wedding .milestone__motif {
+    width: clamp(80px, 24vw, 108px);
+  }
+
+  .milestone__halo {
+    inset: -34%;
+  }
+}
+
+/* --- Phones: invitation panels with room to breathe ----------------------- */
+@media (max-width: 640px) {
+  /* The four priority plaques keep their full width and gain a deeper inner
+     margin, which puts the readable column at roughly three quarters of the
+     screen — the proportion of a printed invitation, not a desktop card. */
+  .invitation__inner {
+    padding: 2.5rem 1.95rem 2.35rem;
+    gap: 1.4rem;
+  }
+
+  .hero__inner {
+    padding: 5.5rem 1.9rem;
+  }
+
+  .celebration__frame {
+    padding: 2.3rem 1.9rem;
+  }
+
+  .closing__panel {
+    padding: 2.4rem 1.85rem;
+  }
+
+  /* --- Typography: a step up in scale, a breath more leading -------------- */
+  .invitation__label,
+  .hero__label,
+  .celebration__label,
+  .closing__eyebrow {
+    font-size: 0.66rem;
+    letter-spacing: 0.32em;
+    text-indent: 0.32em;
+  }
+
+  .invitation__crest-icon,
+  .hero__crest-icon,
+  .celebration__crest-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .invitation__title {
+    font-size: clamp(2.55rem, 12vw, 3rem);
+    line-height: 1.05;
+  }
+
+  .invitation__text {
+    max-width: 25ch;
+    font-size: 0.98rem;
+    line-height: 2.05;
+  }
+
+  /* A full-width target that still reads as a bespoke gold button. */
+  .invitation__button {
+    width: 100%;
+    max-width: 17.5rem;
+    min-height: 3.6rem;
+    padding: 1.1rem 1.4rem;
+    font-size: 0.72rem;
+  }
+
+  .hero__name {
+    font-size: clamp(2.7rem, 12.4vw, 4rem);
+  }
+
+  .hero__and {
+    font-size: 1.15rem;
+  }
+
+  .hero__copy {
+    font-size: 0.95rem;
+    line-height: 1.95;
+  }
+
+  .celebration__title {
+    font-size: clamp(2.3rem, 9.4vw, 2.9rem);
+    line-height: 1.1;
+  }
+
+  .celebration__copy {
+    font-size: 1rem;
+    line-height: 2;
+  }
+
+  .closing__title {
+    font-size: clamp(2.35rem, 9.2vw, 2.95rem);
+    line-height: 1.09;
+  }
+
+  .closing__message {
+    font-size: 0.98rem;
+    line-height: 2.02;
+  }
+
+  .milestone__copy {
+    font-size: 0.97rem;
+    line-height: 1.98;
+  }
+}
+
+/* --- The narrowest phones ------------------------------------------------
+   At 360px the full-width button would push its label onto a second line, so
+   the tracking tightens and the label is kept on one line. */
+@media (max-width: 400px) {
+  .invitation__button {
+    padding: 1.05rem 1rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.15em;
+    text-indent: 0.15em;
+    white-space: nowrap;
+  }
+}
+
