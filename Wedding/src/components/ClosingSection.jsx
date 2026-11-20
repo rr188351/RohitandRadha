@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
+import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { wedding } from '../config/wedding.js';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
@@ -30,6 +31,8 @@ export default function ClosingSection() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return undefined;
     }
+
+    let detachHover = () => {};
 
     const ctx = gsap.context(() => {
       const find = (selector) => gsap.utils.toArray(selector, root);
@@ -60,8 +63,8 @@ export default function ClosingSection() {
         // 2. The glass rises.
         .fromTo(
           panel,
-          { opacity: 0, y: 44 },
-          { opacity: 1, y: 0, duration: 1.25 },
+          cardFrom({ y: 58, scale: 0.963, rotate: 0.25 }),
+          cardTo({ duration: 1.4 }),
           0.15,
         )
         .fromTo(
@@ -130,9 +133,15 @@ export default function ClosingSection() {
         .fromTo(signoff, { opacity: 0 }, { opacity: 1, duration: 0.9 }, 2.2);
 
       cinematicOnPhones(tl);
+
+      // The final page lifts gently under the pointer, like the others.
+      detachHover = attachCardHover(panel);
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      detachHover();
+      ctx.revert();
+    };
   }, []);
 
   const { closing, names } = wedding;

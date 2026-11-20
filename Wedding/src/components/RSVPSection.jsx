@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
+import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { wedding } from '../config/wedding.js';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 import RSVPForm from './RSVPForm.jsx';
@@ -41,6 +42,8 @@ export default function RSVPSection() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return undefined;
     }
+
+    let detachHover = () => {};
 
     const ctx = gsap.context(() => {
       const find = (selector) => gsap.utils.toArray(selector, root);
@@ -100,8 +103,8 @@ export default function RSVPSection() {
         })
         .fromTo(
           panel,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 1.2 },
+          cardFrom({ y: 52, scale: 0.966 }),
+          cardTo({ duration: 1.3 }),
           0,
         )
         .fromTo(
@@ -130,9 +133,16 @@ export default function RSVPSection() {
         );
 
       cinematicOnPhones(panelTl);
+
+      // The reply card is the last thing the guest touches: it lifts to meet
+      // the pointer, on desktop pointers only.
+      detachHover = attachCardHover(panel);
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      detachHover();
+      ctx.revert();
+    };
   }, []);
 
   // --- The panel body unfolds whenever the reply state changes ---

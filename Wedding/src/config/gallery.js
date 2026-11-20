@@ -2,7 +2,7 @@
  * Phase 05 — the memories gallery.
  *
  * ---------------------------------------------------------------------------
- * TEMPORARY PLACEHOLDER PHOTOGRAPHY — NOT ROHIT AND RADHA
+ * TEMPORARY PLACEHOLDER PHOTOGRAPHY — NOT RADHA AND ROHIT
  * ---------------------------------------------------------------------------
  * The four photographs below are stock images from Pexels, used under the
  * Pexels License (free for commercial and non-commercial use, no attribution

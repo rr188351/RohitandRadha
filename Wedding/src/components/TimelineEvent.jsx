@@ -2,6 +2,11 @@ import { useEffect, useRef } from 'react';
 
 import { fromToIf, gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
+import {
+  attachCardHover,
+  cardTo,
+  sideCardFrom,
+} from '../lib/motion.js';
 import EventDetails from './EventDetails.jsx';
 import EventOrnament from './EventOrnament.jsx';
 
@@ -29,6 +34,8 @@ export default function TimelineEvent({ event, index }) {
       return undefined;
     }
 
+    let detachHover = () => {};
+
     const ctx = gsap.context(() => {
       const find = (selector) => gsap.utils.toArray(selector, root);
 
@@ -40,9 +47,6 @@ export default function TimelineEvent({ event, index }) {
       const details = find('.milestone__details');
       const motif = find('.milestone__motif');
       const halo = find('.milestone__halo');
-
-      // The content drifts in from the side of the spine it sits on.
-      const shift = flip ? 26 : -26;
 
       const tl = gsap
         .timeline({
@@ -57,8 +61,8 @@ export default function TimelineEvent({ event, index }) {
         )
         .fromTo(
           content,
-          { opacity: 0, x: shift },
-          { opacity: 1, x: 0, duration: 1.05 },
+          sideCardFrom(flip ? 'right' : 'left', { x: 38, y: 24, scale: 0.974 }),
+          cardTo({ duration: 1.15 }),
           0.1,
         )
         .fromTo(meta, { opacity: 0 }, { opacity: 1, duration: 0.7 }, 0.35)
@@ -109,9 +113,18 @@ export default function TimelineEvent({ event, index }) {
           },
         },
       );
+      // The milestone leans in from its own side of the rail; the pointer can
+      // then lift it, so the rail, the gem and the card feel connected.
+      detachHover = attachCardHover(root, content, {
+        axis: 'y',
+        tilt: 1.0,
+      });
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      detachHover();
+      ctx.revert();
+    };
   }, [flip]);
 
   return (

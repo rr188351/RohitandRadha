@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
+import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { gallery } from '../config/gallery.js';
 import { CornerOrnament } from './Ornaments.jsx';
 
@@ -33,6 +34,8 @@ export default function GallerySection() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return undefined;
     }
+
+    const hoverCleanups = [];
 
     const ctx = gsap.context(() => {
       const find = (selector) => gsap.utils.toArray(selector, root);
@@ -93,17 +96,27 @@ export default function GallerySection() {
         const image = shot.querySelector('.shot__image');
         if (!frame || !image) return;
 
+        // The featured photograph is unveiled by a soft curtain on desktop;
+        // everywhere else it simply rises into place with the others.
+        const curtain =
+          shot.classList.contains('shot--lead') &&
+          window.matchMedia('(min-width: 900px)').matches;
+
+        const from = cardFrom({ y: 42, scale: 0.958 });
+        const to = cardTo({ duration: 1.25 });
+
+        if (curtain) {
+          from.clipPath = 'inset(0% 0% 100% 0%)';
+          to.clipPath = 'inset(0% 0% 0% 0%)';
+          to.clearProps = 'transform,clipPath';
+        }
+
         const shotTl = gsap
           .timeline({
             defaults: { ease: 'power2.out' },
             scrollTrigger: { trigger: shot, start: revealStart(88), once: true },
           })
-          .fromTo(
-            frame,
-            { opacity: 0, y: 34 },
-            { opacity: 1, y: 0, duration: 1.15 },
-            0,
-          )
+          .fromTo(frame, from, to, 0)
           // The inline transform is cleared afterwards so the stylesheet's
           // hover zoom is free to take over.
           .fromTo(
@@ -114,6 +127,8 @@ export default function GallerySection() {
           );
 
         cinematicOnPhones(shotTl);
+
+        hoverCleanups.push(attachCardHover(shot, frame));
       });
 
       // --- A whisper of drift on the featured photograph only ---
@@ -138,7 +153,10 @@ export default function GallerySection() {
       }
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      hoverCleanups.forEach((detach) => detach());
+      ctx.revert();
+    };
   }, []);
 
   // Resolved by id so the composition never depends on array order.

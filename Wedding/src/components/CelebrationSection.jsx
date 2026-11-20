@@ -3,6 +3,7 @@ import { Crown } from 'lucide-react';
 
 import { fromToIf, gsap, ScrollTrigger } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
+import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { wedding } from '../config/wedding.js';
 import EventDetails from './EventDetails.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
@@ -34,6 +35,8 @@ export default function CelebrationSection() {
       return undefined;
     }
 
+    let detachHover = () => {};
+
     const ctx = gsap.context(() => {
       const find = (selector) => gsap.utils.toArray(selector, root);
 
@@ -56,8 +59,8 @@ export default function CelebrationSection() {
         // The glass plaque materialises first; its words follow.
         .fromTo(
           panel,
-          { opacity: 0 },
-          { opacity: 1, duration: 1.2 },
+          cardFrom({ y: 46, scale: 0.968 }),
+          cardTo({ duration: 1.35 }),
           0,
         )
         .fromTo(
@@ -154,9 +157,14 @@ export default function CelebrationSection() {
       // Web fonts can arrive after the first measurement, so re-measure once
       // they are in and every trigger lines up with the final layout.
       document.fonts?.ready?.then(() => ScrollTrigger.refresh());
+      // The plaque answers the pointer with a slow, small lift.
+      detachHover = attachCardHover(panel);
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      detachHover();
+      ctx.revert();
+    };
   }, []);
 
   const { celebration, names } = wedding;

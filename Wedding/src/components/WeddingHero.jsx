@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Crown } from 'lucide-react';
 
 import { fromToIf, gsap } from '../lib/gsap';
+import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { hasEventDetails, wedding } from '../config/wedding.js';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
@@ -32,6 +33,8 @@ export default function WeddingHero({ isOpen }) {
       return undefined;
     }
 
+    let detachHover = () => {};
+
     const ctx = gsap.context(() => {
       const find = (selector) => gsap.utils.toArray(selector, root);
 
@@ -55,8 +58,8 @@ export default function WeddingHero({ isOpen }) {
         // The invitation plaque materialises along with the ambient light.
         .fromTo(
           inner,
-          { opacity: 0 },
-          { opacity: 1, duration: 1.2 },
+          cardFrom({ y: 30, scale: 0.982, rotate: 0.3 }),
+          cardTo({ duration: 1.4 }),
           0.5,
         )
         .fromTo(
@@ -107,7 +110,7 @@ export default function WeddingHero({ isOpen }) {
           },
           1.15,
         )
-        // Rohit — and — Radha, revealed in stages.
+        // Radha — and — Rohit, revealed in stages.
         .fromTo(
           first,
           { opacity: 0, y: 28 },
@@ -142,9 +145,15 @@ export default function WeddingHero({ isOpen }) {
         { opacity: 0, y: 16 },
         { opacity: 1, y: 0, duration: 0.9 },
       );
+      // The plaque is a solid object in a lit room: it rises closer to the
+      // guest when the pointer rests on it.
+      detachHover = attachCardHover(inner);
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      detachHover();
+      ctx.revert();
+    };
   }, [isOpen]);
 
   const { names, label, copy } = wedding;
@@ -187,7 +196,7 @@ export default function WeddingHero({ isOpen }) {
         <Divider className="hero__rule" />
 
         <h1 className="hero__names" id="hero-names">
-          {/* The explicit spaces keep the accessible name as "Rohit and Radha";
+          {/* The explicit spaces keep the accessible name as "Radha and Rohit";
               flex layout ignores whitespace-only text nodes visually. */}
           <span className="hero__name hero__name--first">{names.first}</span>{' '}
           <span className="hero__and">and</span>{' '}

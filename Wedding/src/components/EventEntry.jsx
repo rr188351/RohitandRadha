@@ -2,6 +2,11 @@ import { useEffect, useRef } from 'react';
 
 import { fromToIf, gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
+import {
+  attachCardHover,
+  cardTo,
+  sideCardFrom,
+} from '../lib/motion.js';
 import EventDetails from './EventDetails.jsx';
 import EventOrnament from './EventOrnament.jsx';
 import { CornerOrnament } from './Ornaments.jsx';
@@ -31,6 +36,8 @@ export default function EventEntry({ event, index }) {
       return undefined;
     }
 
+    let detachHover = () => {};
+
     const ctx = gsap.context(() => {
       const find = (selector) => gsap.utils.toArray(selector, root);
 
@@ -42,6 +49,7 @@ export default function EventEntry({ event, index }) {
       const nameInner = find('.event__name-inner');
       const copy = find('.event__copy');
       const details = find('.event__details');
+      const text = find('.event__text');
 
       // The meta row drifts in from the side the entry leans towards.
       const shift = flip ? 20 : -20;
@@ -80,7 +88,13 @@ export default function EventEntry({ event, index }) {
       // Only the wedding ceremony carries a glass frame (with its corner
       // ornaments), and the logistics block appears only once real details
       // exist — both are optional, so they are added only when present.
-      fromToIf(tl, 0, frame, { opacity: 0 }, { opacity: 1, duration: 1.2 });
+      //
+      // The panel arrives first, leaning in from the side it belongs to, and
+      // its words follow inside it. The ceremony's frame rides along with the
+      // text so the two never drift apart.
+      const lean = flip ? 'right' : 'left';
+      fromToIf(tl, 0, text, sideCardFrom(lean), cardTo({ duration: 1.2 }));
+      fromToIf(tl, 0, frame, sideCardFrom(lean), cardTo({ duration: 1.2 }));
       fromToIf(
         tl,
         0.1,
@@ -105,6 +119,10 @@ export default function EventEntry({ event, index }) {
       // Give the choreography room to be watched on a phone.
       cinematicOnPhones(tl);
 
+      // The whole entry is one object: resting on it lifts the glass and its
+      // words together, on desktop pointers only.
+      detachHover = attachCardHover(root, [...text, ...frame]);
+
       // A whisper of depth on the decorative halo only, so no text ever moves.
       gsap.fromTo(
         glow,
@@ -122,7 +140,10 @@ export default function EventEntry({ event, index }) {
       );
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      detachHover();
+      ctx.revert();
+    };
   }, [flip]);
 
   return (

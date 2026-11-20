@@ -18,8 +18,8 @@
  * to them and a change only ever has to be made in one place.
  */
 const names = {
-  first: 'Rohit',
-  second: 'Radha',
+  first: 'Radha',
+  second: 'Rohit',
 };
 
 export const wedding = {
