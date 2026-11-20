@@ -1,0 +1,119 @@
+name: Deploy GitHub Pages
+
+# Publishes both websites from a single artifact:
+#
+#   /            → the reception site (repository root, untouched)
+#   /Wedding/    → the built Vite + React invitation (Wedding/dist)
+#
+# The Wedding *sources* are never published — only its build output — and the
+# reception site is copied byte for byte, so nothing about it can drift.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege for the official Pages artifact flow.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time, and never cancel a run that is already publishing.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and assemble
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: Wedding/package-lock.json
+
+      - name: Install wedding dependencies
+        working-directory: Wedding
+        run: npm ci
+
+      - name: Build wedding site
+        working-directory: Wedding
+        run: npm run build
+
+      - name: Assemble the deployment directory
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+
+          # Reception website: every published root file, but never the repo
+          # plumbing, the wedding sources, the staging folder itself, or a
+          # stray node_modules.
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='Wedding/' \
+            --exclude='_site/' \
+            --exclude='node_modules/' \
+            ./ _site/
+
+          # Wedding website: the built output only, mounted at /Wedding/.
+          mkdir -p _site/Wedding
+          rsync -a Wedding/dist/ _site/Wedding/
+
+      - name: Verify the assembled site
+        run: |
+          set -euo pipefail
+
+          # 1. The reception index is the original — never the Vite one.
+          cmp index.html _site/index.html
+
+          # 2. Every reception file survived the copy untouched.
+          for entry in *; do
+            case "$entry" in
+              Wedding|_site) continue ;;
+            esac
+            diff -r "$entry" "_site/$entry" >/dev/null
+          done
+
+          # 3. The wedding build is present and points at its own base path.
+          test -f _site/Wedding/index.html
+          test -f _site/Wedding/favicon.svg
+          grep -q '/RohitandRadha/Wedding/assets/' _site/Wedding/index.html
+
+          # 4. No Vite source or dependencies leaked into the artifact.
+          test ! -e _site/Wedding/src
+          test ! -e _site/Wedding/node_modules
+          if grep -q '/src/main.jsx' _site/Wedding/index.html; then
+            echo "The Vite dev shell leaked into the deployment." >&2
+            exit 1
+          fi
+
+          echo "Assembled site is clean:"
+          find _site -maxdepth 2 -mindepth 1 | sort
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
