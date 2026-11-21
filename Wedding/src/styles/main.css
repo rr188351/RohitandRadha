@@ -4198,3 +4198,328 @@ button {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   28. ROYAL GOLD FRAME (PHASE 15)
+   Every important surface now carries a deliberate gold edge: a hairline
+   champagne ring, an inner highlight, a controlled bloom — and, on the pieces
+   that deserve it, a light that travels the perimeter.
+
+   The ring is drawn by a separate inset layer (`GoldFrame`), never by the card
+   itself. That keeps every existing card's padding, corner radius, glow and
+   stacking order exactly as approved, and it means the light is clipped to the
+   host's own shape: 12px plaques, 4px gallery frames, the round music pill.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Resting gold of the ring — bright enough to read on burgundy at any size. */
+  --frame-gold: rgba(197, 164, 109, 0.55);
+  --frame-gold-lit: rgba(229, 201, 146, 0.92);
+  --frame-inner: rgba(229, 201, 146, 0.18);
+  --frame-bloom: rgba(197, 164, 109, 0.45);
+}
+
+.gold-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 1px solid var(--frame-gold);
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--frame-inner),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 22px -14px var(--frame-bloom);
+  transition: border-color 0.6s ease, box-shadow 0.6s ease;
+}
+
+/* The richest tone: the ceremony, the opening card and the closing letter. */
+.gold-frame--rich {
+  border-color: rgba(229, 201, 146, 0.68);
+  box-shadow: inset 0 0 0 1px rgba(229, 201, 146, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 0 30px -14px rgba(229, 201, 146, 0.55);
+}
+
+/* --- The one-shot bloom that greets the guest ----------------------------
+   Straight to a bright champagne edge, then settling into the resting gold.
+   No `fill-mode`, so once it finishes the base rule takes over cleanly and the
+   hover state is free again. */
+.gold-frame.is-ignited {
+  animation: gold-frame-ignite 1.5s cubic-bezier(0.22, 0.61, 0.36, 1) 1;
+}
+
+@keyframes gold-frame-ignite {
+  0% {
+    border-color: rgba(229, 201, 146, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(229, 201, 146, 0), 0 0 0 rgba(229, 201, 146, 0);
+  }
+
+  28% {
+    border-color: rgba(255, 244, 214, 0.98);
+    box-shadow: inset 0 0 0 1px rgba(229, 201, 146, 0.42),
+      0 0 40px -6px rgba(229, 201, 146, 0.6);
+  }
+
+  100% {
+    border-color: var(--frame-gold);
+    box-shadow: inset 0 0 0 1px var(--frame-inner),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 0 22px -14px var(--frame-bloom);
+  }
+}
+
+/* --- The light that travels the perimeter --------------------------------
+   Four hairline comets, one per edge, sharing a single cycle so they read as
+   one light walking clockwise: top → right → bottom → left. Each is a
+   transform/opacity animation only, so the compositor carries them and no
+   layout is ever recalculated while the page moves.
+
+   They start paused and are released by `is-ignited`, so nothing burns CPU on
+   a card the guest has not reached yet. */
+.gold-frame__beam {
+  position: absolute;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  animation-duration: var(--frame-speed, 9s);
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+  will-change: transform, opacity;
+}
+
+.gold-frame.is-ignited .gold-frame__beam {
+  animation-play-state: running;
+}
+
+.gold-frame__beam--top,
+.gold-frame__beam--bottom {
+  width: 42%;
+  height: 1.5px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(229, 201, 146, 0) 0%,
+    rgba(229, 201, 146, 0.55) 32%,
+    rgba(255, 247, 226, 1) 50%,
+    rgba(229, 201, 146, 0.55) 68%,
+    rgba(229, 201, 146, 0) 100%
+  );
+}
+
+.gold-frame__beam--left,
+.gold-frame__beam--right {
+  width: 1.5px;
+  height: 42%;
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0) 0%,
+    rgba(229, 201, 146, 0.55) 32%,
+    rgba(255, 247, 226, 1) 50%,
+    rgba(229, 201, 146, 0.55) 68%,
+    rgba(229, 201, 146, 0) 100%
+  );
+}
+
+.gold-frame__beam--top {
+  top: 0;
+  left: 0;
+  animation-name: gold-beam-across;
+}
+
+.gold-frame__beam--right {
+  top: 0;
+  right: 0;
+  animation-name: gold-beam-down;
+}
+
+.gold-frame__beam--bottom {
+  bottom: 0;
+  right: 0;
+  animation-name: gold-beam-back;
+}
+
+.gold-frame__beam--left {
+  bottom: 0;
+  left: 0;
+  animation-name: gold-beam-up;
+}
+
+@keyframes gold-beam-across {
+  0% {
+    transform: translateX(-105%);
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.9;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  24% {
+    transform: translateX(340%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(340%);
+    opacity: 0;
+  }
+}
+
+@keyframes gold-beam-down {
+  0%,
+  24% {
+    transform: translateY(-105%);
+    opacity: 0;
+  }
+  27% {
+    opacity: 0.9;
+  }
+  44% {
+    opacity: 0.9;
+  }
+  48% {
+    transform: translateY(340%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(340%);
+    opacity: 0;
+  }
+}
+
+@keyframes gold-beam-back {
+  0%,
+  48% {
+    transform: translateX(340%);
+    opacity: 0;
+  }
+  52% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.9;
+  }
+  74% {
+    transform: translateX(-105%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-105%);
+    opacity: 0;
+  }
+}
+
+@keyframes gold-beam-up {
+  0%,
+  74% {
+    transform: translateY(340%);
+    opacity: 0;
+  }
+  77% {
+    opacity: 0.9;
+  }
+  94% {
+    opacity: 0.9;
+  }
+  98% {
+    transform: translateY(-105%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-105%);
+    opacity: 0;
+  }
+}
+
+/* A frame that only needs its settled edge keeps no comets at all. */
+.gold-frame:not(.gold-frame--sweep) .gold-frame__beam {
+  display: none;
+}
+
+/* --- Hover: the light gathers --------------------------------------------
+   The existing hover system already lifts a card and warms its own border;
+   this takes the ring with it, so pointer and frame move as one object. */
+@media (hover: hover) and (pointer: fine) {
+  .is-lifted .gold-frame {
+    border-color: var(--frame-gold-lit);
+    box-shadow: inset 0 0 0 1px rgba(229, 201, 146, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 44px -10px rgba(229, 201, 146, 0.55);
+  }
+}
+
+/* --- Each surface keeps its own pace ------------------------------------
+   A large plaque can carry a slower light than a small panel; the lap still
+   reads as one continuous walk around each edge. */
+.invitation > .gold-frame,
+.closing__panel > .gold-frame {
+  --frame-speed: 12s;
+}
+
+.hero__inner > .gold-frame,
+.celebration__frame > .gold-frame,
+.event__frame > .gold-frame,
+.rsvp__panel > .gold-frame {
+  --frame-speed: 10s;
+}
+
+.music__panel > .gold-frame {
+  --frame-speed: 8s;
+}
+
+/* The round pill: a bright ring, but no comets — a 34px circle has no edge
+   long enough for a travelling light to read as one. */
+.music__launch > .gold-frame {
+  border-color: rgba(229, 201, 146, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(229, 201, 146, 0.2),
+    0 0 18px -12px rgba(229, 201, 146, 0.6);
+}
+
+/* --- Phones: the ring stays, the bloom gives way ------------------------ */
+@media (max-width: 640px) {
+  .gold-frame {
+    box-shadow: inset 0 0 0 1px var(--frame-inner),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 0 14px -12px var(--frame-bloom);
+  }
+
+  .gold-frame--rich {
+    box-shadow: inset 0 0 0 1px rgba(229, 201, 146, 0.22),
+      0 0 18px -12px rgba(229, 201, 146, 0.45);
+  }
+
+  /* A narrower edge takes a little longer to walk. */
+  .invitation > .gold-frame,
+  .closing__panel > .gold-frame {
+    --frame-speed: 15s;
+  }
+
+  .hero__inner > .gold-frame,
+  .celebration__frame > .gold-frame,
+  .event__frame > .gold-frame,
+  .rsvp__panel > .gold-frame {
+    --frame-speed: 13s;
+  }
+}
+
+/* --- Reduced motion: a beautiful still frame ----------------------------
+   No bloom, no travelling light, no hover shift — and because the resting
+   gold lives on the base rule, nothing has to be re-added here. */
+@media (prefers-reduced-motion: reduce) {
+  .gold-frame.is-ignited {
+    animation: none;
+  }
+
+  .gold-frame__beam {
+    display: none;
+  }
+
+  .gold-frame {
+    transition: none;
+  }
+
+  .is-lifted .gold-frame {
+    border-color: var(--frame-gold);
+  }
+}
+

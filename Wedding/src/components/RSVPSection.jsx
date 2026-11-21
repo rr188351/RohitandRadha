@@ -5,6 +5,7 @@ import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { wedding } from '../config/wedding.js';
+import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 import RSVPForm from './RSVPForm.jsx';
 
@@ -260,6 +261,7 @@ export default function RSVPSection() {
 
         <article className="rsvp__panel glass glass--panel">
           <span className="glass-grain" aria-hidden="true" />
+          <GoldFrame sweep />
 
           <div className="rsvp__corners" aria-hidden="true">
             {CORNERS.map((position) => (

@@ -4,6 +4,7 @@ import { Crown } from 'lucide-react';
 import { fromToIf, gsap } from '../lib/gsap';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { hasEventDetails, wedding } from '../config/wedding.js';
+import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
@@ -180,6 +181,7 @@ export default function WeddingHero({ isOpen }) {
       </div>
 
       <div className="hero__inner glass glass--panel glass-inset">
+        <GoldFrame sweep />
         <div className="hero__crest">
           <span className="hero__crest-line" aria-hidden="true" />
           <Crown

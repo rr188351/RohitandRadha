@@ -9,6 +9,7 @@ import {
 } from '../lib/motion.js';
 import EventDetails from './EventDetails.jsx';
 import EventOrnament from './EventOrnament.jsx';
+import GoldFrame from './GoldFrame.jsx';
 
 /**
  * One milestone on the celebration timeline.
@@ -146,6 +147,7 @@ export default function TimelineEvent({ event, index }) {
         {event.theme === 'wedding' ? (
           <span className="glass-sheen" aria-hidden="true" />
         ) : null}
+        <GoldFrame />
 
         <p className="milestone__meta">
           <span className="milestone__number">

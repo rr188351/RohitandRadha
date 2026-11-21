@@ -3,6 +3,7 @@ import { ArrowRight, Crown } from 'lucide-react';
 
 import { gsap } from '../lib/gsap';
 import AmbientBackdrop from './AmbientBackdrop.jsx';
+import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
@@ -195,6 +196,7 @@ export default function InvitationIntro({ isOpen = false, onOpen }) {
 
       <article className="glass glass--panel invitation">
         <span className="glass-grain" aria-hidden="true" />
+        <GoldFrame tone="rich" sweep />
 
         {CORNERS.map((position) => (
           <CornerOrnament key={position} position={position} />

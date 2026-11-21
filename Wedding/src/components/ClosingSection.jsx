@@ -4,6 +4,7 @@ import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { wedding } from '../config/wedding.js';
+import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
@@ -153,6 +154,7 @@ export default function ClosingSection() {
       <div className="closing__stage">
         <article className="closing__panel glass glass--panel glass-inset">
           <span className="glass-grain" aria-hidden="true" />
+          <GoldFrame tone="rich" sweep />
 
           <div className="closing__corners" aria-hidden="true">
             {CORNERS.map((position) => (

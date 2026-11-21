@@ -9,6 +9,7 @@ import {
 } from '../lib/motion.js';
 import EventDetails from './EventDetails.jsx';
 import EventOrnament from './EventOrnament.jsx';
+import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
@@ -160,6 +161,7 @@ export default function EventEntry({ event, index }) {
             aria-hidden="true"
           >
             <span className="glass-sheen" />
+            <GoldFrame tone="rich" sweep />
           </span>
           <div className="event__corners" aria-hidden="true">
             {CORNERS.map((position) => (
@@ -183,6 +185,7 @@ export default function EventEntry({ event, index }) {
           event.frame ? '' : ' glass glass--soft glass-inset'
         }`}
       >
+        {event.frame ? null : <GoldFrame />}
         <p className="event__meta">
           <span className="event__number">
             {String(index + 1).padStart(2, '0')}

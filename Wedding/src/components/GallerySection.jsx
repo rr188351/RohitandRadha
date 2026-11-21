@@ -4,6 +4,7 @@ import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { gallery } from '../config/gallery.js';
+import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
@@ -178,6 +179,7 @@ export default function GallerySection() {
             loading="lazy"
             decoding="async"
           />
+          <GoldFrame />
         </span>
 
         {/* A fine gold mat, drawn just outside the photograph. */}

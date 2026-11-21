@@ -3,6 +3,7 @@ import { Music2, Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 
 import { TRACKS } from '../config/music.js';
 import { gsap } from '../lib/gsap.js';
+import GoldFrame from './GoldFrame.jsx';
 
 /**
  * The invitation's music.
@@ -41,6 +42,7 @@ export default function MusicPlayer() {
   const [open, setOpen] = useState(false);
 
   const audioRef = useRef(null);
+  const rootRef = useRef(null);
   const panelRef = useRef(null);
   const labelRef = useRef(null);
   const timeRef = useRef(null);
@@ -219,6 +221,41 @@ export default function MusicPlayer() {
     });
   }, [open]);
 
+  /**
+   * Dismiss on an outside press.
+   *
+   * Only attached while the panel is open, and in the capture phase so nothing
+   * on the page can swallow the first press. Because the listener is added in
+   * an effect — after the click that opened the panel has already dispatched
+   * its `pointerdown` — opening can never immediately close itself, and a press
+   * anywhere inside the player is ignored so the transport keeps working.
+   *
+   * It only changes what is visible: playback is untouched and carries on in
+   * the background.
+   */
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const handlePointerDown = (event) => {
+      const root = rootRef.current;
+      if (!root || !(event.target instanceof Node)) return;
+      if (root.contains(event.target)) return;
+      setOpen(false);
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown, true);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown, true);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
   // The track name settles in each time the song changes.
   useEffect(() => {
     const label = labelRef.current;
@@ -345,7 +382,7 @@ export default function MusicPlayer() {
   }
 
   return (
-    <div className={`music${playing ? ' is-playing' : ''}`}>
+    <div className={`music${playing ? ' is-playing' : ''}`} ref={rootRef}>
       <button
         className="music__launch"
         type="button"
@@ -355,6 +392,7 @@ export default function MusicPlayer() {
         aria-label="Wedding music"
         title={playing ? 'Wedding music' : 'Play wedding music'}
       >
+        <GoldFrame tone="rich" />
         {playing ? (
           <Music2 size={13} strokeWidth={1.75} aria-hidden="true" />
         ) : (
@@ -364,6 +402,7 @@ export default function MusicPlayer() {
       </button>
 
       <div className="music__panel" id="wedding-music" ref={panelRef}>
+        <GoldFrame sweep />
         <div className="music__head">
           <span className="music__track" ref={labelRef}>
             {TRACKS[index].label}

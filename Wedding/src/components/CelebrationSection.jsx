@@ -6,6 +6,7 @@ import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { wedding } from '../config/wedding.js';
 import EventDetails from './EventDetails.jsx';
+import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
@@ -178,6 +179,7 @@ export default function CelebrationSection() {
       <div className="celebration__halo" aria-hidden="true" />
 
       <div className="celebration__frame glass glass--panel glass-inset">
+        <GoldFrame sweep />
         <div className="celebration__corners" aria-hidden="true">
           {CORNERS.map((position) => (
             <CornerOrnament
