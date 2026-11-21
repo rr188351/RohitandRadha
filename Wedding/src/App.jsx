@@ -6,6 +6,7 @@ import ClosingSection from './components/ClosingSection.jsx';
 import EventShowcase from './components/EventShowcase.jsx';
 import GallerySection from './components/GallerySection.jsx';
 import InvitationIntro from './components/InvitationIntro.jsx';
+import MusicPlayer from './components/MusicPlayer.jsx';
 import RSVPSection from './components/RSVPSection.jsx';
 import WeddingHero from './components/WeddingHero.jsx';
 import WeddingTimeline from './components/WeddingTimeline.jsx';
@@ -63,6 +64,9 @@ function App() {
       {isOpen && <RSVPSection />}
       {isOpen && <ClosingSection />}
       <AutoScrollController isOpen={isOpen} />
+      {/* The music joins the invitation with its opening, and picks up the
+          guest's own gesture when the browser holds the automatic start back. */}
+      {isOpen && <MusicPlayer />}
     </main>
   );
 }
