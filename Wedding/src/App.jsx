@@ -8,6 +8,8 @@ import GallerySection from './components/GallerySection.jsx';
 import InvitationIntro from './components/InvitationIntro.jsx';
 import MusicPlayer from './components/MusicPlayer.jsx';
 import RSVPSection from './components/RSVPSection.jsx';
+import TimelineEvent from './components/TimelineEvent.jsx';
+import ViewportFrame from './components/ViewportFrame.jsx';
 import WeddingHero from './components/WeddingHero.jsx';
 import WeddingTimeline from './components/WeddingTimeline.jsx';
 import { AUTO_OPEN_DELAY } from './lib/autoScroll.js';
@@ -67,6 +69,9 @@ function App() {
       {/* The music joins the invitation with its opening, and picks up the
           guest's own gesture when the browser holds the automatic start back. */}
       {isOpen && <MusicPlayer />}
+      {/* The ornamental frame around the whole screen. It is fixed, purely
+          decorative, and never takes a pointer event. */}
+      <ViewportFrame />
     </main>
   );
 }

@@ -4523,3 +4523,285 @@ button {
   }
 }
 
+/* --------------------------------------------------------------------------
+   29. FULL-VIEWPORT ROYAL FRAME (PHASE 16)
+   One continuous ornamental frame around the whole screen: two hairline gold
+   rules, an embroidered repeat along each edge, a filigree corner in every
+   corner, and a light that drifts slowly around the border.
+
+   There is no fill anywhere in this layer — no panel, no scrim, no blur — so the
+   invitation, the petals and the candlelight all read straight through it. It
+   ignores the pointer entirely, and it sits at z-index 40: above every section
+   (the highest is 8) but below the floating controls (60), so the music pill and
+   the auto-scroll capsule are never covered by it.
+   -------------------------------------------------------------------------- */
+.royal-frame {
+  --rf-inset: clamp(5px, 1.1vw, 9px);
+  --rf-gap: clamp(4px, 0.85vw, 7px);
+  --rf-corner: clamp(58px, 14.5vw, 152px);
+  --rf-gold: rgba(197, 164, 109, 0.62);
+  --rf-gold-soft: rgba(229, 201, 146, 0.32);
+  /* Two tiles of the same embroidery: one laid along, one stood on end. */
+  --rf-tile-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='8' viewBox='0 0 56 8'%3E%3Cg fill='none' stroke='%23c5a46d' stroke-width='0.9' stroke-linecap='round'%3E%3Cpath d='M28 1.2 31.8 4 28 6.8 24.2 4Z'/%3E%3Cpath d='M9 4h8M39 4h8'/%3E%3Cpath d='M20.4 1.8 18 4l2.4 2.2M35.6 1.8 38 4l-2.4 2.2'/%3E%3C/g%3E%3C/svg%3E");
+  --rf-tile-y: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='56' viewBox='0 0 8 56'%3E%3Cg fill='none' stroke='%23c5a46d' stroke-width='0.9' stroke-linecap='round'%3E%3Cpath d='M1.2 28 4 24.2 6.8 28 4 31.8Z'/%3E%3Cpath d='M4 9v8M4 39v8'/%3E%3Cpath d='M1.8 20.4 4 18l2.2 2.4M1.8 35.6 4 38l2.2-2.4'/%3E%3C/g%3E%3C/svg%3E");
+
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+/* --- The double rule ------------------------------------------------------ */
+.royal-frame__rule {
+  position: absolute;
+  inset: var(--rf-inset);
+  border: 1px solid var(--rf-gold);
+  border-radius: clamp(2px, 0.45vw, 5px);
+  box-shadow: 0 0 20px -12px rgba(197, 164, 109, 0.55),
+    inset 0 0 22px -14px rgba(197, 164, 109, 0.5);
+}
+
+.royal-frame__rule--inner {
+  inset: calc(var(--rf-inset) + var(--rf-gap));
+  border-color: var(--rf-gold-soft);
+  border-radius: clamp(1px, 0.3vw, 3px);
+  box-shadow: none;
+}
+
+/* --- The embroidery repeated along each edge ------------------------------
+   A diamond between two seed-heads, drawn once as a tile and laid along the
+   sides. It stops short of the corners, which own that space. */
+.royal-frame__repeat {
+  position: absolute;
+  opacity: 0.5;
+  background-repeat: repeat;
+  pointer-events: none;
+}
+
+.royal-frame__repeat--top,
+.royal-frame__repeat--bottom {
+  left: var(--rf-corner);
+  right: var(--rf-corner);
+  height: 8px;
+  background-image: var(--rf-tile-x);
+  background-size: 56px 8px;
+}
+
+.royal-frame__repeat--top {
+  top: calc(var(--rf-inset) + var(--rf-gap) + 6px);
+}
+
+.royal-frame__repeat--bottom {
+  bottom: calc(var(--rf-inset) + var(--rf-gap) + 6px);
+}
+
+.royal-frame__repeat--left,
+.royal-frame__repeat--right {
+  top: var(--rf-corner);
+  bottom: var(--rf-corner);
+  width: 8px;
+  background-image: var(--rf-tile-y);
+  background-size: 8px 56px;
+}
+
+.royal-frame__repeat--left {
+  left: calc(var(--rf-inset) + var(--rf-gap) + 6px);
+}
+
+.royal-frame__repeat--right {
+  right: calc(var(--rf-inset) + var(--rf-gap) + 6px);
+}
+
+/* --- The filigree corners ------------------------------------------------- */
+.royal-frame__corner {
+  position: absolute;
+  width: var(--rf-corner);
+  height: var(--rf-corner);
+  opacity: 0.9;
+  animation: royal-corner-light 13s ease-in-out infinite;
+}
+
+.royal-frame__corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.royal-frame__corner--tr {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+  animation-delay: -3.25s;
+}
+
+.royal-frame__corner--bl {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+  animation-delay: -6.5s;
+}
+
+.royal-frame__corner--br {
+  bottom: 0;
+  right: 0;
+  transform: scale(-1, -1);
+  animation-delay: -9.75s;
+}
+
+.royal-frame__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Gold catching candlelight: a slow swell, never a blink. */
+@keyframes royal-corner-light {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* --- The light that drifts along the rule -------------------------------- */
+.royal-frame__shine {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation-duration: 23s;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-iteration-count: infinite;
+}
+
+.royal-frame__shine--top,
+.royal-frame__shine--bottom {
+  left: 0;
+  width: 34%;
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 244, 214, 0) 0%,
+    rgba(255, 244, 214, 0.85) 50%,
+    rgba(255, 244, 214, 0) 100%
+  );
+  animation-name: royal-shine-x;
+}
+
+.royal-frame__shine--top {
+  top: var(--rf-inset);
+}
+
+.royal-frame__shine--bottom {
+  bottom: var(--rf-inset);
+  animation-delay: -11.5s;
+}
+
+.royal-frame__shine--left,
+.royal-frame__shine--right {
+  top: 0;
+  width: 1px;
+  height: 34%;
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 244, 214, 0) 0%,
+    rgba(255, 244, 214, 0.85) 50%,
+    rgba(255, 244, 214, 0) 100%
+  );
+  animation-name: royal-shine-y;
+}
+
+.royal-frame__shine--left {
+  left: var(--rf-inset);
+  animation-delay: -5.75s;
+}
+
+.royal-frame__shine--right {
+  right: var(--rf-inset);
+  animation-delay: -17.25s;
+}
+
+@keyframes royal-shine-x {
+  0% {
+    transform: translateX(-115%);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.05;
+  }
+  18% {
+    opacity: 0.8;
+  }
+  30% {
+    opacity: 0.55;
+  }
+  38% {
+    transform: translateX(320%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(320%);
+    opacity: 0;
+  }
+}
+
+@keyframes royal-shine-y {
+  0% {
+    transform: translateY(-115%);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.05;
+  }
+  18% {
+    opacity: 0.8;
+  }
+  30% {
+    opacity: 0.55;
+  }
+  38% {
+    transform: translateY(320%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(320%);
+    opacity: 0;
+  }
+}
+
+/* --- Phones: the frame tightens, the finest threads step back ------------- */
+@media (max-width: 640px) {
+  .royal-frame {
+    --rf-corner: clamp(84px, 22vw, 104px);
+  }
+
+  .royal-frame__repeat {
+    opacity: 0.36;
+    background-size: 42px 6px;
+  }
+
+  .royal-frame__repeat--left,
+  .royal-frame__repeat--right {
+    background-size: 6px 42px;
+  }
+
+  /* The thread-work and tip details are the first things a small screen can
+     live without; the paisley, leaves and blossom stay. */
+  .royal-frame__fine {
+    display: none;
+  }
+}
+
+/* --- Reduced motion: the frame, perfectly still -------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .royal-frame__corner {
+    animation: none;
+    opacity: 0.94;
+  }
+
+  .royal-frame__shine {
+    display: none;
+  }
+}
+
