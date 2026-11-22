@@ -44,7 +44,7 @@ export default function RSVPForm({ onSubmit, busy = false }) {
 
   return (
     <form className="rsvp__form" onSubmit={handleSubmit} noValidate>
-      <fieldset className="rsvp__fields" disabled={busy}>
+      <fieldset className="rsvp__fields" disabled={busy} aria-busy={busy}>
         <legend className="rsvp__visually-hidden">Your reply details</legend>
 
         <div className="rsvp__field">
@@ -114,7 +114,7 @@ export default function RSVPForm({ onSubmit, busy = false }) {
 
       <div className="rsvp__actions">
         <button className="rsvp__submit" type="submit" disabled={busy}>
-          <span>Send our reply</span>
+          <span>{busy ? 'Sending your reply' : 'Send our reply'}</span>
           <ArrowRight
             className="rsvp__submit-icon"
             size={16}

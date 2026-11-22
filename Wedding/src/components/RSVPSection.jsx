@@ -5,6 +5,12 @@ import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { wedding } from '../config/wedding.js';
+import {
+  createRequestId,
+  describeRsvpError,
+  RSVP_SOURCE,
+  sendRsvp,
+} from '../config/rsvpApi.js';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 import RSVPForm from './RSVPForm.jsx';
@@ -15,11 +21,15 @@ const OPTIONS = ['accept', 'decline'];
 /**
  * Phase 07 — the RSVP.
  *
- * The final personal gesture of the invitation. Nothing is transmitted: see
- * `submitReply` below, which is the single seam where a real RSVP service would
- * be called. The rest of the flow — busy, failure and success — is already
- * shaped to handle an asynchronous submission, so wiring a backend later needs
- * no redesign.
+ * The final personal gesture of the invitation, and the one place a guest's
+ * words leave the browser: the reply is sent to the couple's own API, stored,
+ * and only then acknowledged. `sendRsvp` (src/config/rsvpApi.js) is the single
+ * seam between this screen and that API.
+ *
+ * The success screen appears ONLY once the backend has confirmed the write, and
+ * a failure keeps everything the guest typed so they can simply press send
+ * again. Each reply carries a request id that is stable across retries, so a
+ * dropped connection can never produce two records.
  *
  * Scroll reveals are `once` ScrollTriggers and each state change unfolds the
  * panel body rather than snapping. With `prefers-reduced-motion` the section
@@ -29,11 +39,14 @@ export default function RSVPSection() {
   const rootRef = useRef(null);
   const bodyRef = useRef(null);
   const firstBodyPaint = useRef(true);
+  // The idempotency key for the reply in progress, kept across retries.
+  const requestIdRef = useRef(null);
 
   const [choice, setChoice] = useState(null); // null | 'accept' | 'decline'
   const [status, setStatus] = useState('editing'); // editing | submitting | done | error
   const [reply, setReply] = useState(null);
   const [declineNote, setDeclineNote] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // --- Scroll reveals, fired once as the section arrives ---
   useLayoutEffect(() => {
@@ -179,22 +192,12 @@ export default function RSVPSection() {
   }, [choice, status]);
 
   /**
-   * The one seam between this UI and a real RSVP service.
+   * Sends the guest's reply.
    *
-   * No backend is configured yet, so this resolves immediately and nothing
-   * leaves the browser. To connect one later, POST `payload` here:
-   *
-   *   await fetch(YOUR_ENDPOINT, {
-   *     method: 'POST',
-   *     headers: { 'Content-Type': 'application/json' },
-   *     body: JSON.stringify(payload),
-   *   });
-   *
-   * The flow below already copes with a slow or failing request, so nothing
-   * else has to change.
+   * The request id is minted once and reused on every retry, so the backend can
+   * recognise a repeat and return the record it already holds instead of
+   * storing a second one.
    */
-  const submitReply = useCallback(async (payload) => Promise.resolve(payload), []);
-
   const handleSubmit = useCallback(
     async (values) => {
       // One reply per guest: ignore anything that arrives while a reply is in
@@ -202,30 +205,42 @@ export default function RSVPSection() {
       if (status === 'submitting' || status === 'done') return;
 
       setStatus('submitting');
+      setErrorMessage('');
+
+      if (!requestIdRef.current) requestIdRef.current = createRequestId();
 
       const payload = {
         attendance: choice,
         name: values.name ?? '',
         partySize: values.partySize ?? 0,
         message: values.message ?? '',
+        requestId: requestIdRef.current,
         capturedAt: new Date().toISOString(),
+        source: RSVP_SOURCE,
       };
 
       try {
-        await submitReply(payload);
+        // Resolves only once the API has confirmed the reply is stored.
+        await sendRsvp(payload);
         setReply(payload);
         setStatus('done');
-      } catch {
+      } catch (error) {
+        // The reply could not be delivered. The guest keeps every detail they
+        // typed (the form stays mounted) and is told what to do next.
+        setErrorMessage(describeRsvpError(error));
         setStatus('error');
       }
     },
-    [choice, status, submitReply],
+    [choice, status],
   );
 
   const handleChoose = useCallback((value) => {
     setChoice(value);
     setStatus('editing');
     setReply(null);
+    setErrorMessage('');
+    // A new reply begins: a fresh idempotency key for it.
+    requestIdRef.current = null;
   }, []);
 
   const handleChangeReply = useCallback(() => {
@@ -233,6 +248,8 @@ export default function RSVPSection() {
     setStatus('editing');
     setReply(null);
     setDeclineNote('');
+    setErrorMessage('');
+    requestIdRef.current = null;
   }, []);
 
   const { rsvp } = wedding;
@@ -309,7 +326,7 @@ export default function RSVPSection() {
             <div className="rsvp__body" ref={bodyRef}>
               {status === 'error' ? (
                 <p className="rsvp__error" role="alert">
-                  Something interrupted your reply. Please try again.
+                  {errorMessage || rsvp.errorNote}
                 </p>
               ) : null}
 
@@ -339,10 +356,7 @@ export default function RSVPSection() {
                     </blockquote>
                   ) : null}
 
-                  <p className="rsvp__success-note">
-                    Nothing has been sent or stored — this is a front-end
-                    demonstration.
-                  </p>
+                  <p className="rsvp__success-note">{rsvp.receivedNote}</p>
 
                   <button
                     className="rsvp__change"
@@ -398,7 +412,11 @@ export default function RSVPSection() {
                         })
                       }
                     >
-                      <span>Send our reply</span>
+                      <span>
+                        {status === 'submitting'
+                          ? 'Sending your reply'
+                          : 'Send our reply'}
+                      </span>
                       <ArrowRight
                         className="rsvp__submit-icon"
                         size={16}
@@ -412,7 +430,7 @@ export default function RSVPSection() {
             </div>
 
             {status !== 'done' ? (
-              <p className="rsvp__demo-note">{rsvp.demoNote}</p>
+              <p className="rsvp__submit-note">{rsvp.submitNote}</p>
             ) : null}
           </div>
         </article>

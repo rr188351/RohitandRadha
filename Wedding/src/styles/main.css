@@ -2974,8 +2974,8 @@ button {
   color: var(--gold-champagne);
 }
 
-/* --- The demonstration note --- */
-.rsvp__demo-note {
+/* --- The reply note (beneath the panel) --- */
+.rsvp__submit-note {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2989,7 +2989,7 @@ button {
   text-align: center;
 }
 
-.rsvp__demo-note::before {
+.rsvp__submit-note::before {
   content: '◇';
   color: var(--gold-muted);
   font-size: 0.9em;

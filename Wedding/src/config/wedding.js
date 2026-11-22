@@ -108,11 +108,12 @@ export const wedding = {
       'Every gathering, every ritual, every moment — a celebration of togetherness.',
   },
 
-  /* Phase 07 — the RSVP.
-     The reply is captured in the browser only: no backend is configured, so
-     nothing is transmitted or stored anywhere. The flow is deliberately shaped
-     so a real RSVP service can be connected later — see the submit handler in
-     `src/components/RSVPSection.jsx` — without redesigning a single screen. */
+  /* Phase 07 — the RSVP, connected to a real backend in Phase 17.
+     A reply is sent to the couple's own API and stored in the wedding's own
+     database BEFORE the guest is told it arrived — see `src/config/rsvpApi.js`
+     and the submit handler in `src/components/RSVPSection.jsx`. Each reply
+     carries a request id that is stable across retries, so a dropped connection
+     can never become a second record. */
   rsvp: {
     eyebrow: 'Your presence is our gift',
     titleLead: 'We Would Love',
@@ -133,8 +134,18 @@ export const wedding = {
         'Thank you for letting us know. You will be missed, and we will be thinking of you.',
     },
 
-    demoNote:
-      'A front-end demonstration — your reply is not sent or stored anywhere.',
+    /* Shown beneath the panel while the guest is still deciding or filling in
+       their details. */
+    submitNote:
+      'Your reply is sent straight to us and is kept only for our wedding.',
+
+    /* Shown in place of the form once the reply has actually been stored. */
+    receivedNote: 'Your reply has reached us safely. Thank you.',
+
+    /* Shown when a reply could not be delivered. `src/config/rsvpApi.js`
+       replaces this with something more specific (a timeout, a rate limit or a
+       rejected detail) whenever it can. */
+    errorNote: 'Something interrupted your reply. Please try again.',
   },
 
   /* Phase 08 — the final blessing. The last page of the invitation: a quiet
