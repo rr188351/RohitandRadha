@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
-const PARTY_SIZES = [1, 2, 3, 4, 5];
+import { isValidEmail } from '../config/rsvpApi.js';
+
+const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 /**
  * The attendee details for an acceptance.
@@ -12,7 +14,7 @@ const PARTY_SIZES = [1, 2, 3, 4, 5];
  * as the guest starts correcting it.
  *
  * @param {{
- *   onSubmit: (values: { name: string, partySize: number, message: string }) => void,
+ *   onSubmit: (values: { name: string, partySize: number, message: string, email: string }) => void,
  *   busy?: boolean,
  * }} props
  */
@@ -20,8 +22,12 @@ export default function RSVPForm({ onSubmit, busy = false }) {
   const [name, setName] = useState('');
   const [partySize, setPartySize] = useState('1');
   const [message, setMessage] = useState('');
+  // Optional: a reply is complete without it, so this can stay empty forever.
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const nameRef = useRef(null);
+  const emailRef = useRef(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -33,12 +39,22 @@ export default function RSVPForm({ onSubmit, busy = false }) {
       nameRef.current?.focus();
       return;
     }
-
     setError('');
+
+    // Only a supplied address is held to the format; empty is always fine.
+    const trimmedEmail = email.trim();
+    if (!isValidEmail(trimmedEmail)) {
+      setEmailError('That address does not look quite right.');
+      emailRef.current?.focus();
+      return;
+    }
+    setEmailError('');
+
     onSubmit({
       name: trimmedName,
       partySize: Number(partySize),
       message: message.trim(),
+      email: trimmedEmail,
     });
   };
 
@@ -92,6 +108,40 @@ export default function RSVPForm({ onSubmit, busy = false }) {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="rsvp__field rsvp__field--wide">
+          <label className="rsvp__field-label" htmlFor="rsvp-email">
+            Email Address
+            <span className="rsvp__optional">optional</span>
+          </label>
+          <input
+            id="rsvp-email"
+            ref={emailRef}
+            className="rsvp__input"
+            type="email"
+            name="email"
+            inputMode="email"
+            autoComplete="email"
+            maxLength={254}
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value);
+              if (emailError) setEmailError('');
+            }}
+            aria-invalid={emailError ? 'true' : undefined}
+            aria-describedby={emailError ? 'rsvp-email-error' : 'rsvp-email-hint'}
+            placeholder="Where we can send a confirmation, if you wish"
+          />
+          {emailError ? (
+            <p className="rsvp__error" id="rsvp-email-error" role="alert">
+              {emailError}
+            </p>
+          ) : (
+            <p className="rsvp__hint" id="rsvp-email-hint">
+              Leave this blank and your reply is still complete.
+            </p>
+          )}
         </div>
 
         <div className="rsvp__field rsvp__field--wide">

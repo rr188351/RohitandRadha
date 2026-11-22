@@ -39,6 +39,41 @@ export const RSVP_TIMEOUT_MS = 45000;
 /** Marks replies that came from this invitation, beside any future source. */
 export const RSVP_SOURCE = 'wedding_invitation';
 
+/**
+ * A pragmatic address check, used only to give the guest immediate feedback.
+ *
+ * The backend holds the authoritative copy of this rule and validates again —
+ * this one exists so a typo is caught before the reply is sent, not because the
+ * server ever trusts it. Conservative on purpose: no space, comma, semicolon,
+ * angle bracket or quote can pass.
+ */
+const EMAIL_PATTERN =
+  /^[A-Za-z0-9._%+-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)+$/;
+
+/**
+ * True when the value is acceptable.
+ *
+ * An EMPTY value is valid: the email is optional, so "no address" can never be
+ * an error here.
+ *
+ * @param {string} value
+ * @returns {boolean}
+ */
+export function isValidEmail(value) {
+  const address = String(value ?? '').trim().toLowerCase();
+  if (!address) return true;
+  if (address.length > 254) return false;
+
+  const parts = address.split('@');
+  if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
+
+  const [localPart] = parts;
+  if (localPart.startsWith('.') || localPart.endsWith('.')) return false;
+  if (address.includes('..')) return false;
+
+  return EMAIL_PATTERN.test(address) && /\.[A-Za-z]{2,}$/.test(address);
+}
+
 /** Raised for a reply that could not be delivered. Carries the HTTP status. */
 export class RsvpSubmissionError extends Error {
   constructor(message, { status = 0, code = 'unknown' } = {}) {

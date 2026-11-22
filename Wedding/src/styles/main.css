@@ -2878,6 +2878,16 @@ button {
   color: #d9a3a3;
 }
 
+/* --- The hint beneath an optional field --- */
+.rsvp__hint {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 2.3vw, 0.76rem);
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--taupe);
+}
+
 /* --- Actions --- */
 .rsvp__actions {
   display: flex;

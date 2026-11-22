@@ -214,6 +214,8 @@ export default function RSVPSection() {
         name: values.name ?? '',
         partySize: values.partySize ?? 0,
         message: values.message ?? '',
+        // Optional: the backend treats an empty string as "no address given".
+        email: values.email ?? '',
         requestId: requestIdRef.current,
         capturedAt: new Date().toISOString(),
         source: RSVP_SOURCE,
@@ -221,8 +223,15 @@ export default function RSVPSection() {
 
       try {
         // Resolves only once the API has confirmed the reply is stored.
-        await sendRsvp(payload);
-        setReply(payload);
+        const result = await sendRsvp(payload);
+        // The API also reports what happened to the courtesy email, so the
+        // success screen says exactly that - and never calls a stored reply a
+        // failure because the email did not go out.
+        const emailStatus = result?.email?.status;
+        setReply({
+          ...payload,
+          emailStatus: typeof emailStatus === 'string' ? emailStatus : 'skipped',
+        });
         setStatus('done');
       } catch (error) {
         // The reply could not be delivered. The guest keeps every detail they
@@ -356,7 +365,11 @@ export default function RSVPSection() {
                     </blockquote>
                   ) : null}
 
-                  <p className="rsvp__success-note">{rsvp.receivedNote}</p>
+                  <p className="rsvp__success-note">
+                    {reply.attendance === 'accept'
+                      ? rsvp.received[reply.emailStatus] || rsvp.received.skipped
+                      : rsvp.received.declined}
+                  </p>
 
                   <button
                     className="rsvp__change"

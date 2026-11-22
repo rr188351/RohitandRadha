@@ -137,10 +137,25 @@ export const wedding = {
     /* Shown beneath the panel while the guest is still deciding or filling in
        their details. */
     submitNote:
-      'Your reply is sent straight to us and is kept only for our wedding.',
+      'Your reply is sent straight to us and is kept only for our wedding. An email address is optional — share one if you would like a confirmation.',
 
-    /* Shown in place of the form once the reply has actually been stored. */
-    receivedNote: 'Your reply has reached us safely. Thank you.',
+    /* Shown in place of the form once the reply has actually been stored.
+       The section picks one from what the backend reports about the courtesy
+       email:
+         sent     - the provider accepted the confirmation
+         failed   - stored, but the email could not be sent just now
+         skipped  - no address was given, so there was nothing to send
+       A failed email is NEVER shown as a failed RSVP. */
+    received: {
+      sent: 'Your RSVP is confirmed! A confirmation email has been sent to your inbox. ❤️',
+      failed:
+        "Your RSVP is confirmed! We couldn't send the email confirmation just now, but your response has been safely received. ❤️",
+      skipped:
+        'Your RSVP has been successfully received. We look forward to celebrating with you! ❤️',
+      /* A regret gets a gentler line - "we look forward to celebrating" would
+         be the wrong thing to say to someone who cannot come. */
+      declined: 'Your reply has reached us safely. Thank you.',
+    },
 
     /* Shown when a reply could not be delivered. `src/config/rsvpApi.js`
        replaces this with something more specific (a timeout, a rate limit or a
