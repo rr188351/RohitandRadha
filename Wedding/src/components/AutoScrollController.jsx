@@ -3,12 +3,14 @@ import { Pause, Play, X } from 'lucide-react';
 
 import { AUTO_SCROLL_DELAY, AUTO_SCROLL_SPEED_PHONE, createAutoScroller } from '../lib/autoScroll.js';
 import { isCompactViewport } from '../lib/reveal.js';
+import { useI18n } from '../i18n/index.jsx';
 
-const LABELS = {
-  playing: 'Auto playing',
-  resuming: 'Resuming',
-  paused: 'Paused',
-  finished: 'Journey complete',
+/** The four states the capsule can report, keyed by the scroller's own status. */
+const LABEL_KEYS = {
+  playing: 'playing',
+  resuming: 'resuming',
+  paused: 'paused',
+  finished: 'finished',
 };
 
 const prefersReducedMotion = () =>
@@ -29,6 +31,9 @@ const prefersReducedMotion = () =>
  * @param {{ isOpen: boolean }} props
  */
 export default function AutoScrollController({ isOpen }) {
+  const { ui } = useI18n();
+  const labels = ui.autoScroll;
+
   const [status, setStatus] = useState(null);
   const [enabled, setEnabled] = useState(true);
   const [still] = useState(prefersReducedMotion);
@@ -79,7 +84,7 @@ export default function AutoScrollController({ isOpen }) {
       />
 
       <span className="auto-scroll__label" role="status" aria-live="polite">
-        {LABELS[status] ?? ''}
+        {labels[LABEL_KEYS[status]] ?? ''}
       </span>
 
       {status !== 'finished' ? (
@@ -87,12 +92,8 @@ export default function AutoScrollController({ isOpen }) {
           className="auto-scroll__btn"
           type="button"
           onClick={() => scrollerRef.current?.toggle()}
-          aria-label={
-            moving ? 'Pause automatic scrolling' : 'Resume automatic scrolling'
-          }
-          title={
-            moving ? 'Pause automatic scrolling' : 'Resume automatic scrolling'
-          }
+          aria-label={moving ? labels.pauseAction : labels.resumeAction}
+          title={moving ? labels.pauseAction : labels.resumeAction}
         >
           {moving ? (
             <Pause size={11} strokeWidth={1.75} aria-hidden="true" />
@@ -106,8 +107,8 @@ export default function AutoScrollController({ isOpen }) {
         className="auto-scroll__btn"
         type="button"
         onClick={() => setEnabled(false)}
-        aria-label="Stop automatic scrolling for this visit"
-        title="Stop automatic scrolling for this visit"
+        aria-label={labels.stopAction}
+        title={labels.stopAction}
       >
         <X size={11} strokeWidth={1.75} aria-hidden="true" />
       </button>

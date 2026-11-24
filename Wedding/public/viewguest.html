@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <title>Wedding Guest Responses</title>
+    <style>
+      /* ----------------------------------------------------------------------
+         An administrative page, so it is deliberately plain: a light ground, dark
+         text and a quiet gold accent. It shares nothing with the invitation's
+         cinematic styling - a table is easier to read when nothing glitters.
+         ---------------------------------------------------------------------- */
+      :root {
+        --page: #faf8f5;
+        --card: #ffffff;
+        --ink: #2a2118;
+        --ink-soft: #6b5b4a;
+        --line: #e4dccf;
+        --gold: #a8874b;
+        --gold-soft: #f1e7d5;
+        --danger: #8c2f2f;
+        --ok: #2f6b47;
+        --radius: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: clamp(0.9rem, 3vw, 2.4rem);
+        background: var(--page);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Helvetica Neue', Arial, sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .wrap {
+        width: min(1080px, 100%);
+        margin: 0 auto;
+      }
+
+      header.head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 0.9rem;
+        padding-bottom: 0.9rem;
+        border-bottom: 2px solid var(--gold-soft);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-weight: 500;
+        font-size: clamp(1.5rem, 4.4vw, 2rem);
+        letter-spacing: 0.01em;
+      }
+
+      h1 + .sub {
+        margin: 0.3rem 0 0;
+        color: var(--ink-soft);
+        font-size: 0.86rem;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+        padding: 0.5rem 0.95rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--card);
+        color: var(--ink);
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+      }
+
+      button:hover:not(:disabled) {
+        border-color: var(--gold);
+      }
+
+      button:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: default;
+      }
+
+      button.primary {
+        border-color: var(--gold);
+        background: var(--gold);
+        color: #fff;
+      }
+
+      .panel {
+        margin-top: clamp(1rem, 3vw, 1.8rem);
+        padding: clamp(1rem, 3vw, 1.6rem);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--card);
+      }
+
+      .status {
+        color: var(--ink-soft);
+      }
+
+      .status.error {
+        color: var(--danger);
+      }
+
+      .status.ok {
+        color: var(--ok);
+      }
+
+      /* --- Sign in ------------------------------------------------------- */
+      .signin {
+        width: min(420px, 100%);
+      }
+
+      .signin h2 {
+        margin: 0 0 0.2rem;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-weight: 500;
+        font-size: 1.2rem;
+      }
+
+      .signin p {
+        margin: 0 0 1rem;
+        color: var(--ink-soft);
+        font-size: 0.86rem;
+      }
+
+      label.field {
+        display: block;
+        margin-bottom: 0.75rem;
+      }
+
+      label.field span {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+
+      input {
+        font: inherit;
+        width: 100%;
+        padding: 0.6rem 0.7rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px var(--gold-soft);
+      }
+
+      /* --- The table ------------------------------------------------------ */
+      .table-scroll {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-variant-numeric: tabular-nums;
+      }
+
+      caption {
+        caption-side: top;
+        padding-bottom: 0.7rem;
+        color: var(--ink-soft);
+        font-size: 0.84rem;
+        text-align: left;
+      }
+
+      th,
+      td {
+        padding: 0.7rem 0.75rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      thead th {
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        background: #fdfbf7;
+        white-space: nowrap;
+      }
+
+      tbody tr:hover {
+        background: #fdfcf9;
+      }
+
+      td.name {
+        font-weight: 600;
+        min-width: 10rem;
+      }
+
+      td.party {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      td.date {
+        white-space: nowrap;
+        color: var(--ink-soft);
+      }
+
+      td.message {
+        min-width: 16rem;
+        max-width: 34rem;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
+      td.empty {
+        color: #b3a695;
+      }
+
+      .foot {
+        margin-top: 1rem;
+        color: var(--ink-soft);
+        font-size: 0.78rem;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <header class="head">
+        <div>
+          <h1>Wedding Guest Responses</h1>
+          <p class="sub">Every reply stored for Radha &amp; Rohit's wedding.</p>
+        </div>
+
+        <div class="toolbar" id="toolbar" hidden>
+          <button type="button" id="refresh">Refresh</button>
+          <button type="button" id="logout">Log out</button>
+        </div>
+      </header>
+
+      <section class="panel signin" id="signin-panel">
+        <h2>Sign in</h2>
+        <p>This page shows private replies. Please sign in to continue.</p>
+
+        <form id="signin-form" autocomplete="on">
+          <label class="field">
+            <span>User name</span>
+            <input id="user" name="username" type="text" value="admin" autocomplete="username" required />
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button class="primary" type="submit" id="submit">Sign in</button>
+        </form>
+
+        <p class="status" id="signin-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" id="data-panel" hidden>
+        <p class="status" id="data-status" role="status" aria-live="polite"></p>
+
+        <div class="table-scroll" id="table-wrap" hidden>
+          <table>
+            <caption id="caption"></caption>
+            <thead>
+              <tr>
+                <th scope="col">Guest Name</th>
+                <th scope="col" class="party">Party Size</th>
+                <th scope="col">Message</th>
+                <th scope="col">RSVP Date</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <p class="foot" id="foot"></p>
+      </section>
+    </div>
+
+    <script>
+      /* ----------------------------------------------------------------------
+         The wedding guest-response viewer.
+
+         SECURITY, IN ONE PARAGRAPH
+         This page is public hosting, so the page itself is not the lock. It holds
+         no credentials, no database URL and no API key of any kind: the person
+         using it types a password, the SERVER checks it against environment
+         variables it alone knows, and the server hands back a short-lived signed
+         token. Every read of guest data carries that token and is checked again
+         server-side, so an unauthenticated caller gets 401 whatever URL they
+         know. The token lives in sessionStorage: it dies with the tab, and
+         "Log out" throws it away at once.
+
+         Guest names and messages are inserted with textContent only - never as
+         HTML - so a message containing a script tag is shown as plain text.
+         ------------------------------------------------------------------- */
+
+      // The deployed API. It is a public address, not a secret; the lock is the
+      // sign-in above. `?api=` overrides it for local testing.
+      const API_BASE = (
+        new URLSearchParams(window.location.search).get('api') ||
+        'https://twiller-2-0-92g7.onrender.com'
+      ).replace(/\/+$/, '');
+
+      const TOKEN_KEY = 'wedding.viewer.token';
+      const REFRESH_MS = 60000;
+
+      const els = {
+        signinPanel: document.getElementById('signin-panel'),
+        signinForm: document.getElementById('signin-form'),
+        user: document.getElementById('user'),
+        password: document.getElementById('password'),
+        submit: document.getElementById('submit'),
+        signinStatus: document.getElementById('signin-status'),
+        toolbar: document.getElementById('toolbar'),
+        refresh: document.getElementById('refresh'),
+        logout: document.getElementById('logout'),
+        dataPanel: document.getElementById('data-panel'),
+        dataStatus: document.getElementById('data-status'),
+        tableWrap: document.getElementById('table-wrap'),
+        caption: document.getElementById('caption'),
+        rows: document.getElementById('rows'),
+        foot: document.getElementById('foot'),
+      };
+
+      const formatter = new Intl.DateTimeFormat('en-IN', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone: 'Asia/Kolkata',
+      });
+
+      const getToken = () => {
+        try {
+          return window.sessionStorage.getItem(TOKEN_KEY) || '';
+        } catch {
+          return '';
+        }
+      };
+
+      const setToken = (token) => {
+        try {
+          if (token) window.sessionStorage.setItem(TOKEN_KEY, token);
+          else window.sessionStorage.removeItem(TOKEN_KEY);
+        } catch {
+          // Storage disabled: the session then lasts only this page view.
+        }
+      };
+
+      /** The date, in the form a person in India reads at a glance. */
+      const formatDate = (value) => {
+        if (!value) return '—';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '—';
+        return formatter.format(date);
+      };
+
+      /** One cell, always as text - never as markup. */
+      const cell = (text, className) => {
+        const td = document.createElement('td');
+        if (className) td.className = className;
+        td.textContent = text === null || text === undefined || text === '' ? '—' : String(text);
+        if (td.textContent === '—') td.classList.add('empty');
+        return td;
+      };
+
+      let refreshTimer = null;
+
+      const stopAutoRefresh = () => {
+        window.clearInterval(refreshTimer);
+        refreshTimer = null;
+      };
+
+      const showSignin = (message = '') => {
+        stopAutoRefresh();
+        els.toolbar.hidden = true;
+        els.dataPanel.hidden = true;
+        els.signinPanel.hidden = false;
+        els.signinStatus.textContent = message;
+        els.signinStatus.className = message ? 'status error' : 'status';
+        els.submit.disabled = false;
+        els.submit.textContent = 'Sign in';
+      };
+
+      /** Draws the table. Every value goes in as text, so nothing can execute. */
+      const renderRows = (guests) => {
+        els.rows.replaceChildren();
+        for (const guest of guests) {
+          const tr = document.createElement('tr');
+          tr.append(
+            cell(guest?.name, 'name'),
+            cell(guest?.partySize, 'party'),
+            cell(guest?.message, 'message'),
+            cell(formatDate(guest?.rsvpDate), 'date'),
+          );
+          els.rows.append(tr);
+        }
+      };
+
+      const startAutoRefresh = () => {
+        if (refreshTimer) return;
+        refreshTimer = window.setInterval(() => {
+          if (document.visibilityState === 'visible' && getToken()) {
+            loadGuests({ silent: true });
+          }
+        }, REFRESH_MS);
+      };
+
+      /** A failure a person can act on - never a status code on its own. */
+      const describeLoadFailure = (status, code) => {
+        if (status === 503 && code === 'viewer-not-configured') {
+          return 'The guest viewer has not been set up on the server yet.';
+        }
+        if (status === 503) return 'The guest responses are unavailable for a moment.';
+        if (status === 429) return 'Too many requests just now. Please wait a minute.';
+        return 'Could not load the responses. Please try again.';
+      };
+
+      const loadGuests = async ({ silent = false } = {}) => {
+        const token = getToken();
+        if (!token) {
+          showSignin();
+          return;
+        }
+
+        if (!silent) {
+          els.dataStatus.textContent = 'Loading responses…';
+          els.dataStatus.className = 'status';
+        }
+        els.refresh.disabled = true;
+
+        try {
+          const response = await fetch(`${API_BASE}/api/wedding/admin/guests`, {
+            headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+            cache: 'no-store',
+          });
+
+          // The token is gone, expired or was never valid: back to the form.
+          if (response.status === 401 || response.status === 403) {
+            setToken('');
+            showSignin('Your session has ended. Please sign in again.');
+            return;
+          }
+
+          let body = null;
+          try {
+            body = await response.json();
+          } catch {
+            body = null;
+          }
+
+          if (!response.ok || body?.success !== true || !Array.isArray(body.guests)) {
+            throw Object.assign(new Error('load failed'), {
+              status: response.status,
+              code: body?.code,
+            });
+          }
+
+          const guests = body.guests;
+          els.signinPanel.hidden = true;
+          els.toolbar.hidden = false;
+          els.dataPanel.hidden = false;
+          els.refresh.disabled = false;
+
+          if (!guests.length) {
+            els.rows.replaceChildren();
+            els.tableWrap.hidden = true;
+            els.caption.textContent = '';
+            els.dataStatus.className = 'status';
+            els.dataStatus.textContent = 'No responses yet.';
+          } else {
+            renderRows(guests);
+            els.tableWrap.hidden = false;
+            els.caption.textContent = `${guests.length} ${
+              guests.length === 1 ? 'response' : 'responses'
+            }, newest first`;
+            els.dataStatus.className = 'status';
+            els.dataStatus.textContent = '';
+          }
+
+          els.foot.textContent = `Last checked at ${formatDate(new Date().toISOString())}.`;
+          startAutoRefresh();
+        } catch (error) {
+          els.refresh.disabled = false;
+          els.signinPanel.hidden = true;
+          els.toolbar.hidden = false;
+          els.dataPanel.hidden = false;
+          els.dataStatus.className = 'status error';
+          els.dataStatus.textContent = describeLoadFailure(error?.status, error?.code);
+        }
+      };
+      els.signinForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        els.submit.disabled = true;
+        els.submit.textContent = 'Signing in…';
+        els.signinStatus.textContent = '';
+        els.signinStatus.className = 'status';
+
+        try {
+          const response = await fetch(`${API_BASE}/api/wedding/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user: els.user.value.trim(),
+              password: els.password.value,
+            }),
+          });
+
+          let body = null;
+          try {
+            body = await response.json();
+          } catch {
+            body = null;
+          }
+
+          if (!response.ok || body?.success !== true || !body.token) {
+            els.password.value = '';
+            els.submit.disabled = false;
+            els.submit.textContent = 'Sign in';
+            els.signinStatus.className = 'status error';
+            els.signinStatus.textContent =
+              response.status === 503
+                ? 'The guest viewer has not been set up on the server yet.'
+                : response.status === 429
+                  ? 'Too many attempts. Please wait a few minutes and try again.'
+                  : 'That user name or password was not recognised.';
+            return;
+          }
+
+          setToken(body.token);
+          els.password.value = '';
+          els.submit.disabled = false;
+          els.submit.textContent = 'Sign in';
+          await loadGuests();
+        } catch {
+          els.submit.disabled = false;
+          els.submit.textContent = 'Sign in';
+          els.signinStatus.className = 'status error';
+          els.signinStatus.textContent =
+            'The server could not be reached. Please check your connection and try again.';
+        }
+      });
+
+      els.refresh.addEventListener('click', () => loadGuests());
+      els.logout.addEventListener('click', () => {
+        setToken('');
+        showSignin('You have been signed out.');
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && getToken()) {
+          loadGuests({ silent: true });
+        }
+      });
+
+      // Restore a session that is still valid, or ask for the password.
+      if (getToken()) loadGuests();
+      else showSignin();
+    </script>
+  </body>
+</html>

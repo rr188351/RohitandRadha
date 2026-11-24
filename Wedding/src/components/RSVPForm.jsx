@@ -2,7 +2,9 @@ import { useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 import { isValidEmail } from '../config/rsvpApi.js';
+import { useI18n } from '../i18n/index.jsx';
 
+/** Every party size the invitation offers: one to twelve guests. */
 const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 /**
@@ -13,19 +15,26 @@ const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
  * than on every keystroke, and any error is announced and then cleared as soon
  * as the guest starts correcting it.
  *
+ * Every label, placeholder and error message comes from the dictionary, and the
+ * error is held as a KEY rather than as a sentence - so if the guest changes the
+ * language while an error is showing, the message changes with it.
+ *
  * @param {{
  *   onSubmit: (values: { name: string, partySize: number, message: string, email: string }) => void,
  *   busy?: boolean,
  * }} props
  */
 export default function RSVPForm({ onSubmit, busy = false }) {
+  const { ui } = useI18n();
+  const form = ui.rsvpForm;
+
   const [name, setName] = useState('');
   const [partySize, setPartySize] = useState('1');
   const [message, setMessage] = useState('');
   // Optional: a reply is complete without it, so this can stay empty forever.
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [errorKey, setErrorKey] = useState('');
+  const [emailErrorKey, setEmailErrorKey] = useState('');
   const nameRef = useRef(null);
   const emailRef = useRef(null);
 
@@ -35,20 +44,20 @@ export default function RSVPForm({ onSubmit, busy = false }) {
 
     const trimmedName = name.trim();
     if (!trimmedName) {
-      setError('Please add your name so we know who is replying.');
+      setErrorKey('nameRequired');
       nameRef.current?.focus();
       return;
     }
-    setError('');
+    setErrorKey('');
 
     // Only a supplied address is held to the format; empty is always fine.
     const trimmedEmail = email.trim();
     if (!isValidEmail(trimmedEmail)) {
-      setEmailError('That address does not look quite right.');
+      setEmailErrorKey('emailInvalid');
       emailRef.current?.focus();
       return;
     }
-    setEmailError('');
+    setEmailErrorKey('');
 
     onSubmit({
       name: trimmedName,
@@ -61,11 +70,11 @@ export default function RSVPForm({ onSubmit, busy = false }) {
   return (
     <form className="rsvp__form" onSubmit={handleSubmit} noValidate>
       <fieldset className="rsvp__fields" disabled={busy} aria-busy={busy}>
-        <legend className="rsvp__visually-hidden">Your reply details</legend>
+        <legend className="rsvp__visually-hidden">{form.legend}</legend>
 
         <div className="rsvp__field">
           <label className="rsvp__field-label" htmlFor="rsvp-name">
-            Your name
+            {form.name}
           </label>
           <input
             id="rsvp-name"
@@ -77,23 +86,23 @@ export default function RSVPForm({ onSubmit, busy = false }) {
             value={name}
             onChange={(event) => {
               setName(event.target.value);
-              if (error) setError('');
+              if (errorKey) setErrorKey('');
             }}
-            aria-invalid={error ? 'true' : undefined}
-            aria-describedby={error ? 'rsvp-name-error' : undefined}
-            placeholder="As we should address you"
+            aria-invalid={errorKey ? 'true' : undefined}
+            aria-describedby={errorKey ? 'rsvp-name-error' : undefined}
+            placeholder={form.namePlaceholder}
             required
           />
-          {error ? (
+          {errorKey ? (
             <p className="rsvp__error" id="rsvp-name-error" role="alert">
-              {error}
+              {form[errorKey]}
             </p>
           ) : null}
         </div>
 
         <div className="rsvp__field">
           <label className="rsvp__field-label" htmlFor="rsvp-party">
-            Guests joining you
+            {form.guests}
           </label>
           <select
             id="rsvp-party"
@@ -112,8 +121,8 @@ export default function RSVPForm({ onSubmit, busy = false }) {
 
         <div className="rsvp__field rsvp__field--wide">
           <label className="rsvp__field-label" htmlFor="rsvp-email">
-            Email Address
-            <span className="rsvp__optional">optional</span>
+            {form.email}
+            <span className="rsvp__optional">{form.optional}</span>
           </label>
           <input
             id="rsvp-email"
@@ -127,27 +136,27 @@ export default function RSVPForm({ onSubmit, busy = false }) {
             value={email}
             onChange={(event) => {
               setEmail(event.target.value);
-              if (emailError) setEmailError('');
+              if (emailErrorKey) setEmailErrorKey('');
             }}
-            aria-invalid={emailError ? 'true' : undefined}
-            aria-describedby={emailError ? 'rsvp-email-error' : 'rsvp-email-hint'}
-            placeholder="Where we can send a confirmation, if you wish"
+            aria-invalid={emailErrorKey ? 'true' : undefined}
+            aria-describedby={emailErrorKey ? 'rsvp-email-error' : 'rsvp-email-hint'}
+            placeholder={form.emailPlaceholder}
           />
-          {emailError ? (
+          {emailErrorKey ? (
             <p className="rsvp__error" id="rsvp-email-error" role="alert">
-              {emailError}
+              {form[emailErrorKey]}
             </p>
           ) : (
             <p className="rsvp__hint" id="rsvp-email-hint">
-              Leave this blank and your reply is still complete.
+              {form.emailHint}
             </p>
           )}
         </div>
 
         <div className="rsvp__field rsvp__field--wide">
           <label className="rsvp__field-label" htmlFor="rsvp-message">
-            A note for the couple
-            <span className="rsvp__optional">optional</span>
+            {form.note}
+            <span className="rsvp__optional">{form.optional}</span>
           </label>
           <textarea
             id="rsvp-message"
@@ -157,14 +166,14 @@ export default function RSVPForm({ onSubmit, busy = false }) {
             maxLength={400}
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            placeholder="Share a wish, a blessing or a memory"
+            placeholder={form.notePlaceholder}
           />
         </div>
       </fieldset>
 
       <div className="rsvp__actions">
         <button className="rsvp__submit" type="submit" disabled={busy}>
-          <span>{busy ? 'Sending your reply' : 'Send our reply'}</span>
+          <span>{busy ? form.submitting : form.submit}</span>
           <ArrowRight
             className="rsvp__submit-icon"
             size={16}

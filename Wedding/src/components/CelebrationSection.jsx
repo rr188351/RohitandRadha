@@ -4,7 +4,7 @@ import { Crown } from 'lucide-react';
 import { fromToIf, gsap, ScrollTrigger } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
-import { wedding } from '../config/wedding.js';
+import { useI18n } from '../i18n/index.jsx';
 import EventDetails from './EventDetails.jsx';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
@@ -168,6 +168,7 @@ export default function CelebrationSection() {
     };
   }, []);
 
+  const { wedding } = useI18n();
   const { celebration, names } = wedding;
 
   return (

@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
-import { gallery } from '../config/gallery.js';
+import { useI18n } from '../i18n/index.jsx';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament } from './Ornaments.jsx';
 
@@ -159,6 +159,10 @@ export default function GallerySection() {
       ctx.revert();
     };
   }, []);
+
+  // The gallery's words (and each photograph's alt text) come from the
+  // dictionary; only the images themselves come from the configuration.
+  const { gallery } = useI18n();
 
   // Resolved by id so the composition never depends on array order.
   const imageById = Object.fromEntries(

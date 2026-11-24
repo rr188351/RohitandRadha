@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ROYAL WEDDING INVITATION — PHASE 01: DESIGN FOUNDATION
+   ROYAL WEDDING INVITATION â€” PHASE 01: DESIGN FOUNDATION
    Dark burgundy atmosphere, antique gold accents, ivory editorial typography
    and a layered, premium glassmorphism system. Custom CSS only (no Tailwind).
    ========================================================================== */
@@ -270,7 +270,7 @@ button {
   }
 }
 
-/* Key light behind the invitation — faded in by GSAP on load. */
+/* Key light behind the invitation â€” faded in by GSAP on load. */
 .backdrop__glow {
   position: absolute;
   left: 50%;
@@ -382,7 +382,7 @@ button {
   animation-delay: var(--dust-delay, 0s), var(--dust-twinkle-delay, 0s);
 }
 
-/* Slow, near-vertical float — opacity is owned by `dust-twinkle` below. */
+/* Slow, near-vertical float â€” opacity is owned by `dust-twinkle` below. */
 @keyframes dust-drift {
   0% {
     transform: translate3d(0, 16px, 0) scale(0.78);
@@ -421,7 +421,7 @@ button {
 /* --------------------------------------------------------------------------
    6.1 ROSE PETALS
    A handful of softly tumbling petals. Each one rides inside a full-height lane
-   so every movement is expressed as a percentage of the stage — that keeps the
+   so every movement is expressed as a percentage of the stage â€” that keeps the
    drift correct on any viewport and lets GSAP animate transforms only. Petals
    sit behind the card, so the invitation itself stays perfectly readable.
    -------------------------------------------------------------------------- */
@@ -592,7 +592,7 @@ button {
   pointer-events: none;
 }
 
-/* Delicate inner hairline ring — the second border layer. */
+/* Delicate inner hairline ring â€” the second border layer. */
 .invitation::after {
   content: '';
   position: absolute;
@@ -1234,7 +1234,7 @@ button {
 /* --------------------------------------------------------------------------
    16. THE CELEBRATION (PHASE 03)
    The heartfelt page below the hero. A normal flow section, so the scroll stays
-   completely native — nothing is pinned and nothing is hijacked. The atmosphere
+   completely native â€” nothing is pinned and nothing is hijacked. The atmosphere
    behind it is untouched: it lives in the fixed backdrop.
    -------------------------------------------------------------------------- */
 .celebration {
@@ -1267,7 +1267,7 @@ button {
   padding: clamp(1.75rem, 5vw, 3rem);
 }
 
-/* Delicate gold frame — the same ornament language as the card and the hero. */
+/* Delicate gold frame â€” the same ornament language as the card and the hero. */
 .celebration__corners {
   position: absolute;
   inset: 0;
@@ -2480,7 +2480,7 @@ button {
 /* --------------------------------------------------------------------------
    20. THE RSVP (PHASE 07)
    The final personal gesture: an invitation-style reply panel. The reply is
-   captured in the browser only — no backend is configured — and the flow is
+   captured in the browser only â€” no backend is configured â€” and the flow is
    shaped so a real RSVP service can be attached later without a redesign.
    -------------------------------------------------------------------------- */
 .rsvp {
@@ -3000,7 +3000,7 @@ button {
 }
 
 .rsvp__submit-note::before {
-  content: '◇';
+  content: 'â—‡';
   color: var(--gold-muted);
   font-size: 0.9em;
 }
@@ -3137,14 +3137,14 @@ button {
 /* --------------------------------------------------------------------------
    21. GLASS TEXT PANELS + THE FINAL BLESSING (PHASE 08)
    Selective refinements: the glass system now also carries the sections whose
-   words used to sit directly on the background — and the closing page that
+   words used to sit directly on the background â€” and the closing page that
    ends the invitation. Everything reuses the existing tokens and utilities.
    -------------------------------------------------------------------------- */
 
 /* A delicate hairline drawn just inside a glass edge: the second border layer
    shared by every panel added below. The host element is always positioned
    already (relative, or absolute for the ceremony's frame), so this utility
-   deliberately declares no `position` of its own — doing so would override an
+   deliberately declares no `position` of its own â€” doing so would override an
    absolutely-positioned host. */
 .glass-inset::after {
   content: '';
@@ -3171,7 +3171,7 @@ button {
 /* The ceremony's frame and its corners are absolutely positioned children of a
    grid, so they must be given an explicit grid area to use as their containing
    block. The entry has two columns and one row: span both columns, but do not
-   use `-1` for the row — there are no explicit row tracks, so `-1` resolves to
+   use `-1` for the row â€” there are no explicit row tracks, so `-1` resolves to
    the first line and the area would collapse to zero height. */
 .event__frame,
 .event__corners {
@@ -3231,7 +3231,7 @@ button {
   padding: clamp(2.25rem, 6.5vw, 2rem) clamp(1.5rem, 5vw, 3rem);
 }
 
-/* A soft top reflection — a deliberate echo of the invitation card that opened
+/* A soft top reflection â€” a deliberate echo of the invitation card that opened
    the whole journey. */
 .closing__panel::before {
   content: '';
@@ -3394,7 +3394,7 @@ button {
 
 /* --------------------------------------------------------------------------
    22. THE HERO PLAQUE (PHASE 08 FOLLOW-UP)
-   "The Wedding Invitation" — the hero — now sits on the same opaque glass as
+   "The Wedding Invitation" â€” the hero â€” now sits on the same opaque glass as
    every other panel, so the invitation's opening words have their own surface.
    -------------------------------------------------------------------------- */
 .hero__inner {
@@ -3402,7 +3402,7 @@ button {
 }
 
 /* --------------------------------------------------------------------------
-   23. "THE SACRED UNION" — A LIVING GOLD BORDER
+   23. "THE SACRED UNION" â€” A LIVING GOLD BORDER
    The third celebration carries a light that travels its border in a slow
    loop. It is a rotating conic gradient masked down to the 1px ring, so the
    motion stays on the compositor and only the border is ever repainted.
@@ -3464,8 +3464,8 @@ button {
    -------------------------------------------------------------------------- */
 .auto-scroll {
   position: fixed;
-  right: clamp(0.85rem, 3vw, 1.6rem);
-  bottom: calc(clamp(0.85rem, 3vw, 1.6rem) + env(safe-area-inset-bottom, 0px));
+  right: var(--control-inset);
+  bottom: calc(var(--control-inset) + env(safe-area-inset-bottom, 0px));
   z-index: 60;
   display: flex;
   align-items: center;
@@ -3554,8 +3554,8 @@ button {
 
 @media (max-width: 640px) {
   .auto-scroll {
-    right: 0.7rem;
-    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    right: var(--control-inset);
+    bottom: calc(var(--control-inset) + env(safe-area-inset-bottom, 0px));
     padding: 0.32rem 0.35rem 0.32rem 0.65rem;
     letter-spacing: 0.12em;
   }
@@ -3577,11 +3577,11 @@ button {
 
 /* --------------------------------------------------------------------------
    26. CINEMATIC CARD DEPTH (PHASE 13)
-   The movement itself lives in `src/lib/motion.js` — every panel rises toward
+   The movement itself lives in `src/lib/motion.js` â€” every panel rises toward
    the guest from slightly further away. What is left here is the light: when a
    settled card sits under the pointer, its border warms and its shadow deepens.
    Only `box-shadow` and `border-color` transition here, because GSAP owns all
-   transforms — a CSS transform transition would smear every reveal.
+   transforms â€” a CSS transform transition would smear every reveal.
    -------------------------------------------------------------------------- */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .hero__inner,
@@ -3607,7 +3607,7 @@ button {
   }
 }
 
-/* Reduced motion keeps the panels perfectly still — no transition, no class. */
+/* Reduced motion keeps the panels perfectly still â€” no transition, no class. */
 @media (prefers-reduced-motion: reduce) {
   .hero__inner,
   .celebration__frame,
@@ -3632,7 +3632,7 @@ button {
 /* --- The journey alternates real cards on small screens -------------------
    Below 900px this used to collapse into one straight rail. Now every other
    milestone steps in from the spine, its ornament swings to the opposite edge
-   and its meta row mirrors — a miniature of the desktop itinerary. The step
+   and its meta row mirrors â€” a miniature of the desktop itinerary. The step
    is taken out of the card's own width, so nothing exceeds the section gutter
    and nothing scrolls sideways. */
 @media (max-width: 899.98px) {
@@ -3730,7 +3730,7 @@ button {
 @media (max-width: 640px) {
   /* The four priority plaques keep their full width and gain a deeper inner
      margin, which puts the readable column at roughly three quarters of the
-     screen — the proportion of a printed invitation, not a desktop card. */
+     screen â€” the proportion of a printed invitation, not a desktop card. */
   .invitation__inner {
     padding: 2.5rem 1.95rem 2.35rem;
     gap: 1.4rem;
@@ -3847,8 +3847,10 @@ button {
    -------------------------------------------------------------------------- */
 .music {
   position: fixed;
-  left: clamp(0.85rem, 3vw, 1.6rem);
-  bottom: calc(clamp(0.85rem, 3vw, 1.6rem) + env(safe-area-inset-bottom, 0px));
+  /* The invariant is the FRAME, not the screen edge: the pill sits clear of both
+     of the frame's hairline rules, whatever the viewport width. */
+  left: var(--control-inset);
+  bottom: calc(var(--control-inset) + env(safe-area-inset-bottom, 0px));
   z-index: 60;
   display: flex;
   flex-direction: column;
@@ -4144,8 +4146,8 @@ button {
 /* --- Phones: the same capsule, given proper thumbs ------------------------ */
 @media (max-width: 640px) {
   .music {
-    left: 0.7rem;
-    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    left: var(--control-inset);
+    bottom: calc(var(--control-inset) + env(safe-area-inset-bottom, 0px));
   }
 
   .music__launch {
@@ -4212,7 +4214,7 @@ button {
 /* --------------------------------------------------------------------------
    28. ROYAL GOLD FRAME (PHASE 15)
    Every important surface now carries a deliberate gold edge: a hairline
-   champagne ring, an inner highlight, a controlled bloom — and, on the pieces
+   champagne ring, an inner highlight, a controlled bloom â€” and, on the pieces
    that deserve it, a light that travels the perimeter.
 
    The ring is drawn by a separate inset layer (`GoldFrame`), never by the card
@@ -4221,7 +4223,7 @@ button {
    host's own shape: 12px plaques, 4px gallery frames, the round music pill.
    -------------------------------------------------------------------------- */
 :root {
-  /* Resting gold of the ring — bright enough to read on burgundy at any size. */
+  /* Resting gold of the ring â€” bright enough to read on burgundy at any size. */
   --frame-gold: rgba(197, 164, 109, 0.55);
   --frame-gold-lit: rgba(229, 201, 146, 0.92);
   --frame-inner: rgba(229, 201, 146, 0.18);
@@ -4280,7 +4282,7 @@ button {
 
 /* --- The light that travels the perimeter --------------------------------
    Four hairline comets, one per edge, sharing a single cycle so they read as
-   one light walking clockwise: top → right → bottom → left. Each is a
+   one light walking clockwise: top â†’ right â†’ bottom â†’ left. Each is a
    transform/opacity animation only, so the compositor carries them and no
    layout is ever recalculated while the page moves.
 
@@ -4477,7 +4479,7 @@ button {
   --frame-speed: 8s;
 }
 
-/* The round pill: a bright ring, but no comets — a 34px circle has no edge
+/* The round pill: a bright ring, but no comets â€” a 34px circle has no edge
    long enough for a travelling light to read as one. */
 .music__launch > .gold-frame {
   border-color: rgba(229, 201, 146, 0.6);
@@ -4513,7 +4515,7 @@ button {
 }
 
 /* --- Reduced motion: a beautiful still frame ----------------------------
-   No bloom, no travelling light, no hover shift — and because the resting
+   No bloom, no travelling light, no hover shift â€” and because the resting
    gold lives on the base rule, nothing has to be re-added here. */
 @media (prefers-reduced-motion: reduce) {
   .gold-frame.is-ignited {
@@ -4539,7 +4541,7 @@ button {
    rules, an embroidered repeat along each edge, a filigree corner in every
    corner, and a light that drifts slowly around the border.
 
-   There is no fill anywhere in this layer — no panel, no scrim, no blur — so the
+   There is no fill anywhere in this layer â€” no panel, no scrim, no blur â€” so the
    invitation, the petals and the candlelight all read straight through it. It
    ignores the pointer entirely, and it sits at z-index 40: above every section
    (the highest is 8) but below the floating controls (60), so the music pill and
@@ -4816,7 +4818,7 @@ button {
 }
 
 /* ==========================================================================
-   Phase 19 — Our Beloved Guests (the celebration wall)
+   Phase 19 â€” Our Beloved Guests (the celebration wall)
    --------------------------------------------------------------------------
    A wall of names rather than another panel: each guest is a small plaque on
    the burgundy ground, so the names themselves are the composition. It reuses
@@ -5204,3 +5206,197 @@ button {
   }
 }
 
+/* --------------------------------------------------------------------------
+   31. LANGUAGE + FLOATING CONTROL GEOMETRY (PHASE 20)
+   The music pill and the auto-scroll capsule used to be placed from the SCREEN
+   edge, which put them on top of the ornamental frame's hairline rules. These
+   variables place them from the FRAME instead: the two rules (`--frame-edge`
+   and `--frame-gap` mirror `--rf-inset`/`--rf-gap` in section 29) plus a real
+   gap, so every floating control sits inside the gold border at every width.
+   The language switcher is pinned to the top-left corner with the same inset.
+   -------------------------------------------------------------------------- */
+:root {
+  --frame-edge: clamp(5px, 1.1vw, 9px);
+  --frame-gap: clamp(4px, 0.85vw, 7px);
+  --control-inset: calc(
+    var(--frame-edge) + var(--frame-gap) + clamp(7px, 1.6vw, 15px)
+  );
+}
+
+/* --- The switcher --------------------------------------------------------- */
+.lang {
+  position: fixed;
+  top: var(--control-inset);
+  left: var(--control-inset);
+  /* Above the frame (40) and beside the other floating controls (60), never
+     above the music panel (61). */
+  z-index: 62;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.lang__toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-height: 2.1rem;
+  padding: 0.3rem 0.72rem 0.3rem 0.66rem;
+  border: 1px solid rgba(197, 164, 109, 0.5);
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--ivory);
+  background-color: rgba(22, 9, 13, 0.82);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.11) 0%,
+    rgba(229, 201, 146, 0) 62%
+  );
+  backdrop-filter: blur(14px) saturate(130%);
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.14),
+    0 14px 34px -22px rgba(0, 0, 0, 0.9);
+  transition: border-color 0.4s var(--ease-soft), transform 0.4s var(--ease-soft),
+    box-shadow 0.4s var(--ease-soft), color 0.4s ease;
+}
+
+.lang__icon {
+  flex: none;
+  color: var(--gold-champagne);
+}
+
+.lang__current {
+  font-family: var(--font-label);
+  /* Devanagari needs no letter-spacing to stay legible. */
+  font-size: clamp(0.64rem, 2.4vw, 0.72rem);
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.lang__chev {
+  flex: none;
+  color: var(--gold);
+  transition: transform 0.35s var(--ease-soft);
+}
+
+.lang.is-open .lang__chev {
+  transform: rotate(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lang__toggle:hover {
+    border-color: var(--glass-border-strong);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+}
+
+.lang__toggle:focus-visible {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 3px;
+}
+
+/* --- The dropdown --------------------------------------------------------- */
+.lang__menu {
+  min-width: 9.6rem;
+  margin: 0;
+  padding: 0.32rem;
+  list-style: none;
+  border: 1px solid rgba(197, 164, 109, 0.44);
+  border-radius: 12px;
+  background-color: rgba(22, 9, 13, 0.93);
+  background-image: radial-gradient(
+      130% 150% at 50% -30%,
+      rgba(229, 201, 146, 0.14) 0%,
+      rgba(229, 201, 146, 0) 62%
+    ),
+    linear-gradient(180deg, rgba(58, 16, 29, 0.5) 0%, rgba(22, 9, 13, 0.2) 100%);
+  backdrop-filter: blur(16px) saturate(135%);
+  box-shadow: 0 26px 60px -30px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(229, 201, 146, 0.12);
+  transform-origin: top left;
+  animation: lang-in 0.32s var(--ease-soft) both;
+}
+
+@keyframes lang-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
+.lang__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.46rem 0.6rem;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ivory-muted);
+  font-family: var(--font-label);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  background: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.lang__item:hover,
+.lang__item:focus-visible {
+  background-color: rgba(197, 164, 109, 0.14);
+  color: var(--ivory);
+  outline: none;
+}
+
+.lang__item[aria-checked='true'] {
+  color: var(--gold-champagne);
+}
+
+.lang__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: transparent;
+  box-shadow: none;
+  flex: none;
+}
+
+.lang__item[aria-checked='true'] .lang__dot {
+  background-color: var(--gold-champagne);
+  box-shadow: 0 0 8px 1px rgba(229, 201, 146, 0.6);
+}
+
+/* --- Phones: the same controls, a tighter inset --------------------------- */
+@media (max-width: 640px) {
+  :root {
+    /* Both rules plus a thumb-sized gap, then nothing wasted. */
+    --control-inset: calc(var(--frame-edge) + var(--frame-gap) + 5px);
+  }
+
+  .lang__toggle {
+    min-height: 1.95rem;
+    padding: 0.26rem 0.6rem 0.26rem 0.56rem;
+    gap: 0.34rem;
+  }
+
+  .lang__menu {
+    min-width: 8.6rem;
+  }
+}
+
+/* --- Reduced motion: appear, do not travel -------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .lang__menu {
+    animation: none;
+  }
+
+  .lang__toggle,
+  .lang__chev,
+  .lang__item {
+    transition: none;
+  }
+}

@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
-import { wedding } from '../config/wedding.js';
+import { useI18n } from '../i18n/index.jsx';
 import {
   createRequestId,
   describeRsvpError,
@@ -241,7 +241,7 @@ export default function RSVPSection() {
       } catch (error) {
         // The reply could not be delivered. The guest keeps every detail they
         // typed (the form stays mounted) and is told what to do next.
-        setErrorMessage(describeRsvpError(error));
+        setErrorMessage(describeRsvpError(error, ui.api));
         setStatus('error');
       }
     },
@@ -266,7 +266,10 @@ export default function RSVPSection() {
     requestIdRef.current = null;
   }, []);
 
+  const { wedding, ui, format } = useI18n();
   const { rsvp } = wedding;
+  const form = ui.rsvpForm;
+  const section = ui.rsvpSection;
 
   return (
     <section className="rsvp" ref={rootRef} aria-labelledby="rsvp-title">
@@ -307,9 +310,7 @@ export default function RSVPSection() {
           <div className="rsvp__inner">
             {status !== 'done' ? (
               <fieldset className="rsvp__choice">
-                <legend className="rsvp__visually-hidden">
-                  Will you be joining us?
-                </legend>
+                <legend className="rsvp__visually-hidden">{form.help}</legend>
 
                 {OPTIONS.map((value) => (
                   <label
@@ -349,7 +350,9 @@ export default function RSVPSection() {
                   <span className="rsvp__success-mark" aria-hidden="true" />
 
                   <p className="rsvp__success-title">
-                    Thank you, {reply.name || 'dear guest'}.
+                    {format(section.thanks, {
+                      name: reply.name || section.dearGuest,
+                    })}
                   </p>
 
                   <p className="rsvp__success-lede">
@@ -360,7 +363,7 @@ export default function RSVPSection() {
 
                   {reply.attendance === 'accept' && reply.partySize > 1 ? (
                     <p className="rsvp__success-detail">
-                      We have noted a party of {reply.partySize}.
+                      {format(section.partyOf, { count: reply.partySize })}
                     </p>
                   ) : null}
 
@@ -381,7 +384,7 @@ export default function RSVPSection() {
                     type="button"
                     onClick={handleChangeReply}
                   >
-                    Change my reply
+                    {section.change}
                   </button>
                 </div>
               ) : null}
@@ -402,8 +405,8 @@ export default function RSVPSection() {
                       className="rsvp__field-label"
                       htmlFor="rsvp-decline-note"
                     >
-                      A note for the couple
-                      <span className="rsvp__optional">optional</span>
+                      {form.note}
+                      <span className="rsvp__optional">{form.optional}</span>
                     </label>
                     <textarea
                       id="rsvp-decline-note"
@@ -413,7 +416,7 @@ export default function RSVPSection() {
                       maxLength={300}
                       value={declineNote}
                       onChange={(event) => setDeclineNote(event.target.value)}
-                      placeholder="Share a wish or a blessing"
+                      placeholder={form.declineNotePlaceholder}
                     />
                   </div>
 
@@ -431,9 +434,7 @@ export default function RSVPSection() {
                       }
                     >
                       <span>
-                        {status === 'submitting'
-                          ? 'Sending your reply'
-                          : 'Send our reply'}
+                        {status === 'submitting' ? form.submitting : form.submit}
                       </span>
                       <ArrowRight
                         className="rsvp__submit-icon"

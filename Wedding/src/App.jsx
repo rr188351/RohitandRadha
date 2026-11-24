@@ -7,6 +7,7 @@ import EventShowcase from './components/EventShowcase.jsx';
 import GallerySection from './components/GallerySection.jsx';
 import GuestWall from './components/GuestWall.jsx';
 import InvitationIntro from './components/InvitationIntro.jsx';
+import LanguageSwitcher from './components/LanguageSwitcher.jsx';
 import MusicPlayer from './components/MusicPlayer.jsx';
 import RSVPSection from './components/RSVPSection.jsx';
 import TimelineEvent from './components/TimelineEvent.jsx';
@@ -77,6 +78,10 @@ function App() {
       {/* The ornamental frame around the whole screen. It is fixed, purely
           decorative, and never takes a pointer event. */}
       <ViewportFrame />
+      {/* The language switcher sits in the top-left corner, inside the frame and
+          clear of the music pill (bottom-left) and the auto-scroll capsule
+          (bottom-right). It is available from the very first screen. */}
+      <LanguageSwitcher />
     </main>
   );
 }

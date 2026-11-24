@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { ArrowRight, Crown } from 'lucide-react';
 
 import { gsap } from '../lib/gsap';
+import { useI18n } from '../i18n/index.jsx';
 import AmbientBackdrop from './AmbientBackdrop.jsx';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
@@ -18,6 +19,7 @@ const CORNERS = ['tl', 'tr', 'br', 'bl'];
  * stylesheet already renders the correct state for each phase.
  */
 export default function InvitationIntro({ isOpen = false, onOpen }) {
+  const { ui } = useI18n();
   const rootRef = useRef(null);
   const entranceRef = useRef(null);
 
@@ -215,7 +217,7 @@ export default function InvitationIntro({ isOpen = false, onOpen }) {
           </div>
 
           <p className="invitation__label" data-reveal="text">
-            The Wedding Invitation
+            {ui.intro.label}
           </p>
 
           <Divider />
@@ -225,11 +227,11 @@ export default function InvitationIntro({ isOpen = false, onOpen }) {
             id="invitation-title"
             data-reveal="text"
           >
-            A Celebration of <em>Love</em>
+            {ui.intro.taglineLead} <em>{ui.intro.taglineAccent}</em>
           </h1>
 
           <p className="invitation__text" data-reveal="text">
-            A beautiful beginning deserves a timeless invitation.
+            {ui.intro.supporting}
           </p>
 
           <Divider />
@@ -244,7 +246,7 @@ export default function InvitationIntro({ isOpen = false, onOpen }) {
             aria-disabled={isOpen}
           >
             <span className="invitation__button-label">
-              Open the Invitation
+              {ui.intro.open}
             </span>
             <ArrowRight
               className="invitation__button-icon"

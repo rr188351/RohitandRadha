@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Music2, Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 
 import { TRACKS } from '../config/music.js';
+import { useI18n } from '../i18n/index.jsx';
 import { gsap } from '../lib/gsap.js';
 import GoldFrame from './GoldFrame.jsx';
 
@@ -35,6 +36,11 @@ const prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export default function MusicPlayer() {
+  /* The player's labels, in the guest's language (they are aria-labels and
+     titles, so they are heard rather than seen - worth translating properly). */
+  const { ui } = useI18n();
+  const music = ui.music;
+
   const [index, setIndex] = useState(0);
   // 'idle' | 'playing' | 'paused' | 'blocked' | 'error'
   const [status, setStatus] = useState('idle');
@@ -389,8 +395,8 @@ export default function MusicPlayer() {
         onClick={openPanel}
         aria-expanded={open}
         aria-controls="wedding-music"
-        aria-label="Wedding music"
-        title={playing ? 'Wedding music' : 'Play wedding music'}
+        aria-label={music.launch}
+        title={playing ? music.launch : music.launchIdle}
       >
         <GoldFrame tone="rich" />
         {playing ? (
@@ -405,7 +411,7 @@ export default function MusicPlayer() {
         <GoldFrame sweep />
         <div className="music__head">
           <span className="music__track" ref={labelRef}>
-            {TRACKS[index].label}
+            {music.tracks[TRACKS[index].id] ?? TRACKS[index].label}
           </span>
           <span className="music__time">
             <span ref={timeRef}>00:00</span>
@@ -421,7 +427,7 @@ export default function MusicPlayer() {
           ref={barRef}
           role="slider"
           tabIndex={0}
-          aria-label="Seek within the song"
+          aria-label={music.seek}
           aria-valuemin={0}
           aria-valuemax={Math.round(duration)}
           aria-valuenow={0}
@@ -441,8 +447,8 @@ export default function MusicPlayer() {
             className="music__btn"
             type="button"
             onClick={() => step(-1)}
-            aria-label="Previous song"
-            title="Previous song"
+            aria-label={music.previous}
+            title={music.previous}
           >
             <span className="music__icon" ref={prevIconRef}>
               <SkipBack size={12} strokeWidth={1.75} aria-hidden="true" />
@@ -453,8 +459,8 @@ export default function MusicPlayer() {
             className="music__btn music__btn--play"
             type="button"
             onClick={toggle}
-            aria-label={playing ? 'Pause music' : 'Play music'}
-            title={playing ? 'Pause music' : 'Play music'}
+            aria-label={playing ? music.pause : music.play}
+            title={playing ? music.pause : music.play}
           >
             <span className="music__icon" key={playing ? 'pause' : 'play'}>
               {playing ? (
@@ -469,8 +475,8 @@ export default function MusicPlayer() {
             className="music__btn"
             type="button"
             onClick={() => step(1)}
-            aria-label="Next song"
-            title="Next song"
+            aria-label={music.next}
+            title={music.next}
           >
             <span className="music__icon" ref={nextIconRef}>
               <SkipForward size={12} strokeWidth={1.75} aria-hidden="true" />
@@ -480,7 +486,7 @@ export default function MusicPlayer() {
 
         {status === 'error' ? (
           <p className="music__notice" role="status">
-            This song could not be loaded.
+            {music.failed}
           </p>
         ) : null}
       </div>

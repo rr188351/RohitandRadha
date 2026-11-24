@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
-import { wedding } from '../config/wedding.js';
+import { useI18n } from '../i18n/index.jsx';
 import { Divider } from './Ornaments.jsx';
 import TimelineEvent from './TimelineEvent.jsx';
 
@@ -102,6 +102,7 @@ export default function WeddingTimeline() {
     return () => ctx.revert();
   }, []);
 
+  const { wedding } = useI18n();
   const { timeline, celebrations } = wedding;
 
   return (

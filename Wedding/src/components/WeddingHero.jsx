@@ -3,7 +3,8 @@ import { Crown } from 'lucide-react';
 
 import { fromToIf, gsap } from '../lib/gsap';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
-import { hasEventDetails, wedding } from '../config/wedding.js';
+import { hasEventDetails } from '../config/wedding.js';
+import { useI18n } from '../i18n/index.jsx';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
@@ -157,7 +158,11 @@ export default function WeddingHero({ isOpen }) {
     };
   }, [isOpen]);
 
-  const { names, label, copy } = wedding;
+  /* The invitation's words, in the guest's language. `label`, `copy` and `names`
+     are read from the same tree the English config used to provide, so the JSX
+     below is unchanged except for the two labels that had been written inline. */
+  const { wedding: invitation, ui } = useI18n();
+  const { names, label, copy } = invitation;
 
   return (
     <section
@@ -201,7 +206,7 @@ export default function WeddingHero({ isOpen }) {
           {/* The explicit spaces keep the accessible name as "Radha and Rohit";
               flex layout ignores whitespace-only text nodes visually. */}
           <span className="hero__name hero__name--first">{names.first}</span>{' '}
-          <span className="hero__and">and</span>{' '}
+          <span className="hero__and">{ui.hero.and}</span>{' '}
           <span className="hero__name hero__name--second">{names.second}</span>
         </h1>
 
@@ -214,34 +219,34 @@ export default function WeddingHero({ isOpen }) {
             no placeholder text is ever shown on the designed screen. */}
         {hasEventDetails() && (
           <dl className="hero__details">
-            {wedding.dateLabel && (
+            {invitation.dateLabel && (
               <div className="hero__detail">
-                <dt>The Day</dt>
-                <dd>{wedding.dateLabel}</dd>
+                <dt>{ui.details.day}</dt>
+                <dd>{invitation.dateLabel}</dd>
               </div>
             )}
-            {wedding.timeLabel && (
+            {invitation.timeLabel && (
               <div className="hero__detail">
-                <dt>The Hour</dt>
-                <dd>{wedding.timeLabel}</dd>
+                <dt>{ui.details.hour}</dt>
+                <dd>{invitation.timeLabel}</dd>
               </div>
             )}
-            {wedding.venueName && (
+            {invitation.venueName && (
               <div className="hero__detail">
-                <dt>The Place</dt>
-                <dd>{wedding.venueName}</dd>
+                <dt>{ui.details.place}</dt>
+                <dd>{invitation.venueName}</dd>
               </div>
             )}
-            {wedding.venueLocation && (
+            {invitation.venueLocation && (
               <div className="hero__detail">
-                <dt>Location</dt>
-                <dd>{wedding.venueLocation}</dd>
+                <dt>{ui.details.location}</dt>
+                <dd>{invitation.venueLocation}</dd>
               </div>
             )}
-            {wedding.venueAddress && (
+            {invitation.venueAddress && (
               <div className="hero__detail">
-                <dt>Address</dt>
-                <dd>{wedding.venueAddress}</dd>
+                <dt>{ui.details.address}</dt>
+                <dd>{invitation.venueAddress}</dd>
               </div>
             )}
           </dl>

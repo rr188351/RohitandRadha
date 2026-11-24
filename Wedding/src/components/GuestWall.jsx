@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
-import { wedding } from '../config/wedding.js';
+import { useI18n } from '../i18n/index.jsx';
 import {
   GUEST_REFRESH_MS,
   RSVP_ACCEPTED_EVENT,
@@ -242,6 +242,7 @@ export default function GuestWall() {
     };
   }, []);
 
+  const { wedding } = useI18n();
   const { guests: copy, names } = wedding;
   const count = guests.length;
   const showWall = status === 'ready' && count > 0;

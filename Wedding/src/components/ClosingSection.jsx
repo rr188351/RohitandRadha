@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { gsap } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
-import { wedding } from '../config/wedding.js';
+import { useI18n } from '../i18n/index.jsx';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
@@ -145,6 +145,7 @@ export default function ClosingSection() {
     };
   }, []);
 
+  const { wedding } = useI18n();
   const { closing, names } = wedding;
 
   return (

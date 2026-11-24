@@ -107,17 +107,33 @@ export function createRequestId() {
  * @param {unknown} error
  * @returns {string}
  */
-export function describeRsvpError(error) {
-  if (error?.code === 'timeout' || error?.name === 'AbortError') {
-    return 'Your reply took too long to reach us. Please check your connection and try again.';
-  }
-  if (error?.status === 429) {
-    return 'We have already received several replies from this device. Please try again in a little while.';
-  }
-  if (error?.status === 400) {
-    return 'Some of the details need a second look. Please check them and try again.';
-  }
-  return 'We could not send your reply just now. Please try again in a moment.';
+/**
+ * Turns a failure into something worth showing a guest.
+ *
+ * Never a driver, server or stack detail - only what the guest can act on. The
+ * wording comes from the dictionary, so it is shown in the guest's own language;
+ * `messages` may be omitted (the English copy is the default) and the callers in
+ * the invitation pass the translated set.
+ *
+ * @param {unknown} error
+ * @param {{timeout: string, rateLimited: string, invalid: string, fallback: string}} [messages]
+ * @returns {string}
+ */
+export function describeRsvpError(error, messages = {}) {
+  const copy = {
+    timeout:
+      'Your reply took too long to reach us. Please check your connection and try again.',
+    rateLimited:
+      'We have already received several replies from this device. Please try again in a little while.',
+    invalid: 'Some of the details need a second look. Please check them and try again.',
+    fallback: 'We could not send your reply just now. Please try again in a moment.',
+    ...messages,
+  };
+
+  if (error?.code === 'timeout' || error?.name === 'AbortError') return copy.timeout;
+  if (error?.status === 429) return copy.rateLimited;
+  if (error?.status === 400) return copy.invalid;
+  return copy.fallback;
 }
 
 /**
