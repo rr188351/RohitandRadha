@@ -4815,3 +4815,392 @@ button {
   }
 }
 
+/* ==========================================================================
+   Phase 19 — Our Beloved Guests (the celebration wall)
+   --------------------------------------------------------------------------
+   A wall of names rather than another panel: each guest is a small plaque on
+   the burgundy ground, so the names themselves are the composition. It reuses
+   the invitation's glass utility, tokens and typography, and it inherits the
+   same candlelight the rest of the journey is lit by.
+   ========================================================================== */
+.guests {
+  position: relative;
+  z-index: 8;
+  width: 100%;
+  max-width: 62rem;
+  margin-inline: auto;
+  padding: clamp(5rem, 12vw, 9rem) clamp(1.25rem, 5vw, 3rem)
+    clamp(6rem, 15vw, 11rem);
+  overflow: clip;
+}
+
+/* Warm candlelight gathering behind the wall. */
+.guests__halo {
+  position: absolute;
+  inset: 8% 3% 10%;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    closest-side,
+    rgba(229, 201, 146, 0.16) 0%,
+    rgba(197, 164, 109, 0.05) 54%,
+    rgba(197, 164, 109, 0) 78%
+  );
+  pointer-events: none;
+}
+
+/* --- The heading --------------------------------------------------------- */
+.guests__header,
+.guests__footer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.45rem);
+  text-align: center;
+}
+
+.guests__eyebrow {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: clamp(0.6rem, 2.4vw, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.guests__rule {
+  width: min(100%, 15rem);
+}
+
+.guests__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 8.5vw, 4.1rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.guests__title-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.guests__title-inner {
+  display: block;
+}
+
+.guests__title em {
+  font-style: italic;
+  color: var(--gold-champagne);
+}
+
+.guests__intro {
+  max-width: 36ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.88rem, 2.9vw, 1rem);
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--ivory-muted);
+}
+
+/* --- The wall ------------------------------------------------------------ */
+.guests__stage {
+  position: relative;
+  margin-top: clamp(2.2rem, 6vw, 3.4rem);
+}
+
+.guests__wall {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(0.6rem, 2vw, 1rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each name keeps the invitation's glass, in the softest of its weights. */
+.guests__plaque {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+  max-width: 100%;
+  padding: 0.72rem clamp(1rem, 3.4vw, 1.5rem);
+  transition: transform 0.5s var(--ease-soft), border-color 0.5s ease,
+    box-shadow 0.5s ease, background-color 0.5s ease;
+}
+
+/* A hairline inside the hairline: the invitation's double rule in miniature. */
+.guests__plaque::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid var(--glass-ring);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.guests__plaque-gem {
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-radius: 1px;
+  rotate: 45deg;
+  background-image: linear-gradient(140deg, var(--gold-champagne), var(--gold-muted));
+  box-shadow: 0 0 7px rgba(229, 201, 146, 0.45);
+}
+
+.guests__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.02rem, 3.5vw, 1.32rem);
+  line-height: 1.3;
+  letter-spacing: 0.012em;
+  color: var(--ivory);
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+/* Desktop pointers only: a lift, a warmer border, a little more light. */
+@media (hover: hover) and (pointer: fine) {
+  .guests__plaque:hover {
+    transform: translateY(-3px);
+    border-color: var(--glass-border-strong);
+    background-color: var(--glass-fill-burgundy);
+    box-shadow: inset 0 1px 0 0 rgba(229, 201, 146, 0.2),
+      0 26px 48px -26px rgba(197, 164, 109, 0.5),
+      0 0 42px -18px rgba(197, 164, 109, 0.3);
+  }
+}
+
+/* --- The loading, empty and unreachable states --------------------------- */
+.guests__loading,
+.guests__state {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  text-align: center;
+}
+
+.guests__state-copy {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.98rem, 3.2vw, 1.14rem);
+  line-height: 1.7;
+  color: var(--ivory-muted);
+}
+
+.guests__state-copy--empty {
+  max-width: 30ch;
+  color: var(--ivory);
+}
+
+/* Four empty capsules where the names will be, breathing slowly. */
+.guests__ghosts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.6rem, 2vw, 1rem);
+}
+
+.guests__ghost {
+  position: relative;
+  width: clamp(5.5rem, 24vw, 8.5rem);
+  height: clamp(2.6rem, 8vw, 2.95rem);
+  border: 1px solid rgba(197, 164, 109, 0.22);
+  border-radius: var(--glass-radius);
+  overflow: hidden;
+  background-color: var(--glass-fill-wine);
+  animation: guests-breathe 3.6s var(--ease-soft) infinite;
+}
+
+.guests__ghost::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    105deg,
+    rgba(245, 239, 229, 0) 38%,
+    rgba(229, 201, 146, 0.12) 50%,
+    rgba(245, 239, 229, 0) 62%
+  );
+  background-size: 240% 100%;
+  animation: guests-shimmer 3.6s linear infinite;
+}
+
+@keyframes guests-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.88;
+  }
+}
+
+@keyframes guests-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+.guests__state-gem {
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  rotate: 45deg;
+  background-image: linear-gradient(140deg, var(--gold-champagne), var(--gold-muted));
+  box-shadow: 0 0 10px rgba(229, 201, 146, 0.45);
+}
+
+/* The retry button wears the invitation's button, in a smaller size. */
+.guests__retry {
+  position: relative;
+  min-height: 2.85rem;
+  padding: 0.72rem 1.6rem;
+  border: 1px solid rgba(197, 164, 109, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--gold-champagne);
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.5vw, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  background-color: rgba(37, 13, 22, 0.55);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.1) 0%,
+    rgba(229, 201, 146, 0.02) 48%,
+    rgba(22, 9, 13, 0.32) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.14),
+    0 14px 34px -18px rgba(197, 164, 109, 0.55);
+  transition: transform 0.45s var(--ease-soft), border-color 0.45s ease,
+    color 0.45s ease, box-shadow 0.45s ease;
+}
+
+.guests__retry:hover {
+  transform: translateY(-2px);
+  border-color: var(--glass-border-strong);
+  color: var(--ivory);
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.22),
+    0 22px 46px -18px rgba(197, 164, 109, 0.6);
+}
+
+.guests__retry:active {
+  transform: translateY(0);
+}
+
+.guests__retry:focus-visible {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 3px;
+}
+
+/* --- The sign-off -------------------------------------------------------- */
+.guests__footer {
+  margin-top: clamp(2.6rem, 7vw, 4rem);
+}
+
+.guests__signoff {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.42rem;
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 3.4vw, 1.26rem);
+  color: var(--ivory-muted);
+}
+
+.guests__signoff-names {
+  font-style: normal;
+  font-size: clamp(1.22rem, 4.2vw, 1.62rem);
+  color: var(--gold-champagne);
+}
+
+.guests__signoff-names em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.guests__heart {
+  color: var(--gold);
+  font-size: 1.08em;
+}
+
+.guests__visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Phones: a calmer, cheaper wall ------------------------------------- */
+@media (max-width: 899.98px) {
+  /* Fifty frosted plaques would cost a phone real frames per second, and the
+     background behind them is nearly flat: the translucency carries the look,
+     the blur would only carry the cost. */
+  .guests__plaque {
+    backdrop-filter: none;
+    background-color: rgba(37, 13, 22, 0.72);
+  }
+}
+
+@media (max-width: 520px) {
+  .guests__wall {
+    gap: 0.55rem;
+  }
+
+  .guests__plaque {
+    padding: 0.64rem 1rem;
+    gap: 0.52rem;
+  }
+
+  .guests__name {
+    font-size: 1.04rem;
+  }
+}
+
+/* --- Reduced motion: complete and still --------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .guests__ghost {
+    animation: none;
+    opacity: 0.72;
+  }
+
+  .guests__ghost::after {
+    display: none;
+  }
+
+  .guests__plaque,
+  .guests__retry {
+    transition: none;
+  }
+}
+

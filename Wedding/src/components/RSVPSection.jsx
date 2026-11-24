@@ -11,6 +11,7 @@ import {
   RSVP_SOURCE,
   sendRsvp,
 } from '../config/rsvpApi.js';
+import { RSVP_ACCEPTED_EVENT } from '../config/guestsApi.js';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 import RSVPForm from './RSVPForm.jsx';
@@ -233,6 +234,10 @@ export default function RSVPSection() {
           emailStatus: typeof emailStatus === 'string' ? emailStatus : 'skipped',
         });
         setStatus('done');
+
+        // Phase 19 — the reply is stored, so the guest wall can fetch the new
+        // name at once instead of waiting for its next refresh tick.
+        window.dispatchEvent(new CustomEvent(RSVP_ACCEPTED_EVENT));
       } catch (error) {
         // The reply could not be delivered. The guest keeps every detail they
         // typed (the form stays mounted) and is told what to do next.

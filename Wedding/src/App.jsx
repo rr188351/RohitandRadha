@@ -5,6 +5,7 @@ import CelebrationSection from './components/CelebrationSection.jsx';
 import ClosingSection from './components/ClosingSection.jsx';
 import EventShowcase from './components/EventShowcase.jsx';
 import GallerySection from './components/GallerySection.jsx';
+import GuestWall from './components/GuestWall.jsx';
 import InvitationIntro from './components/InvitationIntro.jsx';
 import MusicPlayer from './components/MusicPlayer.jsx';
 import RSVPSection from './components/RSVPSection.jsx';
@@ -64,6 +65,10 @@ function App() {
       {isOpen && <GallerySection />}
       {isOpen && <WeddingTimeline />}
       {isOpen && <RSVPSection />}
+      {/* Phase 19 — the names of everyone who accepted, read from the public,
+          read-only endpoint. It sits after the RSVP so a guest who has just
+          replied meets the wall their own name has just joined. */}
+      {isOpen && <GuestWall />}
       {isOpen && <ClosingSection />}
       <AutoScrollController isOpen={isOpen} />
       {/* The music joins the invitation with its opening, and picks up the

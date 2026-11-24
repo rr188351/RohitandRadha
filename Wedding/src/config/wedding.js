@@ -175,6 +175,37 @@ export const wedding = {
     signoff: 'With love, always.',
   },
 
+  /* Phase 19 — the guest celebration wall.
+     The names are read from the public, read-only endpoint
+     (`GET /api/wedding/guests`), which returns a display name per guest and
+     nothing else, so nothing about a guest beyond the name they chose to give
+     is ever published. Every word below is the couple's own copy. */
+  guests: {
+    eyebrow: 'A Celebration of Love',
+    titleLead: 'Our',
+    titleAccent: 'Beloved Guests',
+    intro: 'Thank you for being a part of our happiness',
+
+    /* Shown while the names are being read from the API. */
+    loading: 'Gathering the blessings\u2026',
+
+    /* Shown when nobody has accepted yet - never filled with invented names. */
+    empty: 'Our celebration is waiting for its first blessings.',
+
+    /* Shown when the list simply cannot be reached. The rest of the invitation
+       carries on regardless; this is one quiet panel, not a broken page. */
+    error: 'The guest list could not be reached just now.',
+    retry: 'Try again',
+
+    /* The closing line of the section. `names.first` and `names.second` join it,
+       so the signature can only ever read Radha & Rohit. */
+    signoff: 'With love,',
+
+    /* Announced to screen readers only, and only when the wall changes. */
+    announceOne: 'One guest has accepted.',
+    announceSuffix: 'guests have accepted.',
+  },
+
   /* ---------------------------------------------------------------------
      Awaiting confirmation — leave `null` until the details are final
      --------------------------------------------------------------------- */
