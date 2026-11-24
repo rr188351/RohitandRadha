@@ -5400,3 +5400,183 @@ button {
     transition: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   32. DEVANAGARI TYPE, FORM AIR AND CONTROL OFFSETS (PHASE 21)
+
+   Hindi and Bhojpuri are set in the very same faces as the English invitation,
+   but Devanagari is a taller, connected script: it carries matras above the
+   shirorekha and descenders below the baseline, and the wide tracking that
+   makes the Latin labels look engraved tears its conjuncts apart.
+
+   EVERYTHING BELOW IS SCOPED TO `html:lang(hi)` / `html:lang(bho)`. The
+   English invitation is not touched by a single declaration in this section.
+   -------------------------------------------------------------------------- */
+
+/* --- 32a. The script ------------------------------------------------------
+   Noto Serif Devanagari is placed AFTER every Latin family and BEFORE the
+   generic serif. Cormorant, Cinzel and DM Sans carry no Devanagari glyphs, so
+   Devanagari falls through to Noto while every Latin word - including the
+   couple's names, which are never translated - keeps the face it was drawn in. */
+html:lang(hi),
+html:lang(bho) {
+  --font-display: 'Cormorant Garamond', 'Noto Serif Devanagari',
+    'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-label: 'Cinzel', 'Noto Serif Devanagari', 'Trajan Pro',
+    'Times New Roman', Georgia, serif;
+  --font-body: 'DM Sans', 'Noto Serif Devanagari', system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif;
+}
+
+/* The base leading was tuned for Latin; Devanagari needs more of it. */
+:is(html:lang(hi), html:lang(bho)) body {
+  line-height: 1.78;
+}
+
+/* --- 32b. Display type ----------------------------------------------------
+   The English headings run at 1.02-1.15 so the serif sits tight and elegant.
+   Devanagari needs a full line box for the matras that sit above and below. */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .invitation__title,
+    .celebration__title,
+    .showcase__title,
+    .event__name,
+    .gallery__title,
+    .timeline__title,
+    .milestone__name,
+    .rsvp__title,
+    .rsvp__success-title,
+    .closing__title,
+    .guests__title
+  ) {
+  line-height: 1.46;
+  letter-spacing: 0;
+}
+
+/* --- 32c. Masked reveals --------------------------------------------------
+   Each title is revealed through an `overflow: hidden` mask. These negative
+   margins enlarge the clip window without moving anything on the page, so a
+   matra on the first line or a descender on the last is never cut off. */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .showcase__title-mask,
+    .event__name-mask,
+    .gallery__title-mask,
+    .timeline__title-mask,
+    .milestone__name-mask,
+    .rsvp__title-mask,
+    .closing__title-mask,
+    .guests__title-mask
+  ) {
+  padding-top: 0.12em;
+  margin-top: -0.12em;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+}
+
+/* --- 32d. Labels and tracked capitals ------------------------------------
+   Devanagari conjuncts are joined strokes: 0.28-0.36em of tracking splits them
+   and reads as a rendering fault. The tracking is dropped, the `text-indent`
+   that compensated for it goes with it, and the label gets the leading its
+   matras need. */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .invitation__label,
+    .invitation__button,
+    .hero__label,
+    .hero__detail dt,
+    .celebration__label,
+    .details__label,
+    .showcase__label,
+    .event__label,
+    .gallery__label,
+    .timeline__eyebrow,
+    .milestone__label,
+    .rsvp__eyebrow,
+    .rsvp__option-label,
+    .rsvp__field-label,
+    .rsvp__submit,
+    .rsvp__change,
+    .closing__eyebrow,
+    .guests__eyebrow,
+    .guests__retry,
+    .auto-scroll,
+    .music__track,
+    .lang__current
+  ) {
+  letter-spacing: 0.02em;
+  text-indent: 0;
+  line-height: 1.55;
+}
+
+/* --- 32e. Running text ---------------------------------------------------- */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .invitation__text,
+    .hero__copy,
+    .celebration__copy,
+    .showcase__intro,
+    .event__copy,
+    .gallery__intro,
+    .timeline__intro,
+    .milestone__copy,
+    .rsvp__intro,
+    .rsvp__decline-copy,
+    .rsvp__success-lede,
+    .rsvp__success-quote,
+    .closing__message,
+    .guests__intro,
+    .guests__state-copy
+  ) {
+  line-height: 2.05;
+}
+
+/* Short strings still deserve a whole Devanagari line: notes, hints, errors and
+   the names on the guest wall (a guest may write their own name in Devanagari). */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .rsvp__option-note,
+    .rsvp__success-note,
+    .rsvp__success-detail,
+    .rsvp__submit-note,
+    .rsvp__hint,
+    .rsvp__error,
+    .guests__name,
+    .music__notice
+  ) {
+  line-height: 1.75;
+}
+
+/* --- 32f. Form controls ---------------------------------------------------
+   A field clips its own text, so Devanagari gets a taller box and a leading
+   that cannot crop a matra at either edge of the control. */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .rsvp__input,
+    .rsvp__select,
+    .rsvp__textarea
+  ) {
+  min-height: 3.1rem;
+  padding-block: 0.7rem;
+  line-height: 1.75;
+}
+
+:is(html:lang(hi), html:lang(bho)) .rsvp__textarea {
+  line-height: 1.9;
+}
+
+/* --- 32g. Floating control offsets ---------------------------------------
+   Both bottom controls and the language pill step further inside the gold
+   frame: 15px down from the top edge and 10px in from the left, with the same
+   15px lift at the foot so the music pill and the auto-scroll capsule keep
+   sharing one baseline instead of drifting apart. Every offset is added to the
+   frame-derived `--control-inset`, so all three stay inside the border at every
+   width, phones included. */
+.lang {
+  margin-top: 15px;
+  margin-left: 10px;
+}
+
+.music {
+  margin-left: 10px;
+  margin-bottom: 15px;
+}
+
+.auto-scroll {
+  margin-bottom: 15px;
+}
