@@ -6,6 +6,7 @@ import { attachCardHover, cardFrom, cardTo } from '../lib/motion.js';
 import { hasEventDetails } from '../config/wedding.js';
 import { useI18n } from '../i18n/index.jsx';
 import GoldFrame from './GoldFrame.jsx';
+import CardOrnament from './CardOrnament.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
@@ -186,6 +187,9 @@ export default function WeddingHero({ isOpen }) {
       </div>
 
       <div className="hero__inner glass glass--panel glass-inset">
+        <CardOrnament kind="dust" />
+        <CardOrnament kind="arch" />
+        <CardOrnament kind="band" />
         <GoldFrame sweep />
         <div className="hero__crest">
           <span className="hero__crest-line" aria-hidden="true" />

@@ -4,6 +4,7 @@ import { ArrowRight, Crown } from 'lucide-react';
 import { gsap } from '../lib/gsap';
 import { useI18n } from '../i18n/index.jsx';
 import AmbientBackdrop from './AmbientBackdrop.jsx';
+import CardOrnament from './CardOrnament.jsx';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 
@@ -198,6 +199,11 @@ export default function InvitationIntro({ isOpen = false, onOpen }) {
 
       <article className="glass glass--panel invitation">
         <span className="glass-grain" aria-hidden="true" />
+        {/* Phase 22B/22D: the card's own ornamental ground — a Mughal
+            eight-point star lattice, a palace arch and a header band. */}
+        <CardOrnament kind="mughal" />
+        <CardOrnament kind="arch" />
+        <CardOrnament kind="band" />
         <GoldFrame tone="rich" sweep />
 
         {CORNERS.map((position) => (

@@ -9,10 +9,18 @@ import {
 } from '../lib/motion.js';
 import EventDetails from './EventDetails.jsx';
 import EventOrnament from './EventOrnament.jsx';
+import CardOrnament from './CardOrnament.jsx';
 import GoldFrame from './GoldFrame.jsx';
 import { CornerOrnament } from './Ornaments.jsx';
 
 const CORNERS = ['tl', 'tr', 'br', 'bl'];
+
+/** Phase 22D — each celebration carries its own background ground. */
+const PATTERN = {
+  haldi: 'diagonal',
+  mehendi: 'bloom',
+  wedding: 'mandala',
+};
 
 /**
  * One editorial celebration entry.
@@ -161,6 +169,8 @@ export default function EventEntry({ event, index }) {
             aria-hidden="true"
           >
             <span className="glass-sheen" />
+            <CardOrnament kind="scallop" />
+            <CardOrnament kind="arch" />
             <GoldFrame tone="rich" sweep />
           </span>
           <div className="event__corners" aria-hidden="true">
@@ -186,6 +196,7 @@ export default function EventEntry({ event, index }) {
         }`}
       >
         {event.frame ? null : <GoldFrame />}
+        {event.frame ? null : <CardOrnament kind={PATTERN[event.theme] || 'diagonal'} />}
         <p className="event__meta">
           <span className="event__number">
             {String(index + 1).padStart(2, '0')}

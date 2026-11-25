@@ -9,6 +9,7 @@ import {
   fetchAcceptedGuests,
 } from '../config/guestsApi.js';
 import { Divider } from './Ornaments.jsx';
+import CardOrnament from './CardOrnament.jsx';
 
 /** The placeholder capsules the loading state breathes through. */
 const LOADING_CAPSULES = [0, 1, 2, 3];
@@ -304,12 +305,14 @@ export default function GuestWall() {
           <ul className="guests__wall" role="list">
             {guests.map((name, index) => (
               <li
-                className="guests__plaque glass glass--soft"
+                className="guests__plaque glass glass--panel"
                 key={`${name}-${index}`}
                 data-name={name}
               >
                 <span className="guests__plaque-gem" aria-hidden="true" />
+                <CardOrnament kind="speckle" />
                 <span className="guests__name">{name}</span>
+                <span className="guests__plaque-gem" aria-hidden="true" />
               </li>
             ))}
           </ul>

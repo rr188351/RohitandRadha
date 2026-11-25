@@ -10,6 +10,7 @@ import {
 import EventDetails from './EventDetails.jsx';
 import EventOrnament from './EventOrnament.jsx';
 import GoldFrame from './GoldFrame.jsx';
+import CardOrnament from './CardOrnament.jsx';
 
 /**
  * One milestone on the celebration timeline.
@@ -147,6 +148,7 @@ export default function TimelineEvent({ event, index }) {
         {event.theme === 'wedding' ? (
           <span className="glass-sheen" aria-hidden="true" />
         ) : null}
+        <CardOrnament kind="trellis" />
         <GoldFrame />
 
         <p className="milestone__meta">

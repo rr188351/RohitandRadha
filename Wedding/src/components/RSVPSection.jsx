@@ -13,6 +13,7 @@ import {
 } from '../config/rsvpApi.js';
 import { RSVP_ACCEPTED_EVENT } from '../config/guestsApi.js';
 import GoldFrame from './GoldFrame.jsx';
+import CardOrnament from './CardOrnament.jsx';
 import { CornerOrnament, Divider } from './Ornaments.jsx';
 import RSVPForm from './RSVPForm.jsx';
 
@@ -295,6 +296,8 @@ export default function RSVPSection() {
 
         <article className="rsvp__panel glass glass--panel">
           <span className="glass-grain" aria-hidden="true" />
+          <CardOrnament kind="mandala" />
+          <CardOrnament kind="band" />
           <GoldFrame sweep />
 
           <div className="rsvp__corners" aria-hidden="true">

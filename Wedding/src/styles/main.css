@@ -4922,6 +4922,11 @@ button {
 }
 
 .guests__wall {
+  /* The plaque motif, defined once for the whole wall: a small gold lozenge
+     that sits in all four inner corners of every plaque. Inline SVG, so it
+     stays crisp at any size and costs no request. */
+  --guests-motif-gem: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 .7 9.3 5 5 9.3.7 5Z' fill='none' stroke='%23e5c992' stroke-opacity='.7' stroke-width='.9'/%3E%3Cpath d='M5 3.3 6.7 5 5 6.7 3.3 5Z' fill='%23c5a46d' fill-opacity='.85'/%3E%3C/svg%3E");
+
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
@@ -4932,16 +4937,55 @@ button {
   list-style: none;
 }
 
-/* Each name keeps the invitation's glass, in the softest of its weights. */
+/* Each name sits on a proper royal plaque rather than a bare pill: the same
+   opaque burgundy glass the invitation, hero and closing letter wear, a
+   champagne hairline, the invitation's own gold lozenge motif (in all four
+   corners), and a small lozenge flanking the name on either side. The plaque is
+   a `min-width` card so the wall reads as a set of framed names instead of a
+   row of tight chips, while still growing with the guest's name. */
 .guests__plaque {
   position: relative;
+  /* Keeps the plaque's ornament layer (z-index: -1) inside this card, so the
+     speckle paints above the glass rather than behind it. */
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
-  gap: 0.62rem;
-  max-width: 100%;
-  padding: 0.72rem clamp(1rem, 3.4vw, 1.5rem);
+  justify-content: center;
+  gap: 0.7rem;
+  width: auto;
+  min-width: clamp(9rem, 21vw, 12.5rem);
+  max-width: min(100%, 20rem);
+  padding: 0.95rem clamp(1.15rem, 3.4vw, 1.7rem);
+  border-color: var(--glass-border-strong);
+  box-shadow: inset 0 1px 0 0 rgba(229, 201, 146, 0.16),
+    inset 0 -1px 0 0 rgba(22, 9, 13, 0.6), 0 0 0 1px rgba(11, 5, 7, 0.5),
+    0 22px 48px -28px rgba(0, 0, 0, 0.88),
+    0 0 36px -20px rgba(197, 164, 109, 0.55);
   transition: transform 0.5s var(--ease-soft), border-color 0.5s ease,
-    box-shadow 0.5s ease, background-color 0.5s ease;
+    box-shadow 0.5s ease;
+}
+
+/* The ornament layer. Drawn entirely with background layers so a wall of two
+   hundred names still costs no extra markup: a small gold lozenge in each
+   corner just inside the ring, over a soft champagne wash that gathers under
+   the top edge. */
+.guests__plaque::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: var(--guests-motif-gem), var(--guests-motif-gem),
+    var(--guests-motif-gem), var(--guests-motif-gem),
+    radial-gradient(
+      120% 92% at 50% -24%,
+      rgba(229, 201, 146, 0.14),
+      rgba(229, 201, 146, 0) 62%
+    );
+  background-repeat: no-repeat;
+  background-position: left top, right top, right bottom, left bottom, center;
+  background-size: 7px 7px, 7px 7px, 7px 7px, 7px 7px, 100% 100%;
 }
 
 /* A hairline inside the hairline: the invitation's double rule in miniature. */
@@ -4949,26 +4993,33 @@ button {
   content: '';
   position: absolute;
   inset: 4px;
+  z-index: 1;
   border: 1px solid var(--glass-ring);
   border-radius: inherit;
   pointer-events: none;
 }
 
+/* A small gold lozenge, drawn as an outline so it echoes the corner diamonds
+   rather than fighting them. */
 .guests__plaque-gem {
+  position: relative;
+  z-index: 1;
   flex: 0 0 auto;
-  width: 5px;
-  height: 5px;
-  border-radius: 1px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--gold-champagne);
   rotate: 45deg;
-  background-image: linear-gradient(140deg, var(--gold-champagne), var(--gold-muted));
-  box-shadow: 0 0 7px rgba(229, 201, 146, 0.45);
+  box-shadow: 0 0 8px rgba(229, 201, 146, 0.5);
 }
 
 .guests__name {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-display);
-  font-size: clamp(1.02rem, 3.5vw, 1.32rem);
+  font-size: clamp(1.06rem, 3.5vw, 1.34rem);
   line-height: 1.3;
   letter-spacing: 0.012em;
+  text-align: center;
   color: var(--ivory);
   overflow-wrap: break-word;
   text-wrap: balance;
@@ -4977,12 +5028,12 @@ button {
 /* Desktop pointers only: a lift, a warmer border, a little more light. */
 @media (hover: hover) and (pointer: fine) {
   .guests__plaque:hover {
-    transform: translateY(-3px);
-    border-color: var(--glass-border-strong);
-    background-color: var(--glass-fill-burgundy);
-    box-shadow: inset 0 1px 0 0 rgba(229, 201, 146, 0.2),
-      0 26px 48px -26px rgba(197, 164, 109, 0.5),
-      0 0 42px -18px rgba(197, 164, 109, 0.3);
+    transform: translateY(-4px);
+    border-color: rgba(229, 201, 146, 0.82);
+    box-shadow: inset 0 1px 0 0 rgba(229, 201, 146, 0.22),
+      inset 0 -1px 0 0 rgba(22, 9, 13, 0.6), 0 0 0 1px rgba(11, 5, 7, 0.5),
+      0 30px 56px -28px rgba(0, 0, 0, 0.9),
+      0 0 48px -16px rgba(197, 164, 109, 0.62);
   }
 }
 
@@ -5166,11 +5217,11 @@ button {
 /* --- Phones: a calmer, cheaper wall ------------------------------------- */
 @media (max-width: 899.98px) {
   /* Fifty frosted plaques would cost a phone real frames per second, and the
-     background behind them is nearly flat: the translucency carries the look,
-     the blur would only carry the cost. */
+     plaque's own panel gradient already carries almost all of its opacity: the
+     fill carries the look, the blur would only carry the cost. */
   .guests__plaque {
     backdrop-filter: none;
-    background-color: rgba(37, 13, 22, 0.72);
+    background-color: rgba(37, 13, 22, 0.8);
   }
 }
 
@@ -5180,12 +5231,18 @@ button {
   }
 
   .guests__plaque {
-    padding: 0.64rem 1rem;
-    gap: 0.52rem;
+    min-width: clamp(8.25rem, 40vw, 10rem);
+    padding: 0.85rem 0.95rem;
+    gap: 0.55rem;
   }
 
   .guests__name {
-    font-size: 1.04rem;
+    font-size: 1.06rem;
+  }
+
+  /* Narrower plaques: the corner lozenges step down with them. */
+  .guests__plaque::before {
+    background-size: 6px 6px, 6px 6px, 6px 6px, 6px 6px, 100% 100%;
   }
 }
 
@@ -5579,4 +5636,662 @@ html:lang(bho) {
 
 .auto-scroll {
   margin-bottom: 15px;
+}
+
+/* --------------------------------------------------------------------------
+   33. GUEST PLAQUES + THE CEREMONY PLAQUE'S TOP AIR (PHASE 22)
+   Two targeted refinements. The guest wall's cards now wear the invitation's
+   opaque glass with their ornament drawn in CSS (section 30, edited in place),
+   and the ceremony's framed entry — the one carrying `03 — The Sacred Union` —
+   finally has breathing room above its own words.
+   -------------------------------------------------------------------------- */
+
+/* The framed ceremony's gold frame is positioned against its grid row, and a
+   grid area begins at the CONTENT box. The article's top padding therefore fell
+   outside the plaque while its bottom padding fell inside it — so the
+   `03 — The Sacred Union` row sat straight on the top rule (measured: 0px of
+   air) while the copy kept a full 48px below it. Lifting the frame, and the
+   corner ornaments that ride with it, by exactly the article's vertical padding
+   makes both edges sit the same distance from the words, without changing the
+   entry's height or the space around it. */
+.event--framed .event__frame,
+.event--framed .event__corners {
+  top: calc(-1 * clamp(1.75rem, 4.5vw, 3rem));
+}
+
+/* --------------------------------------------------------------------------
+   34. ORNAMENTAL CARD SURFACES (PHASE 22B)
+   Every card in the invitation is the same dark burgundy glass, which on a
+   large screen reads as a flat, empty panel. This section puts ornamental
+   artwork back INTO the surfaces: a Mughal star lattice, gold dust, botanical
+   vines, ornamental diagonals, miniature florals, a royal mandala, a geometric
+   trellis, flowing curves, gold speckle, a palace arch, a floral spray and a
+   filigree band — all drawn as inline SVG (no requests, crisp at any size) and
+   exposed once as custom properties so each card can compose its own
+   combination.
+
+   The layers are absolutely positioned at `z-index: -1` inside the card, so
+   an ornament is painted above the glass and below every word, button and
+   photograph. The cards that do not already establish a stacking context get
+   `isolation: isolate`, which keeps that negative index inside the panel
+   instead of letting it fall behind the panel's own background.
+   -------------------------------------------------------------------------- */
+
+.celebration__frame,
+.closing__panel,
+.rsvp__panel,
+.event__frame {
+  isolation: isolate;
+}
+
+.card-orn,
+.card-orn-corners {
+  --art-arch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='300' viewBox='0 0 240 300' fill='none'%3E%3Cg stroke='%23e5c992' stroke-opacity='.45' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M120 34V12'/%3E%3Cpath d='M120 46 92 26'/%3E%3Cpath d='M120 46 148 26'/%3E%3Cpath d='M120 54 74 40'/%3E%3Cpath d='M120 54 166 40'/%3E%3C/g%3E%3Cpath d='M120 40 126 48 120 56 114 48Z' fill='%23e5c992' fill-opacity='.75'/%3E%3Cpath d='M26 300V150a94 94 0 0 1 188 0v150' stroke='%23c5a46d' stroke-opacity='.62' stroke-width='1.2'/%3E%3Cpath d='M44 300V152a76 76 0 0 1 152 0v148' stroke='%23c5a46d' stroke-opacity='.44'/%3E%3Cpath d='M14 216h212' stroke='%23c5a46d' stroke-opacity='.34'/%3E%3Cpath d='M120 104 146 160 120 216 94 160Z' stroke='%23e5c992' stroke-opacity='.52' fill='%23e5c992' fill-opacity='.08'/%3E%3C/svg%3E");
+  --art-spray: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='70' viewBox='0 0 200 70' fill='none'%3E%3Cg stroke='%23c5a46d' stroke-opacity='.55' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M100 58C86 58 76 50 66 40 58 32 48 30 38 34'/%3E%3Cpath d='M100 58C114 58 124 50 134 40 142 32 152 30 162 34'/%3E%3C/g%3E%3Cg fill='%23c5a46d' fill-opacity='.5'%3E%3Cpath d='M66 40C72 30 82 26 90 28 84 34 76 38 66 40Z'/%3E%3Cpath d='M134 40C128 30 118 26 110 28 116 34 124 38 134 40Z'/%3E%3Cpath d='M46 33C52 24 62 21 69 24 63 30 55 33 46 33Z'/%3E%3Cpath d='M154 33C148 24 138 21 131 24 137 30 145 33 154 33Z'/%3E%3C/g%3E%3Cpath d='M100 40 108 52 100 64 92 52Z' stroke='%23e5c992' stroke-opacity='.62' fill='%23e5c992' fill-opacity='.14'/%3E%3Ccircle cx='100' cy='33' r='2' fill='%23e5c992' fill-opacity='.75'/%3E%3C/svg%3E");
+  --art-band: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='24' viewBox='0 0 320 24' fill='none'%3E%3Cpath d='M0 12h116' stroke='%23c5a46d' stroke-opacity='.5'/%3E%3Cpath d='M204 12h116' stroke='%23c5a46d' stroke-opacity='.5'/%3E%3Cpath d='M124 12C130 4 142 4 148 12 142 20 130 20 124 12Z' stroke='%23c5a46d' stroke-opacity='.55'/%3E%3Cpath d='M196 12C190 4 178 4 172 12 178 20 190 20 196 12Z' stroke='%23c5a46d' stroke-opacity='.55'/%3E%3Ccircle cx='118' cy='12' r='1.6' fill='%23e5c992' fill-opacity='.8'/%3E%3Ccircle cx='202' cy='12' r='1.6' fill='%23e5c992' fill-opacity='.8'/%3E%3Cpath d='M160 3 169 12 160 21 151 12Z' stroke='%23e5c992' stroke-opacity='.72'/%3E%3Cpath d='M160 8 164 12 160 16 156 12Z' fill='%23e5c992' fill-opacity='.6'/%3E%3C/svg%3E");
+  --art-corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76' fill='none'%3E%3Cpath d='M2 48C2 22 22 2 48 2' stroke='%23c5a46d' stroke-opacity='.6'/%3E%3Cpath d='M9 50C9 27 27 9 50 9' stroke='%23c5a46d' stroke-opacity='.34'/%3E%3Cg fill='%23c5a46d' fill-opacity='.45'%3E%3Cpath d='M15 15C26 13 33 16 36 23 27 26 18 24 15 15Z'/%3E%3Cpath d='M15 15C13 26 16 33 23 36 26 27 24 18 15 15Z'/%3E%3C/g%3E%3Cpath d='M24 32C33 23 48 25 50 38 52 50 41 58 31 54' stroke='%23e5c992' stroke-opacity='.6'/%3E%3Cpath d='M31 54C27 52 26 47 28 44' stroke='%23e5c992' stroke-opacity='.6' stroke-linecap='round'/%3E%3Ccircle cx='39' cy='38' r='2.2' fill='%23e5c992' fill-opacity='.65'/%3E%3Ccircle cx='12' cy='56' r='1.4' fill='%23c5a46d' fill-opacity='.55'/%3E%3Ccircle cx='56' cy='12' r='1.4' fill='%23c5a46d' fill-opacity='.55'/%3E%3C/svg%3E");
+
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+.card-orn,
+.card-orn-corners {
+  /* Phase 22D — nine genuinely different grounds, one per card family. */
+  --art-mughal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96' fill='none'%3E%3Cg stroke='%23c5a46d' stroke-opacity='.45'%3E%3Cpath d='M48 18 78 48 48 78 18 48Z'/%3E%3Cpath d='M26.8 26.8H69.2V69.2H26.8Z'/%3E%3C/g%3E%3Cg fill='%23c5a46d' fill-opacity='.5'%3E%3Cpath d='M48 0 54 6 48 12 42 6Z'/%3E%3Cpath d='M48 84 54 90 48 96 42 90Z'/%3E%3Cpath d='M0 48 6 42 12 48 6 54Z'/%3E%3Cpath d='M84 48 90 42 96 48 90 54Z'/%3E%3C/g%3E%3Ccircle cx='48' cy='48' r='3' fill='%23e5c992' fill-opacity='.6'/%3E%3C/svg%3E");
+  --art-dust: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cdefs%3E%3CradialGradient id='gl'%3E%3Cstop offset='0' stop-color='%23fbf0d6' stop-opacity='.9'/%3E%3Cstop offset='.42' stop-color='%23e5c992' stop-opacity='.34'/%3E%3Cstop offset='1' stop-color='%23e5c992' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg fill='%23c5a46d'%3E%3Ccircle cx='60' cy='26' r='2.6' fill-opacity='.22'/%3E%3Ccircle cx='154' cy='22' r='2.4' fill-opacity='.2'/%3E%3Ccircle cx='8' cy='46' r='2.2' fill-opacity='.2'/%3E%3Ccircle cx='72' cy='58' r='2.8' fill-opacity='.2'/%3E%3Ccircle cx='132' cy='80' r='2.5' fill-opacity='.18'/%3E%3Ccircle cx='168' cy='128' r='2.4' fill-opacity='.2'/%3E%3Ccircle cx='24' cy='154' r='2.6' fill-opacity='.2'/%3E%3Ccircle cx='180' cy='162' r='2.4' fill-opacity='.18'/%3E%3Ccircle cx='110' cy='188' r='2.5' fill-opacity='.18'/%3E%3Ccircle cx='196' cy='28' r='.8' fill-opacity='.45'/%3E%3C/g%3E%3Cg fill='%23f4e3bd'%3E%3Ccircle cx='36' cy='8' r='.8' fill-opacity='.55'/%3E%3Ccircle cx='84' cy='12' r='1.2' fill-opacity='.6'/%3E%3Ccircle cx='106' cy='30' r='.7' fill-opacity='.5'/%3E%3Ccircle cx='180' cy='14' r='1' fill-opacity='.6'/%3E%3Ccircle cx='24' cy='60' r='.9' fill-opacity='.6'/%3E%3Ccircle cx='170' cy='58' r='1.1' fill-opacity='.55'/%3E%3Ccircle cx='192' cy='52' r='.7' fill-opacity='.5'/%3E%3Ccircle cx='30' cy='78' r='.8' fill-opacity='.55'/%3E%3Ccircle cx='54' cy='92' r='1.4' fill-opacity='.6'/%3E%3Ccircle cx='104' cy='96' r='.9' fill-opacity='.5'/%3E%3Ccircle cx='182' cy='84' r='1' fill-opacity='.6'/%3E%3Ccircle cx='14' cy='120' r='.9' fill-opacity='.55'/%3E%3Ccircle cx='92' cy='116' r='.8' fill-opacity='.5'/%3E%3Ccircle cx='118' cy='130' r='1.2' fill-opacity='.55'/%3E%3Ccircle cx='194' cy='118' r='1' fill-opacity='.5'/%3E%3Ccircle cx='102' cy='150' r='.9' fill-opacity='.55'/%3E%3Ccircle cx='12' cy='188' r='.9' fill-opacity='.5'/%3E%3Ccircle cx='38' cy='180' r='1.2' fill-opacity='.55'/%3E%3Ccircle cx='64' cy='194' r='1' fill-opacity='.5'/%3E%3Ccircle cx='90' cy='184' r='.8' fill-opacity='.5'/%3E%3Ccircle cx='142' cy='182' r='.9' fill-opacity='.5'/%3E%3Ccircle cx='168' cy='194' r='1.1' fill-opacity='.55'/%3E%3C/g%3E%3Cg fill='%23e5c992'%3E%3Ccircle cx='12' cy='20' r='1.8' fill-opacity='.52'/%3E%3Ccircle cx='128' cy='9' r='1.6' fill-opacity='.45'/%3E%3Ccircle cx='46' cy='44' r='1.7' fill-opacity='.48'/%3E%3Ccircle cx='122' cy='62' r='1.9' fill-opacity='.5'/%3E%3Ccircle cx='146' cy='46' r='1.5' fill-opacity='.42'/%3E%3Ccircle cx='6' cy='86' r='1.9' fill-opacity='.5'/%3E%3Ccircle cx='80' cy='82' r='1.6' fill-opacity='.45'/%3E%3Ccircle cx='156' cy='94' r='1.7' fill-opacity='.46'/%3E%3Ccircle cx='66' cy='126' r='1.8' fill-opacity='.5'/%3E%3Ccircle cx='144' cy='114' r='1.5' fill-opacity='.42'/%3E%3Ccircle cx='50' cy='146' r='1.7' fill-opacity='.46'/%3E%3Ccircle cx='76' cy='160' r='1.9' fill-opacity='.5'/%3E%3Ccircle cx='154' cy='148' r='1.5' fill-opacity='.4'/%3E%3Ccircle cx='192' cy='186' r='.8' fill-opacity='.45'/%3E%3C/g%3E%3Ccircle cx='96' cy='48' r='12' fill='url(%23gl)'/%3E%3Ccircle cx='40' cy='112' r='10' fill='url(%23gl)'/%3E%3Ccircle cx='128' cy='164' r='8.5' fill='url(%23gl)'/%3E%3C/svg%3E");
+--art-vine: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='40' viewBox='0 0 200 40' fill='none'%3E%3Cpath d='M0 20Q50 0 100 20T200 20' stroke='%23c5a46d' stroke-opacity='.5'/%3E%3Cg fill='%23c5a46d' fill-opacity='.45'%3E%3Cpath d='M50 6C46 0 39 0 35 3 39 9 46 10 50 6Z'/%3E%3Cpath d='M50 6C54 0 61 0 65 3 61 9 54 10 50 6Z'/%3E%3Cpath d='M150 34C146 40 139 40 135 37 139 31 146 30 150 34Z'/%3E%3Cpath d='M150 34C154 40 161 40 165 37 161 31 154 30 150 34Z'/%3E%3C/g%3E%3Cg fill='%23e5c992' fill-opacity='.5'%3E%3Ccircle cx='25' cy='12' r='1.3'/%3E%3Ccircle cx='75' cy='12' r='1.3'/%3E%3Ccircle cx='125' cy='28' r='1.3'/%3E%3Ccircle cx='175' cy='28' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+  --art-diagonal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' fill='none'%3E%3Cg stroke='%23c5a46d' stroke-opacity='.4'%3E%3Cpath d='M-20 40 20 0'/%3E%3Cpath d='M0 40 40 0'/%3E%3Cpath d='M20 40 60 0'/%3E%3C/g%3E%3Cg fill='%23e5c992'%3E%3Ccircle cx='20' cy='20' r='1.2' fill-opacity='.45'/%3E%3Ccircle cx='0' cy='0' r='1.2' fill-opacity='.3'/%3E%3Ccircle cx='40' cy='40' r='1.2' fill-opacity='.3'/%3E%3C/g%3E%3C/svg%3E");
+  --art-bloom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' fill='none'%3E%3Cg stroke='%23c5a46d' stroke-opacity='.5' stroke-linecap='round'%3E%3Cpath d='M20 10v12M14 16h12M15.8 11.8 24.2 20.2M24.2 11.8 15.8 20.2'/%3E%3Cpath d='M82 32v12M76 38h12M77.8 33.8 86.2 42.2M86.2 33.8 77.8 42.2'/%3E%3Cpath d='M46 68v12M40 74h12M41.8 69.8 50.2 78.2M50.2 69.8 41.8 78.2'/%3E%3Cpath d='M102 94v12M96 100h12M97.8 95.8 106.2 104.2M106.2 95.8 97.8 104.2'/%3E%3C/g%3E%3Cg fill='%23e5c992'%3E%3Ccircle cx='20' cy='16' r='1.6' fill-opacity='.6'/%3E%3Ccircle cx='82' cy='38' r='1.6' fill-opacity='.6'/%3E%3Ccircle cx='46' cy='74' r='1.6' fill-opacity='.6'/%3E%3Ccircle cx='102' cy='100' r='1.6' fill-opacity='.6'/%3E%3C/g%3E%3Cg fill='%23c5a46d' fill-opacity='.35'%3E%3Ccircle cx='60' cy='30' r='.9'/%3E%3Ccircle cx='18' cy='52' r='.9'/%3E%3Ccircle cx='94' cy='66' r='.9'/%3E%3Ccircle cx='34' cy='98' r='.9'/%3E%3Ccircle cx='112' cy='20' r='.9'/%3E%3C/g%3E%3C/svg%3E");
+  --art-mandala: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300' fill='none'%3E%3Cg stroke='%23c5a46d' stroke-opacity='.42'%3E%3Ccircle cx='150' cy='150' r='146' stroke-dasharray='2 8'/%3E%3Ccircle cx='150' cy='150' r='122'/%3E%3Ccircle cx='150' cy='150' r='76' stroke-dasharray='2 6'/%3E%3Ccircle cx='150' cy='150' r='38'/%3E%3C/g%3E%3Cdefs%3E%3Cpath id='pt' d='M150 42C162 68 162 100 150 126 138 100 138 68 150 42Z'/%3E%3C/defs%3E%3Cg fill='%23c5a46d' fill-opacity='.26'%3E%3Cuse href='%23pt'/%3E%3Cuse href='%23pt' transform='rotate(30 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(60 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(90 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(120 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(150 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(180 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(210 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(240 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(270 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(300 150 150)'/%3E%3Cuse href='%23pt' transform='rotate(330 150 150)'/%3E%3C/g%3E%3Ccircle cx='150' cy='150' r='112' stroke='%23e5c992' stroke-opacity='.18'/%3E%3Ccircle cx='150' cy='150' r='6' fill='%23e5c992' fill-opacity='.55'/%3E%3C/svg%3E");
+  --art-trellis: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64' fill='none'%3E%3Cg stroke='%23c5a46d' stroke-opacity='.28'%3E%3Cpath d='M32 0v64M0 32h64'/%3E%3Cpath d='M32 32 64 0M32 32 64 64M32 32 0 64M32 32 0 0' stroke-opacity='.16'/%3E%3C/g%3E%3Cg fill='%23e5c992'%3E%3Ccircle cx='32' cy='32' r='1.6' fill-opacity='.5'/%3E%3Ccircle cx='0' cy='0' r='1.4' fill-opacity='.35'/%3E%3Ccircle cx='64' cy='0' r='1.4' fill-opacity='.35'/%3E%3Ccircle cx='0' cy='64' r='1.4' fill-opacity='.35'/%3E%3Ccircle cx='64' cy='64' r='1.4' fill-opacity='.35'/%3E%3C/g%3E%3C/svg%3E");
+  --art-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120' viewBox='0 0 240 120' fill='none'%3E%3Cg stroke='%23c5a46d'%3E%3Cpath d='M0 10Q60 -10 120 10T240 10' stroke-opacity='.34'/%3E%3Cpath d='M0 40Q60 20 120 40T240 40' stroke-opacity='.26'/%3E%3Cpath d='M0 70Q60 50 120 70T240 70' stroke-opacity='.2'/%3E%3Cpath d='M0 100Q60 80 120 100T240 100' stroke-opacity='.15'/%3E%3C/g%3E%3Cg fill='%23e5c992' fill-opacity='.4'%3E%3Ccircle cx='120' cy='10' r='1.5'/%3E%3Ccircle cx='0' cy='40' r='1.5'/%3E%3Ccircle cx='240' cy='40' r='1.5'/%3E%3Ccircle cx='120' cy='70' r='1.5'/%3E%3Ccircle cx='0' cy='100' r='1.5'/%3E%3Ccircle cx='240' cy='100' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  --art-speckle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='%23c5a46d'%3E%3Ccircle cx='7' cy='11' r='1.1' fill-opacity='.5'/%3E%3Ccircle cx='21' cy='5' r='.7' fill-opacity='.38'/%3E%3Ccircle cx='38' cy='9' r='.9' fill-opacity='.45'/%3E%3Ccircle cx='52' cy='15' r='1.2' fill-opacity='.52'/%3E%3Ccircle cx='13' cy='27' r='.8' fill-opacity='.4'/%3E%3Ccircle cx='30' cy='22' r='1.3' fill-opacity='.55'/%3E%3Ccircle cx='46' cy='29' r='.7' fill-opacity='.36'/%3E%3Ccircle cx='4' cy='40' r='1' fill-opacity='.46'/%3E%3Ccircle cx='22' cy='44' r='.9' fill-opacity='.44'/%3E%3Ccircle cx='39' cy='38' r='1.1' fill-opacity='.5'/%3E%3Ccircle cx='11' cy='55' r='1.2' fill-opacity='.52'/%3E%3Ccircle cx='47' cy='54' r='1' fill-opacity='.46'/%3E%3C/g%3E%3Cg fill='%23e5c992'%3E%3Ccircle cx='55' cy='45' r='.8' fill-opacity='.6'/%3E%3Ccircle cx='28' cy='56' r='.7' fill-opacity='.55'/%3E%3Ccircle cx='17' cy='33' r='.6' fill-opacity='.6'/%3E%3Ccircle cx='43' cy='20' r='.6' fill-opacity='.55'/%3E%3C/g%3E%3C/svg%3E");
+  --art-scallop: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M0 64V32a32 32 0 0 1 64 0v32' stroke='%23c5a46d' stroke-opacity='.4'/%3E%3Cpath d='M9 64V34a23 23 0 0 1 46 0v30' stroke='%23c5a46d' stroke-opacity='.24'/%3E%3Ccircle cx='32' cy='8' r='1.6' fill='%23e5c992' fill-opacity='.45'/%3E%3C/svg%3E");
+
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* --- The five layers ------------------------------------------------------
+   One class per artwork. The card that hosts a layer sets its strength, so a
+   single asset serves both a wide background wash and a quiet accent. */
+.card-orn {
+  background-repeat: no-repeat;
+  /* Intensity knob: every card sets `--orn-strength` (section 34b). */
+  opacity: 0.5;
+}
+
+/* Each ground gets its own tile size, repeat axis and default strength, so no
+   two cards can ever read as the same texture. `--orn-strength` and
+   `--orn-speed` are set by the card that hosts the layer (section 34b). */
+.card-orn--mughal {
+  background-image: var(--art-mughal);
+  background-repeat: repeat;
+  background-size: 96px 96px;
+}
+
+/* Dust, mandala and wave animate an oversized ::before (so the motion stays on
+   the compositor instead of repainting a background); the artwork therefore
+   lives on the pseudo-element and the host layer stays transparent. Their
+   strength still comes from `opacity` on this element, which the card sets. */
+.card-orn--dust::before {
+  content: '';
+  position: absolute;
+  inset: -48px;
+  background-image: var(--art-dust);
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: orn-drift var(--orn-speed, 34s) ease-in-out infinite alternate;
+}
+
+.card-orn--vine {
+  background-image: var(--art-vine);
+  background-repeat: repeat-x;
+  background-position: center top 1rem;
+  background-size: auto 2.9rem;
+}
+
+.card-orn--vine.card-orn--floor {
+  background-position: center bottom 1rem;
+}
+
+.card-orn--diagonal {
+  background-image: var(--art-diagonal);
+  background-repeat: repeat;
+  background-size: 40px 40px;
+}
+
+.card-orn--bloom {
+  background-image: var(--art-bloom);
+  background-repeat: repeat;
+  background-size: 120px 120px;
+}
+
+.card-orn--mandala::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--art-mandala);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(76%, 22rem) auto;
+  animation: orn-spin var(--orn-speed, 180s) linear infinite;
+}
+
+/* The celebration's central medallion: the mandala artwork reused at a much
+   larger scale and a whisper of opacity, bled past the card edges so only part
+   of it is seen. Fine outlines only, so it never competes with the words. */
+.card-orn--medallion {
+  background-image: var(--art-mandala);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(112%, 30rem) auto;
+}
+
+.card-orn--trellis {
+  background-image: var(--art-trellis);
+  background-repeat: repeat;
+  background-size: 64px 64px;
+}
+
+.card-orn--wave::before {
+  content: '';
+  position: absolute;
+  inset: -40px -40px -40px -40px;
+  background-image: var(--art-wave);
+  background-repeat: repeat;
+  background-size: 240px 120px;
+  animation: orn-drift-x var(--orn-speed, 52s) linear infinite alternate;
+}
+
+.card-orn--speckle {
+  background-image: var(--art-speckle);
+  background-repeat: repeat;
+  background-size: 60px 60px;
+}
+
+/* A screen of nested mughal arches — an arcade, for the ceremony. */
+.card-orn--scallop {
+  background-image: var(--art-scallop);
+  background-repeat: repeat;
+  background-size: 64px 64px;
+}
+
+.card-orn--arch {
+  background-image: var(--art-arch);
+  background-position: center bottom;
+  background-size: min(76%, 20rem) auto;
+}
+
+.card-orn--spray {
+  background-image: var(--art-spray);
+  background-position: center bottom 0.6rem;
+  background-size: min(66%, 13rem) auto;
+}
+
+.card-orn--band {
+  background-image: var(--art-band);
+  background-position: center top 0.55rem;
+  background-size: min(68%, 15rem) auto;
+}
+
+.card-orn--crest {
+  background-image: var(--art-arch);
+  background-position: center 50%;
+  background-size: min(46%, 13rem) auto;
+}
+
+/* --- The paisley corner layer -------------------------------------------- */
+.card-orn-corner {
+  position: absolute;
+  width: clamp(46px, 13%, 84px);
+  aspect-ratio: 1;
+  background-image: var(--art-corner);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.card-orn-corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.card-orn-corner--tr {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.card-orn-corner--br {
+  right: 0;
+  bottom: 0;
+  transform: scale(-1, -1);
+}
+
+.card-orn-corner--bl {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+/* --- Phones -------------------------------------------------------------
+   The repeating grounds step down a size with the card and the single-motif
+   layers shrink, so nothing is ever cropped mid-ornament. Only SIZE changes
+   here: each card's chosen strength (34b) is deliberately untouched, because a
+   re-opacity at this specificity would silently lose to those rules. */
+@media (max-width: 599.98px) {
+  .card-orn--mughal {
+    background-size: 72px 72px;
+  }
+
+  .card-orn--diagonal {
+    background-size: 32px 32px;
+  }
+
+  .card-orn--bloom {
+    background-size: 96px 96px;
+  }
+
+  .card-orn--trellis {
+    background-size: 52px 52px;
+  }
+
+  .card-orn--speckle {
+    background-size: 48px 48px;
+  }
+
+  .card-orn--scallop {
+    background-size: 52px 52px;
+  }
+
+  .card-orn--vine {
+    background-size: auto 1.9rem;
+  }
+
+  .card-orn--arch {
+    background-size: min(84%, 13rem) auto;
+  }
+
+  .card-orn--spray {
+    background-size: min(78%, 10rem) auto;
+  }
+
+  .card-orn--band {
+    background-size: min(76%, 11rem) auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   34b. WHICH CARD WEARS WHAT
+   Ten cards, nine distinct grounds — no card repeats another's texture:
+
+     invitation   Mughal eight-point star lattice   + palace arch + header band
+     hero         scattered gold dust (drifting)    + wide arch + foot band
+     celebration  botanical vine band, top & foot   + crest arch
+     haldi        fine ornamental diagonals
+     mehendi      scattered miniature florals
+     ceremony     rotating royal mandala            + palace arch
+     milestones   minimal geometric trellis
+     rsvp         flowing wave filigree (drifting)  + header band
+     closing      paisley corners + curve fields    + foot band
+     guest wall   fine gold speckle                 (its lozenges stay)
+
+   Each rule sets `--orn-strength` (intensity) and, where the layer animates,
+   `--orn-speed` (duration) — the two knobs the phase asked for.
+   -------------------------------------------------------------------------- */
+
+/* --- The opening card: Mughal geometry, a palace arch, a header band ------ */
+.invitation > .card-orn--mughal {
+  --orn-strength: 0.26;
+}
+
+.invitation > .card-orn--arch {
+  --orn-strength: 0.5;
+  --orn-speed: 17s;
+  background-size: min(74%, 17rem) auto;
+  background-position: center bottom 1.5rem;
+  animation: orn-breathe var(--orn-speed) ease-in-out infinite;
+}
+
+.invitation > .card-orn--band {
+  --orn-strength: 0.85;
+  background-position: center top 1.1rem;
+  background-size: min(64%, 13rem) auto;
+}
+
+/* --- The hero: gold dust drifting, the widest arch, a foot band ----------- */
+.hero__inner > .card-orn--dust {
+  --orn-strength: 0.9;
+  --orn-speed: 30s;
+}
+
+.hero__inner > .card-orn--arch {
+  --orn-strength: 0.62;
+  --orn-speed: 21s;
+  background-size: min(54%, 21rem) auto;
+  background-position: center bottom 0.5rem;
+  animation: orn-breathe var(--orn-speed) ease-in-out infinite;
+}
+
+.hero__inner > .card-orn--band {
+  --orn-strength: 0.55;
+  background-position: center bottom 1.1rem;
+  background-size: min(52%, 13rem) auto;
+}
+
+/* --- A celebration of two souls: botanical vines top and foot ------------- */
+.celebration__frame > .card-orn--vine {
+  --orn-strength: 0.75;
+}
+
+.celebration__frame > .card-orn--vine.card-orn--floor {
+  background-position: center bottom 1rem;
+}
+
+/* The central texture that fills the middle of the card. 22% of an artwork
+   whose own strokes sit at 0.42 alpha is ~0.09 effective gold — faint enough to
+   stay behind the copy, strong enough to see the rings and petals. */
+.celebration__frame > .card-orn--medallion {
+  --orn-strength: 0.24;
+}
+
+.celebration__frame > .card-orn--crest {
+  --orn-strength: 0.42;
+  --orn-speed: 26s;
+  background-position: center top 1.1rem;
+  background-size: min(34%, 8.5rem) auto;
+  animation: orn-breathe var(--orn-speed) ease-in-out infinite;
+}
+
+/* --- The closing letter: paisley corners over drifting curves ------------- */
+.closing__panel > .card-orn-corners {
+  opacity: 0.7;
+}
+
+.closing__panel .card-orn-corner {
+  width: clamp(58px, 17%, 108px);
+}
+
+.closing__panel > .card-orn--wave {
+  --orn-strength: 0.42;
+  --orn-speed: 64s;
+}
+
+.closing__panel > .card-orn--spray {
+  --orn-strength: 0.62;
+  background-size: min(58%, 12rem) auto;
+  background-position: center bottom 1.1rem;
+}
+
+/* --- The RSVP: a slowly turning mandala, plus a header band --------------- */
+.rsvp__panel > .card-orn--mandala {
+  --orn-strength: 0.3;
+  --orn-speed: 200s;
+}
+
+.rsvp__panel > .card-orn--band {
+  --orn-strength: 0.5;
+  background-position: center top 1.1rem;
+  background-size: min(56%, 12rem) auto;
+}
+
+/* --- Haldi, Mehendi and the Ceremony: three different grounds -------------
+   Each entry carries its own pattern, set from its theme in EventEntry.jsx, so
+   the three never look like copies of one another. */
+.event--haldi > .event__text > .card-orn--diagonal {
+  --orn-strength: 0.24;
+}
+
+.event--mehendi > .event__text > .card-orn--bloom {
+  --orn-strength: 0.26;
+  --orn-speed: 24s;
+  animation: orn-shimmer var(--orn-speed) ease-in-out infinite;
+}
+
+.event--wedding > .event__frame > .card-orn--scallop {
+  --orn-strength: 0.3;
+}
+
+.event--wedding > .event__frame > .card-orn--arch {
+  --orn-strength: 0.3;
+  --orn-speed: 19s;
+  background-position: center bottom 0.5rem;
+  background-size: min(30%, 9rem) auto;
+  animation: orn-breathe var(--orn-speed) ease-in-out infinite;
+}
+
+/* --- The wedding journey: the quietest ground of all ---------------------- */
+.milestone__content > .card-orn--trellis {
+  --orn-strength: 0.22;
+}
+
+/* --- The guest wall: a whisper of gold speckle behind the plaques --------- */
+.guests__plaque > .card-orn--speckle {
+  --orn-strength: 0.24;
+}
+
+/* --- Phones: keep the motif, drop the cost of the repeat -----------------
+   Single-motif layers shrink with the card so nothing is cropped mid-ornament,
+   and the drifting layers slow a little further so a phone never shows the
+   pattern travelling faster than the card is tall. */
+@media (max-width: 599.98px) {
+  .invitation > .card-orn--arch,
+  .hero__inner > .card-orn--arch {
+    background-position: center bottom 0.75rem;
+  }
+
+  .celebration__frame > .card-orn--crest {
+    background-position: center top 0.75rem;
+  }
+
+  /* Narrower panel: the medallion is kept LARGE relative to the card, because a
+   small mandala renders its 1px rings sub-pixel and disappears. Slightly
+   stronger than desktop so the same stroke weight still reads at 390px. */
+  .celebration__frame > .card-orn--medallion {
+    --orn-strength: 0.24;
+    background-size: min(150%, 20rem) auto;
+  }
+
+  .event--wedding > .event__frame > .card-orn--arch {
+    background-size: min(38%, 6.5rem) auto;
+  }
+
+  .closing__panel > .card-orn--wave {
+    --orn-speed: 78s;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   35. DEVANAGARI READABILITY (PHASE 22C)
+   Phase 21 gave the translated pages their own font stack, leading and matra
+   clearance, but every SIZE stayed exactly as English wrote it. At 9.6-10.6px
+   a tracked Latin capital line is a deliberate whisper; at the same size a
+   Devanagari label is a row of conjuncts that cannot be resolved. These rules
+   raise the small end of the Hindi/Bhojpuri scale only.
+
+   Four tiers, so the hierarchy survives and nothing ends up equal in weight:
+     A  autoplay capsule          8.5px  -> 10.6-11.8px
+     B  eyebrows and small labels 9.6-10.6px -> 11.9-13.6px
+     C  control labels           10.2-10.9px -> 12.5-14.4px
+     D  running text             14.1-14.7px -> 16.0-17.3px
+
+   Everything is scoped with :is(html:lang(hi), html:lang(bho)), so the English
+   page keeps the exact metrics it was approved with, and every size is a
+   clamp so a phone gets the largest relative increase and nothing scales
+   without bound at 1920.
+   -------------------------------------------------------------------------- */
+
+/* --- A. The autoplay capsule -------------------------------------------- */
+:is(html:lang(hi), html:lang(bho)) .auto-scroll {
+  font-size: clamp(0.66rem, 2.5vw, 0.74rem);
+}
+
+/* --- B. Eyebrows and small labels ---------------------------------------
+   The tracked capital line above every section, the event and milestone
+   labels, and every field label. */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .invitation__label,
+    .hero__label,
+    .celebration__label,
+    .closing__eyebrow,
+    .showcase__label,
+    .gallery__label,
+    .timeline__eyebrow,
+    .rsvp__eyebrow,
+    .guests__eyebrow,
+    .event__label,
+    .milestone__label,
+    .details__label,
+    .rsvp__field-label
+  ) {
+  font-size: clamp(0.73rem, 3.05vw, 0.85rem);
+}
+
+/* --- C. Control labels ---------------------------------------------------
+   Anything the guest reads on a button, a pill or a status line: the opening
+   button, the RSVP choices, change link, hint and reply note, the guest-wall
+   retry, the music player's track and clock, and the language switcher. */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .invitation__button,
+    .invitation__button-label,
+    .rsvp__option-label,
+    .rsvp__submit,
+    .rsvp__change,
+    .rsvp__submit-note,
+    .rsvp__hint,
+    .rsvp__success-note,
+    .guests__retry,
+    .music__track,
+    .music__time,
+    .music__time-sep,
+    .music__notice,
+    .lang__current,
+    .lang__item
+  ) {
+  font-size: clamp(0.77rem, 3.2vw, 0.9rem);
+}
+
+/* --- D. Running text -----------------------------------------------------
+   Body copy, intros and notes. The smallest relative increase of the four
+   tiers on purpose, so the labels above them stay visibly subordinate. The
+   ones already at 16px or more in Devanagari (the closing signature, the
+   guest-wall count line, the decline message) are deliberately NOT listed:
+   this tier may only ever raise a size, never lower one. */
+:is(html:lang(hi), html:lang(bho)) :where(
+    .invitation__text,
+    .hero__copy,
+    .celebration__copy,
+    .showcase__intro,
+    .event__copy,
+    .gallery__intro,
+    .timeline__intro,
+    .milestone__copy,
+    .rsvp__intro,
+    .rsvp__option-note,
+    .rsvp__success-detail,
+    .closing__message,
+    .guests__intro,
+    .details__value
+  ) {
+  font-size: clamp(1rem, 2.55vw, 1.08rem);
+}
+
+/* --- E. Touch targets ---------------------------------------------------
+   A taller label needs a taller button to sit in. Only the one text button
+   that was sized for a 10px capital line needs the extra height; every other
+   control already exceeds it. */
+:is(html:lang(hi), html:lang(bho)) .guests__retry {
+  min-height: 3rem;
+}
+/* --------------------------------------------------------------------------
+   36. ORNAMENT MOTION (PHASE 22D)
+   Five very slow, very small movements, each belonging to one family of card
+   so no two panels animate the same way. Every one of them is a transform or
+   an opacity on a layer that already sits behind the content, so none of them
+   can ever touch a word.
+
+   Durations come from `--orn-speed`, set per card in section 34b: the fastest
+   is 17s and the slowest 240s. Amplitudes are 26-38px of drift for the dust
+   (phase 22E widened it so the motion reads), 60px for the curve field, or a
+   quarter turn a minute for the mandala. Nothing loops fast enough to read as
+   motion when the guest is looking at the words.
+   -------------------------------------------------------------------------- */
+
+/* Gold dust and curve fields: a slow diagonal walk. The artwork lives on an
+   oversized ::before, so this is a compositor transform — no repaint. Phase 22E
+   widened the walk from 22px to 38px over a shorter cycle, so the dust reads as
+   drifting rather than as a still photograph. */
+@keyframes orn-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-38px, -26px, 0);
+  }
+}
+
+@keyframes orn-drift-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-60px, 0, 0);
+  }
+}
+
+/* The royal mandala: one turn every three to four minutes. */
+@keyframes orn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The palace arch and the botanical vine: a breath, not a pulse. The keyframes
+   read `--orn-strength` back so the card's chosen intensity is preserved
+   throughout the cycle instead of being replaced by 1. */
+@keyframes orn-breathe {
+  0%,
+  100% {
+    opacity: var(--orn-strength, 1);
+  }
+  50% {
+    opacity: calc(var(--orn-strength, 1) * 0.68);
+  }
+}
+
+/* The miniature florals: a slower, uneven shimmer so the wall of blossoms does
+   not look like a single element dimming. */
+@keyframes orn-shimmer {
+  0%,
+  100% {
+    opacity: var(--orn-strength, 1);
+  }
+  38% {
+    opacity: calc(var(--orn-strength, 1) * 0.52);
+  }
+  72% {
+    opacity: calc(var(--orn-strength, 1) * 0.86);
+  }
+}
+
+/* Reduced motion: every ornamental layer holds still in its finished state —
+   the patterns stay exactly where they were designed, they simply stop moving.
+   `!important` is deliberate here: the per-card `animation` shorthands in 34b
+   are more specific than this rule, and there is no other way to guarantee a
+   guest who asked for no motion gets none. */
+@media (prefers-reduced-motion: reduce) {
+  .card-orn,
+  .card-orn::before,
+  .card-orn-corners,
+  .card-orn-corner {
+    animation: none !important;
+  }
 }
