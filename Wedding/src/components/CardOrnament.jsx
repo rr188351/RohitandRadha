@@ -20,7 +20,8 @@
  *   kind:
  *     | 'mughal' | 'dust' | 'vine' | 'diagonal' | 'bloom'
  *     | 'mandala' | 'trellis' | 'wave' | 'speckle'
- *     | 'arch' | 'spray' | 'band' | 'crest',
+ *     | 'arch' | 'spray' | 'band' | 'crest'
+ *     | 'medallion' | 'scallop' | 'floret',
  *   className?: string,
  * }} props
  */

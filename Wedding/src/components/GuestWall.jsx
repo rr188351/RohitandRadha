@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
-import { gsap } from '../lib/gsap';
+import { gsap, ScrollTrigger } from '../lib/gsap';
 import { cinematicOnPhones, revealStart } from '../lib/reveal.js';
 import { useI18n } from '../i18n/index.jsx';
 import {
@@ -15,14 +16,23 @@ import CardOrnament from './CardOrnament.jsx';
 const LOADING_CAPSULES = [0, 1, 2, 3];
 
 /**
+ * How many rows of names the wall shows before it is folded.
+ *
+ * The wall can carry anything from a handful of names to a few hundred, and the
+ * closing letter sits directly below it, so it opens at a few rows and the guest
+ * unfolds the rest rather than the section growing past the whole screen.
+ */
+const COLLAPSE_ROWS = 4;
+
+/**
  * Phase 19 — our beloved guests.
  *
  * A wall of the people who accepted, drawn from the public read-only endpoint.
- * It is deliberately NOT a panel like the RSVP's: the names themselves are the
- * composition, each set in its own small plaque on the burgundy ground, so the
- * section reads as a page of blessings rather than a list in a box.
+ * The names are the composition — each set in its own small plaque, and the
+ * plaques gathered on one royal glass panel — so the section reads as a page of
+ * blessings rather than a list in a box.
  *
- * Three things keep it honest and quiet:
+ * Four things keep it honest and quiet:
  *
  *   · the list refreshes on a slow interval (and on returning to the tab, and
  *     the instant a reply is stored) but re-renders ONLY when it truly changed,
@@ -30,9 +40,15 @@ const LOADING_CAPSULES = [0, 1, 2, 3];
  *   · only genuinely new names animate - the rest of the wall is never touched;
  *   · a failure leaves the wall alone: names already on it stay, and only a wall
  *     that never loaded shows the retry line. The invitation never depends on
- *     this section.
+ *     this section;
+ *   · the names sit on a proper royal glass panel (its own surface, its own
+ *     ornament) and the wall folds to `COLLAPSE_ROWS` rows, measured from the
+ *     real rows rather than guessed from the viewport, so a two-hundred-name
+ *     celebration never swallows the page. The clip is presentational only: the
+ *     whole list stays in the DOM, and a screen reader still hears every name.
  *
- * With `prefers-reduced-motion` the section renders complete and still.
+ * With `prefers-reduced-motion` the section renders complete and still, and the
+ * fold opens without an animation.
  */
 export default function GuestWall() {
   const rootRef = useRef(null);
@@ -45,10 +61,22 @@ export default function GuestWall() {
   const revealedRef = useRef(false);
   const waveRef = useRef(null);
 
+  // The fold: the clipping wrapper, the wall it clips, the row geometry measured
+  // from them, and a ticket marking that the first measurement has run.
+  const clipRef = useRef(null);
+  const wallRef = useRef(null);
+  const layoutRef = useRef({ collapsed: 0, full: 0 });
+  const expandedRef = useRef(false);
+  const measuredRef = useRef(false);
+  const foldTweenRef = useRef(null);
+
   const [guests, setGuests] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | ready | error
   // Names that arrived since the last time the wall animated.
   const [freshNames, setFreshNames] = useState([]);
+  // The fold state: whether the wall is long enough to fold, and whether it is open.
+  const [foldable, setFoldable] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const load = useCallback(async () => {
     const ticket = (requestRef.current += 1);
@@ -82,6 +110,114 @@ export default function GuestWall() {
     setStatus('loading');
     load();
   }, [load]);
+
+  // --- The fold: four rows standing, the rest behind one tap -----------------
+  //
+  // The folded height comes from the REAL rows — their layout tops and heights,
+  // which transforms cannot skew, so the entrance wave cannot distort it — rather
+  // than from a guess about the viewport. A long name that wraps to a second line
+  // therefore pushes the fold down with it instead of being cut through.
+  const applyFold = useCallback((open, animate) => {
+    const clip = clipRef.current;
+    const { collapsed, full } = layoutRef.current;
+    if (!clip || !full) return;
+
+    // The CSS `max-height` only guards the frame before the first measurement;
+    // once the rows have been read, the height belongs to us.
+    clip.style.maxHeight = 'none';
+
+    const target = open ? full : collapsed;
+    if (measuredRef.current && Math.abs(clip.offsetHeight - target) < 1) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    foldTweenRef.current?.kill();
+    foldTweenRef.current = null;
+
+    if (!animate || reduce) {
+      gsap.set(clip, { height: target });
+      if (measuredRef.current) ScrollTrigger.refresh();
+      return;
+    }
+
+    foldTweenRef.current = gsap.to(clip, {
+      height: target,
+      duration: 0.6,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        foldTweenRef.current = null;
+        // The closing letter moves down when the wall unfolds, so its reveal has
+        // to be told where it now begins.
+        ScrollTrigger.refresh();
+      },
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    const wall = wallRef.current;
+    if (!wall) return undefined;
+
+    const measure = () => {
+      const plaques = Array.from(wall.querySelectorAll('.guests__plaque'));
+
+      if (!plaques.length) {
+        layoutRef.current = { collapsed: 0, full: 0 };
+        setFoldable(false);
+        return;
+      }
+
+      // The plaques of one flex row share a layout top, so they are grouped by it.
+      const rows = [];
+      plaques.forEach((plaque) => {
+        const top = plaque.offsetTop;
+        const bottom = top + plaque.offsetHeight;
+        const row = rows[rows.length - 1];
+
+        if (row && Math.abs(top - row.top) < 6) {
+          if (bottom > row.bottom) row.bottom = bottom;
+        } else {
+          rows.push({ top, bottom });
+        }
+      });
+
+      const wallTop = wall.offsetTop;
+      const full = wall.offsetHeight;
+      const canFold = rows.length > COLLAPSE_ROWS;
+      const collapsed = canFold
+        ? Math.max(0, rows[COLLAPSE_ROWS - 1].bottom - wallTop)
+        : full;
+
+      layoutRef.current = { collapsed, full };
+      setFoldable(canFold);
+      // The first pass always sets the height; only later passes (a re-wrap, or
+      // the guest unfolding) need to know that the layout below has moved.
+      applyFold(expandedRef.current, false);
+      measuredRef.current = true;
+    };
+
+    measure();
+
+    // A re-wrap (a narrower screen, a late font, a name that grew) changes the
+    // rows, so the fold is re-derived from the wall's own size.
+    const observer = new ResizeObserver(measure);
+    observer.observe(wall);
+    window.addEventListener('resize', measure);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [guests, applyFold]);
+
+  useEffect(() => {
+    expandedRef.current = expanded;
+    applyFold(expanded, true);
+  }, [expanded, applyFold]);
+
+  // A pending fold is stopped if the section ever goes away.
+  useEffect(() => () => foldTweenRef.current?.kill(), []);
+
+  const toggleFold = useCallback(() => setExpanded((open) => !open), []);
 
   // --- The data: one read, then a slow self-refresh -------------------------
   useEffect(() => {
@@ -243,7 +379,7 @@ export default function GuestWall() {
     };
   }, []);
 
-  const { wedding } = useI18n();
+  const { wedding, format } = useI18n();
   const { guests: copy, names } = wedding;
   const count = guests.length;
   const showWall = status === 'ready' && count > 0;
@@ -271,7 +407,14 @@ export default function GuestWall() {
         <p className="guests__intro">{copy.intro}</p>
       </header>
 
-      <div className="guests__stage" ref={stageRef}>
+      <div
+        className="guests__stage guests__panel glass glass--panel glass-inset"
+        ref={stageRef}
+        data-expanded={expanded}
+      >
+        <span className="glass-grain" aria-hidden="true" />
+        <CardOrnament kind="floret" />
+
         {status === 'loading' ? (
           <div className="guests__loading">
             <p className="guests__state-copy">{copy.loading}</p>
@@ -302,20 +445,47 @@ export default function GuestWall() {
         ) : null}
 
         {showWall ? (
-          <ul className="guests__wall" role="list">
-            {guests.map((name, index) => (
-              <li
-                className="guests__plaque glass glass--panel"
-                key={`${name}-${index}`}
-                data-name={name}
-              >
-                <span className="guests__plaque-gem" aria-hidden="true" />
-                <CardOrnament kind="speckle" />
-                <span className="guests__name">{name}</span>
-                <span className="guests__plaque-gem" aria-hidden="true" />
-              </li>
-            ))}
-          </ul>
+          <div className="guests__clip" ref={clipRef}>
+            <ul className="guests__wall" id="guests-wall" role="list" ref={wallRef}>
+              {guests.map((name, index) => (
+                <li
+                  className="guests__plaque glass glass--panel"
+                  key={`${name}-${index}`}
+                  data-name={name}
+                >
+                  <span className="guests__plaque-gem" aria-hidden="true" />
+                  <CardOrnament kind="speckle" />
+                  <span className="guests__name">{name}</span>
+                  <span className="guests__plaque-gem" aria-hidden="true" />
+                </li>
+              ))}
+            </ul>
+
+            {/* The names the fold is holding back dissolve into the panel. */}
+            {foldable ? <span className="guests__fade" aria-hidden="true" /> : null}
+          </div>
+        ) : null}
+
+        {showWall && foldable ? (
+          <div className="guests__more">
+            <button
+              className="guests__toggle"
+              type="button"
+              aria-expanded={expanded}
+              aria-controls="guests-wall"
+              onClick={toggleFold}
+            >
+              <span className="guests__toggle-label">
+                {expanded ? copy.showLess : format(copy.showAll, { count })}
+              </span>
+              <ChevronDown
+                className="guests__toggle-icon"
+                size={14}
+                strokeWidth={1.6}
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         ) : null}
       </div>
 

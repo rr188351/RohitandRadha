@@ -5726,7 +5726,7 @@ html:lang(bho) {
 .card-orn {
   background-repeat: no-repeat;
   /* Intensity knob: every card sets `--orn-strength` (section 34b). */
-  opacity: 0.5;
+  opacity: var(--orn-strength, 1);
 }
 
 /* Each ground gets its own tile size, repeat axis and default strength, so no
@@ -5969,7 +5969,7 @@ html:lang(bho) {
 
 /* --- The hero: gold dust drifting, the widest arch, a foot band ----------- */
 .hero__inner > .card-orn--dust {
-  --orn-strength: 0.9;
+  --orn-strength: 0.75;
   --orn-speed: 30s;
 }
 
@@ -5989,7 +5989,7 @@ html:lang(bho) {
 
 /* --- A celebration of two souls: botanical vines top and foot ------------- */
 .celebration__frame > .card-orn--vine {
-  --orn-strength: 0.75;
+  --orn-strength: 0.81;
 }
 
 .celebration__frame > .card-orn--vine.card-orn--floor {
@@ -6000,7 +6000,7 @@ html:lang(bho) {
    whose own strokes sit at 0.42 alpha is ~0.09 effective gold — faint enough to
    stay behind the copy, strong enough to see the rings and petals. */
 .celebration__frame > .card-orn--medallion {
-  --orn-strength: 0.24;
+  --orn-strength: 0.3;
 }
 
 .celebration__frame > .card-orn--crest {
@@ -6070,7 +6070,7 @@ html:lang(bho) {
 
 /* --- The wedding journey: the quietest ground of all ---------------------- */
 .milestone__content > .card-orn--trellis {
-  --orn-strength: 0.22;
+  --orn-strength: 0.26;
 }
 
 /* --- The guest wall: a whisper of gold speckle behind the plaques --------- */
@@ -6096,7 +6096,7 @@ html:lang(bho) {
    small mandala renders its 1px rings sub-pixel and disappears. Slightly
    stronger than desktop so the same stroke weight still reads at 390px. */
   .celebration__frame > .card-orn--medallion {
-    --orn-strength: 0.24;
+    --orn-strength: 0.3;
     background-size: min(150%, 20rem) auto;
   }
 
@@ -6293,5 +6293,217 @@ html:lang(bho) {
   .card-orn-corners,
   .card-orn-corner {
     animation: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   37. THE GUEST WALL PANEL
+   The celebration wall used to be a field of loose plaques on the burgundy
+   ground. On a page that may carry two hundred names that read as an unfinished
+   list, and it ran the whole height of the screen on the way to the closing
+   letter.
+
+   It now sits on one opaque royal glass panel and folds to a few rows that the
+   guest unfolds. Two rules govern the look: the panel is deliberately QUIETER
+   than the closing letter (no gold frame, no paisley corners, a single soft
+   reflection and a gentler gold glow, so it can never outshine the page that
+   ends the invitation), and every ornament stays behind the words at
+   `z-index: -1` inside the panel's own stacking context.
+   -------------------------------------------------------------------------- */
+
+/* --- The wall's own ground: a fine gold buti print ------------------------
+   A half-drop tile - one rosette at the centre, quarter-diamonds at the four
+   corners - so the repeat reads as an Indian block print rather than a square
+   grid. Concentric antique-gold rings, a four-point petal in the middle, and a
+   champagne bead at every lattice node, drawn faintly enough to sit behind a
+   name. No other card in the invitation wears this ground. */
+.card-orn {
+  --art-floret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84' fill='none'%3E%3Cg stroke='%23c5a46d' stroke-opacity='.34'%3E%3Ccircle cx='42' cy='42' r='17'/%3E%3Ccircle cx='42' cy='42' r='11.5' stroke-opacity='.2'/%3E%3Cpath d='M42 27 47 42 42 57 37 42Z' stroke-opacity='.24'/%3E%3Cpath d='M42 17v6M42 61v6M17 42h6M61 42h6' stroke-opacity='.26'/%3E%3C/g%3E%3Cg fill='%23c5a46d' fill-opacity='.3'%3E%3Cpath d='M0 -4 L4 0 L0 4 L-4 0 Z'/%3E%3Cpath d='M84 -4 L88 0 L84 4 L80 0 Z'/%3E%3Cpath d='M0 80 L4 84 L0 88 L-4 84 Z'/%3E%3Cpath d='M84 80 L88 84 L84 88 L80 84 Z'/%3E%3C/g%3E%3Cg fill='%23e5c992' fill-opacity='.44'%3E%3Ccircle cx='42' cy='42' r='2'/%3E%3Ccircle cx='0' cy='42' r='1'/%3E%3Ccircle cx='84' cy='42' r='1'/%3E%3Ccircle cx='42' cy='0' r='1'/%3E%3Ccircle cx='42' cy='84' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.card-orn--floret {
+  background-image: var(--art-floret);
+  background-repeat: repeat;
+  background-size: 84px 84px;
+}
+
+/* 0.5 is not a preference, it is the layer's own weight: the artwork's strokes
+   sit at 0.34 alpha, so half opacity leaves a ~0.17 gold print. It is set here
+   rather than left to the shared base rule so the print looks the same whatever
+   that base does. */
+.guests__panel > .card-orn--floret {
+  --orn-strength: 0.5;
+}
+
+/* --- The panel ------------------------------------------------------------ */
+.guests__panel {
+  /* Keeps the ornament layer's negative z-index inside this card. */
+  isolation: isolate;
+  padding: clamp(1.15rem, 3.4vw, 1.9rem) clamp(0.95rem, 3vw, 1.7rem);
+  border-color: var(--glass-border-strong);
+  /* The invitation's glass, minus the wide gold bloom the closing letter wears. */
+  box-shadow: inset 0 1px 0 0 rgba(229, 201, 146, 0.12),
+    inset 0 -1px 0 0 rgba(22, 9, 13, 0.6), 0 0 0 1px rgba(11, 5, 7, 0.5),
+    0 40px 96px -54px rgba(197, 164, 109, 0.42),
+    0 44px 120px -50px rgba(0, 0, 0, 0.88);
+}
+
+/* One soft reflection under the top edge - a quiet echo of the invitation card,
+   well short of the closing letter's second glow. */
+.guests__panel::before {
+  content: '';
+  position: absolute;
+  inset: 1px 1px auto;
+  z-index: 0;
+  height: 32%;
+  border-radius: calc(var(--glass-radius) - 1px) calc(var(--glass-radius) - 1px) 48% 48%;
+  background-image: linear-gradient(
+    180deg,
+    rgba(245, 239, 229, 0.055) 0%,
+    rgba(229, 201, 146, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* --- The fold ------------------------------------------------------------- */
+/* 6px of clearance inside the clip, top and bottom, so a plaque's desktop hover
+   lift is never shaved off by the clip edge. The fold is measured from the rows
+   themselves, so this extra space is accounted for automatically. */
+.guests__panel .guests__wall {
+  padding-block: 6px;
+}
+
+.guests__clip {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: calc(var(--glass-radius) - 5px);
+  /* Only a guard for the frame before the first measurement runs: the folded
+     height is then set from the real rows and this is cleared. */
+  max-height: 16rem;
+}
+
+/* The names the fold is holding back dissolve into the panel instead of being
+   cut off mid-row. */
+.guests__fade {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  height: clamp(1.5rem, 4.5vw, 2.4rem);
+  background-image: linear-gradient(
+    180deg,
+    rgba(22, 9, 13, 0) 0%,
+    rgba(22, 9, 13, 0.72) 58%,
+    rgba(22, 9, 13, 0.92) 100%
+  );
+  opacity: 1;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.guests__panel[data-expanded='true'] .guests__fade {
+  opacity: 0;
+}
+
+.guests__more {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(0.95rem, 3vw, 1.4rem);
+}
+
+/* The unfold control: the invitation's own button at a pill's scale, so it reads
+   as part of the wall rather than as a form control. */
+.guests__toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.85rem;
+  padding: 0.7rem 1.5rem;
+  border: 1px solid rgba(197, 164, 109, 0.5);
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--gold-champagne);
+  font-family: var(--font-label);
+  font-size: clamp(0.62rem, 2.5vw, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  text-transform: uppercase;
+  background-color: rgba(37, 13, 22, 0.55);
+  background-image: linear-gradient(
+    180deg,
+    rgba(229, 201, 146, 0.1) 0%,
+    rgba(229, 201, 146, 0.02) 48%,
+    rgba(22, 9, 13, 0.32) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.14),
+    0 14px 34px -18px rgba(197, 164, 109, 0.55);
+  transition: transform 0.45s var(--ease-soft), border-color 0.45s ease,
+    color 0.45s ease, box-shadow 0.45s ease;
+}
+
+.guests__toggle-icon {
+  flex: 0 0 auto;
+  transition: transform 0.45s var(--ease-soft);
+}
+
+.guests__toggle[aria-expanded='true'] .guests__toggle-icon {
+  transform: rotate(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .guests__toggle:hover {
+    transform: translateY(-2px);
+    border-color: var(--glass-border-strong);
+    color: var(--ivory);
+    box-shadow: inset 0 1px 0 rgba(229, 201, 146, 0.22),
+      0 22px 46px -18px rgba(197, 164, 109, 0.6);
+  }
+}
+
+.guests__toggle:active {
+  transform: translateY(0);
+}
+
+.guests__toggle:focus-visible {
+  outline: 2px solid var(--gold-champagne);
+  outline-offset: 3px;
+}
+
+/* --- Phones: the panel keeps its breathing room, the print gets finer ------ */
+@media (max-width: 599.98px) {
+  .card-orn--floret {
+    background-size: 64px 64px;
+  }
+
+  .guests__panel {
+    padding: clamp(0.95rem, 4vw, 1.3rem) clamp(0.7rem, 3.2vw, 1rem);
+  }
+
+  .guests__panel .guests__wall {
+    padding-block: 5px;
+  }
+}
+
+/* --- Devanagari: the one control this panel adds --------------------------
+   The tracking that a Latin capital line wants splits Devanagari conjuncts, so
+   the label drops it and takes the leading and height its matras need. */
+:is(html:lang(hi), html:lang(bho)) .guests__toggle {
+  font-size: clamp(0.77rem, 3.2vw, 0.9rem);
+  letter-spacing: 0.02em;
+  text-indent: 0;
+  line-height: 1.55;
+  min-height: 3rem;
+}
+
+/* --- Reduced motion: the fold still folds, it simply does not travel ------- */
+@media (prefers-reduced-motion: reduce) {
+  .guests__toggle,
+  .guests__toggle-icon,
+  .guests__fade {
+    transition: none;
   }
 }

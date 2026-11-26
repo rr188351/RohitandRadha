@@ -197,6 +197,11 @@ export const wedding = {
     error: 'The guest list could not be reached just now.',
     retry: 'Try again',
 
+    /* The fold. The wall can hold hundreds of names, so it opens at a few rows
+       and the guest unfolds the rest. `{count}` is filled in at render time. */
+    showAll: 'See all {count} guests',
+    showLess: 'Show fewer guests',
+
     /* The closing line of the section. `names.first` and `names.second` join it,
        so the signature can only ever read Radha & Rohit. */
     signoff: 'With love,',
