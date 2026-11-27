@@ -115,15 +115,67 @@ export function format(template, values = {}) {
   );
 }
 
-/** The safe way to read a remembered choice: anything unknown means English. */
+/** The query parameter a shared link may use: `.../Wedding/?lang=hi`. */
+export const LANGUAGE_QUERY_KEY = 'lang';
+
+/** True only for a code the invitation actually speaks. */
+const isKnownLanguage = (code) => Boolean(code) && LANGUAGES.some((entry) => entry.code === code);
+
+/**
+ * The language the LINK itself asked for.
+ *
+ * A link sent round on WhatsApp has to arrive already readable: the guest cannot
+ * be expected to hunt for a switcher in a script they may not read. So
+ * `?lang=hi` (or `?lang=bho` / `?lang=en`) is honoured on the first render -
+ * above - so the page never flashes English before settling.
+ *
+ * Anything absent, misspelled or unknown returns null and is simply ignored.
+ */
+function readUrlLanguage() {
+  try {
+    const asked = new URLSearchParams(window.location.search).get(LANGUAGE_QUERY_KEY);
+    if (isKnownLanguage(asked)) return asked;
+  } catch {
+    // No URL parsing available: the invitation falls back to the usual order.
+  }
+  return null;
+}
+
+/**
+ * The safe way to read the opening language: a language named in the link wins
+ * for that visit (that is what the sender asked for), then the guest's own
+ * remembered choice, then English. Anything unknown means English.
+ */
 function readStoredLanguage() {
+  const fromLink = readUrlLanguage();
+  if (fromLink) return fromLink;
   try {
     const saved = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (saved && LANGUAGES.some((language) => language.code === saved)) return saved;
+    if (isKnownLanguage(saved)) return saved;
   } catch {
     // Private mode, or storage disabled: the invitation simply opens in English.
   }
   return DEFAULT_LANGUAGE;
+}
+
+/**
+ * Points the address bar at a language, so a guest who switches and then copies
+ * or shares the link sends the language they are actually reading. Rewritten in
+ * place (`replaceState`): no reload, no history entry, and the hash is kept.
+ */
+function writeUrlLanguage(code) {
+  try {
+    const url = new URL(window.location.href);
+    const current = url.searchParams.get(LANGUAGE_QUERY_KEY);
+    if (current === code) return;
+    // English is the default, so a guest who never leaves it keeps the clean,
+    // unadorned link instead of one that reads `?lang=en`.
+    if (!current && code === DEFAULT_LANGUAGE) return;
+    url.searchParams.set(LANGUAGE_QUERY_KEY, code);
+    window.history.replaceState(window.history.state, '', url);
+  } catch {
+    // A URL we cannot rewrite still switches the language on screen.
+  }
 }
 
 const I18nContext = createContext(null);
@@ -134,7 +186,17 @@ const I18nContext = createContext(null);
  * @param {{ children: import('react').ReactNode }} props
  */
 export function LanguageProvider({ children }) {
-  const [code, setLanguage] = useState(readStoredLanguage);
+  const [code, setCode] = useState(readStoredLanguage);
+
+  /**
+   * Changing the language keeps three things in step: what is on screen, what a
+   * copied link would say, and (below) what the next visit remembers.
+   */
+  const setLanguage = useCallback((next) => {
+    if (!isKnownLanguage(next)) return;
+    setCode(next);
+    writeUrlLanguage(next);
+  }, []);
 
   // The page's own language attribute follows the choice, so screen readers and
   // the browser's font fallback both know which script to expect.
@@ -145,6 +207,9 @@ export function LanguageProvider({ children }) {
       // A guest without storage still gets the language for this visit.
     }
     document.documentElement.lang = code;
+    // A link that named a language is honoured on arrival; keeping the address
+    // bar in step means the page and the URL never contradict each other.
+    writeUrlLanguage(code);
   }, [code]);
 
   const value = useMemo(() => {
@@ -170,7 +235,7 @@ export function LanguageProvider({ children }) {
           .reduce((node, key) => (node == null ? node : node[key]), dictionary) ?? fallback,
       format,
     };
-  }, [code]);
+  }, [code, setLanguage]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
