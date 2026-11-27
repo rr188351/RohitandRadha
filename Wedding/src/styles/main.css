@@ -6000,11 +6000,11 @@ html:lang(bho) {
    whose own strokes sit at 0.42 alpha is ~0.09 effective gold — faint enough to
    stay behind the copy, strong enough to see the rings and petals. */
 .celebration__frame > .card-orn--medallion {
-  --orn-strength: 0.3;
+  --orn-strength: 0.65;
 }
 
 .celebration__frame > .card-orn--crest {
-  --orn-strength: 0.42;
+  --orn-strength: 0.62;
   --orn-speed: 26s;
   background-position: center top 1.1rem;
   background-size: min(34%, 8.5rem) auto;
@@ -6013,7 +6013,7 @@ html:lang(bho) {
 
 /* --- The closing letter: paisley corners over drifting curves ------------- */
 .closing__panel > .card-orn-corners {
-  opacity: 0.7;
+  opacity: 0.87;
 }
 
 .closing__panel .card-orn-corner {
@@ -6021,7 +6021,7 @@ html:lang(bho) {
 }
 
 .closing__panel > .card-orn--wave {
-  --orn-strength: 0.42;
+  --orn-strength: 0.9;
   --orn-speed: 64s;
 }
 
@@ -6033,12 +6033,12 @@ html:lang(bho) {
 
 /* --- The RSVP: a slowly turning mandala, plus a header band --------------- */
 .rsvp__panel > .card-orn--mandala {
-  --orn-strength: 0.3;
+  --orn-strength: 0.5;
   --orn-speed: 200s;
 }
 
 .rsvp__panel > .card-orn--band {
-  --orn-strength: 0.5;
+  --orn-strength: 0.7;
   background-position: center top 1.1rem;
   background-size: min(56%, 12rem) auto;
 }
@@ -6047,21 +6047,21 @@ html:lang(bho) {
    Each entry carries its own pattern, set from its theme in EventEntry.jsx, so
    the three never look like copies of one another. */
 .event--haldi > .event__text > .card-orn--diagonal {
-  --orn-strength: 0.24;
+  --orn-strength: 0.44;
 }
 
 .event--mehendi > .event__text > .card-orn--bloom {
-  --orn-strength: 0.26;
+  --orn-strength: 0.66;
   --orn-speed: 24s;
   animation: orn-shimmer var(--orn-speed) ease-in-out infinite;
 }
 
 .event--wedding > .event__frame > .card-orn--scallop {
-  --orn-strength: 0.3;
+  --orn-strength: 0.55;
 }
 
 .event--wedding > .event__frame > .card-orn--arch {
-  --orn-strength: 0.3;
+  --orn-strength: 0.55;
   --orn-speed: 19s;
   background-position: center bottom 0.5rem;
   background-size: min(30%, 9rem) auto;
@@ -6070,12 +6070,12 @@ html:lang(bho) {
 
 /* --- The wedding journey: the quietest ground of all ---------------------- */
 .milestone__content > .card-orn--trellis {
-  --orn-strength: 0.26;
+  --orn-strength: 0.58;
 }
 
 /* --- The guest wall: a whisper of gold speckle behind the plaques --------- */
 .guests__plaque > .card-orn--speckle {
-  --orn-strength: 0.24;
+  --orn-strength: 1;
 }
 
 /* --- Phones: keep the motif, drop the cost of the repeat -----------------
