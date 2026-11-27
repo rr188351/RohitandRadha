@@ -6075,7 +6075,7 @@ html:lang(bho) {
 
 /* --- The guest wall: a whisper of gold speckle behind the plaques --------- */
 .guests__plaque > .card-orn--speckle {
-  --orn-strength: 1;
+  --orn-strength: .28;
 }
 
 /* --- Phones: keep the motif, drop the cost of the repeat -----------------
@@ -6332,7 +6332,7 @@ html:lang(bho) {
    rather than left to the shared base rule so the print looks the same whatever
    that base does. */
 .guests__panel > .card-orn--floret {
-  --orn-strength: 0.5;
+  --orn-strength: 1;
 }
 
 /* --- The panel ------------------------------------------------------------ */
